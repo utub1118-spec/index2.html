@@ -2,58 +2,254 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Мой Mini App</title>
-    <!-- Подключаем официальный скрипт Telegram -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JetTon Clone Base</title>
     <script src="https://telegram.org"></script>
     <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-color: #161b26;
+            --text-color: #ffffff;
+            --accent-color: #007aff;
+            --green-color: #34c759;
+            --muted-color: #8e8e93;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            text-align: center;
-            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            user-select: none;
         }
-        .container {
-            margin-top: 50px;
+
+        /* Шапка профиля */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background-color: var(--card-color);
+            border-bottom: 1px solid #242b3d;
         }
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: var(--tg-theme-button-color, #2481cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            border-radius: 8px;
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #007aff, #34c759);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #1d273a, #161b26);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid #2c384e;
+            font-weight: 600;
+            color: var(--green-color);
+        }
+
+        /* Главный баннер */
+        .promo-banner {
+            margin: 16px;
+            padding: 20px;
+            background: linear-gradient(230deg, #1e3c72, #2a5298);
+            border-radius: 12px;
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-banner h2 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+        }
+
+        .promo-banner p {
+            margin: 0;
+            font-size: 14px;
+            color: #d1d1d6;
+        }
+
+        /* Категории/Разделы */
+        .section-title {
+            padding: 0 16px;
             font-size: 16px;
+            font-weight: 600;
+            color: var(--muted-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+
+        .menu-card {
+            background-color: var(--card-color);
+            border: 1px solid #242b3d;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             cursor: pointer;
-            text-decoration: none;
+            transition: transform 0.1s ease;
+        }
+
+        .menu-card:active {
+            transform: scale(0.97);
+        }
+
+        .card-icon {
+            font-size: 24px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .card-desc {
+            font-size: 12px;
+            color: var(--muted-color);
+        }
+
+        /* Нижнее меню навигации */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: var(--card-color);
+            border-top: 1px solid #242b3d;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: var(--muted-color);
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Привет, <span id="username">Гость</span>!</h1>
-        <p>Это пример вашего собственного Telegram Mini App.</p>
-        <br>
-        <button class="btn" id="main-action">Главное действие</button>
+    <!-- Шапка приложения -->
+    <div class="header">
+        <div class="user-info">
+            <div class="avatar" id="user-avatar">?</div>
+            <div id="user-name">Загрузка...</div>
+        </div>
+        <div class="balance-card">
+            <span id="user-balance">0.00</span> TON
+        </div>
+    </div>
+
+    <!-- Большой промо-баннер -->
+    <div class="promo-banner">
+        <h2>Игровая Платформа</h2>
+        <p>Добро пожаловать в ваше новое Telegram Web App приложение.</p>
+    </div>
+
+    <div class="section-title">Разделы платформы</div>
+
+    <!-- Сетка с основными функциями -->
+    <div class="grid-container">
+        <div class="menu-card" onclick="openSection('Профиль')">
+            <div class="card-icon">👤</div>
+            <div class="card-title">Мой аккаунт</div>
+            <div class="card-desc">Статистика и настройки профиля</div>
+        </div>
+        <div class="menu-card" onclick="openSection('Кошелек')">
+            <div class="card-icon">👛</div>
+            <div class="card-title">Кошелек</div>
+            <div class="card-desc">Баланс и история транзакций</div>
+        </div>
+        <div class="menu-card" onclick="openSection('Рефералы')">
+            <div class="card-icon">👥</div>
+            <div class="card-title">Партнерам</div>
+            <div class="card-desc">Приглашайте друзей и зарабатывайте</div>
+        </div>
+        <div class="menu-card" onclick="openSection('Поддержка')">
+            <div class="card-icon">🛠</div>
+            <div class="card-title">Поддержка</div>
+            <div class="card-desc">Связаться с администрацией</div>
+        </div>
+    </div>
+
+    <div style="height: 80px;"></div> <!-- Отступ под нижнее меню -->
+
+    <!-- Панель навигации (Таббар) -->
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <div class="nav-icon">🏠</div>
+            <div>Главная</div>
+        </div>
+        <div class="nav-item" onclick="openSection('Задания')">
+            <div class="nav-icon">🏆</div>
+            <div>Квесты</div>
+        </div>
+        <div class="nav-item" onclick="openSection('Лидеры')">
+            <div class="nav-icon">📊</div>
+            <div>Топ</div>
+        </div>
     </div>
 
     <script>
-        // Инициализируем Telegram Web App API
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Расширяем приложение на весь экран
+        tg.expand();
+        tg.ready();
 
-        // Получаем имя пользователя из Telegram
+        // Динамическое получение данных из Telegram
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('username').innerText = tg.initDataUnsafe.user.first_name;
+            const user = tg.initDataUnsafe.user;
+            document.getElementById('user-name').innerText = user.first_name;
+            if (user.last_name) {
+                document.getElementById('user-name').innerText += ' ' + user.last_name;
+            }
+            // Первая буква имени для аватарки
+            document.getElementById('user-avatar').innerText = user.first_name.charAt(0).toUpperCase();
+        } else {
+            document.getElementById('user-name').innerText = "Local User";
+            document.getElementById('user-avatar').innerText = "U";
         }
 
-        // Поведение при клике на кнопку
-        document.getElementById('main-action').addEventListener('click', () => {
-            tg.showAlert("Вы нажали на кнопку внутри сайта!");
-        });
+        // Функция обработки кликов по карточкам
+        function openSection(name) {
+            tg.HapticFeedback.impactOccurred('medium'); // Вибрация при клике
+            tg.showAlert(`Вы открыли раздел: ${name}`);
+        }
     </script>
 </body>
 </html>
