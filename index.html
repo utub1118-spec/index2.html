@@ -1,1 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой Mini App</title>
+    <!-- Подключаем официальный скрипт Telegram -->
+    <script src="https://telegram.org"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--tg-theme-button-color, #2481cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
 
+    <div class="container">
+        <h1>Привет, <span id="username">Гость</span>!</h1>
+        <p>Это пример вашего собственного Telegram Mini App.</p>
+        <br>
+        <button class="btn" id="main-action">Главное действие</button>
+    </div>
+
+    <script>
+        // Инициализируем Telegram Web App API
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Расширяем приложение на весь экран
+
+        // Получаем имя пользователя из Telegram
+        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            document.getElementById('username').innerText = tg.initDataUnsafe.user.first_name;
+        }
+
+        // Поведение при клике на кнопку
+        document.getElementById('main-action').addEventListener('click', () => {
+            tg.showAlert("Вы нажали на кнопку внутри сайта!");
+        });
+    </script>
+</body>
+</html>
