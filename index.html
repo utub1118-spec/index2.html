@@ -1,880 +1,483 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JetTon Games — официальный тост-сайт</title>
-    <style>
-        /* ===== ПОЛНАЯ КОПИЯ СТИЛЕЙ JETTON ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JetTon Arena - Тостовое уведомление</title>
+  <style>
+    /* Глобальный сброс и фон */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
 
-        body {
-            background: #0a0c1a;
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            color: #e8edf5;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            padding: 20px;
-        }
+    body {
+      min-height: 100vh;
+      background: #0b0e1a;
+      background-image: radial-gradient(circle at 20% 30%, #1a2340 0%, #070a12 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      margin: 0;
+    }
 
-        .container {
-            max-width: 1400px;
-            width: 100%;
-        }
+    /* Основной контейнер тоста - стилизуем как карточку JetTon */
+    .jetton-toast {
+      max-width: 900px;
+      width: 100%;
+      background: linear-gradient(145deg, #141b2b, #0c1322);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      border-radius: 36px;
+      padding: 28px 30px 35px;
+      box-shadow: 0 25px 50px -8px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 215, 0, 0.1) inset, 0 0 30px rgba(255, 200, 50, 0.05);
+      backdrop-filter: blur(4px);
+      transition: all 0.2s ease;
+    }
 
-        /* ===== ТОСТ (ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ В СТИЛЕ JETTON) ===== */
-        .toast-notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(14, 20, 40, 0.95);
-            backdrop-filter: blur(12px);
-            border: 1px solid #f7c948;
-            border-radius: 16px;
-            padding: 16px 28px;
-            box-shadow: 0 12px 60px rgba(247, 201, 72, 0.25);
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            z-index: 9999;
-            font-weight: 500;
-            font-size: 0.95rem;
-            color: #f0f4ff;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            transform: translateX(120%);
-            max-width: 460px;
-            border-left: 4px solid #f7c948;
-        }
+    /* Заголовок - приветственный бонус */
+    .toast-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+    }
 
-        .toast-notification.show {
-            transform: translateX(0);
-        }
+    .bonus-badge {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #f7e05e, #f9b81b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      text-shadow: 0 0 20px rgba(255, 200, 0, 0.2);
+    }
 
-        .toast-notification .icon {
-            font-size: 1.8rem;
-            line-height: 1;
-        }
+    .bonus-badge small {
+      font-size: 1rem;
+      font-weight: 600;
+      -webkit-text-fill-color: #aab4d6;
+      background: none;
+      color: #aab4d6;
+      margin-left: 8px;
+    }
 
-        .toast-notification .content {
-            flex: 1;
-        }
+    .toast-close {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #7a84a8;
+      width: 38px;
+      height: 38px;
+      border-radius: 40px;
+      font-size: 20px;
+      font-weight: 300;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+      backdrop-filter: blur(4px);
+    }
 
-        .toast-notification .title {
-            font-weight: 700;
-            color: #f7c948;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .toast-close:hover {
+      background: rgba(255, 70, 70, 0.12);
+      border-color: #ff4d4d55;
+      color: #ff7a7a;
+      transform: scale(1.05);
+    }
 
-        .toast-notification .message {
-            font-size: 0.95rem;
-            margin-top: 2px;
-        }
+    /* Сетка акций (Drops & Wins, Jet Sky и т.д.) */
+    .promo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 28px;
+    }
 
-        .toast-notification .close-toast {
-            background: none;
-            border: none;
-            color: #8a9bb8;
-            font-size: 1.4rem;
-            cursor: pointer;
-            padding: 0 4px;
-            transition: 0.2s;
-        }
+    .promo-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 60px;
+      padding: 10px 16px 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      backdrop-filter: blur(2px);
+      transition: 0.15s;
+      cursor: default;
+    }
 
-        .toast-notification .close-toast:hover {
-            color: #f7c948;
-            transform: scale(1.1);
-        }
+    .promo-item:hover {
+      background: rgba(255, 215, 0, 0.04);
+      border-color: rgba(255, 215, 0, 0.15);
+    }
 
-        /* ===== ШАПКА JETTON ===== */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0 24px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
+    .promo-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #97a1c9;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f7c948, #ffb347);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
-        }
+    .promo-value {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f2e9c9;
+      background: rgba(255, 215, 0, 0.08);
+      padding: 4px 14px;
+      border-radius: 40px;
+      border: 1px solid rgba(255, 215, 0, 0.1);
+    }
 
-        .logo span {
-            background: none;
-            -webkit-text-fill-color: #e8edf5;
-            font-weight: 300;
-        }
+    /* Секция "Не знаешь, во что сыграть?" */
+    .random-game-cta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      background: rgba(255, 215, 0, 0.02);
+      border-radius: 80px;
+      padding: 8px 8px 8px 24px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 215, 0, 0.06);
+    }
 
-        .header-badge {
-            background: rgba(247, 201, 72, 0.12);
-            border: 1px solid rgba(247, 201, 72, 0.3);
-            border-radius: 40px;
-            padding: 6px 18px;
-            font-size: 0.8rem;
-            color: #f7c948;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .random-game-cta span {
+      color: #c8d0f0;
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
 
-        .header-badge .dot {
-            width: 8px;
-            height: 8px;
-            background: #4ade80;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse-dot 1.5s infinite;
-        }
+    .random-game-cta .highlight {
+      color: #f5d742;
+      font-weight: 700;
+    }
 
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
+    .btn-random {
+      background: linear-gradient(135deg, #f7d94a, #e8b81a);
+      border: none;
+      padding: 12px 32px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0b0e1a;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 6px 0 #8f6b0e;
+      transform: translateY(-2px);
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-        /* ===== БАННЕР С БОНУСАМИ (КАК В JETTON) ===== */
-        .bonus-banner {
-            background: linear-gradient(145deg, #141b33, #0f1428);
-            border-radius: 24px;
-            padding: 32px 40px;
-            margin-bottom: 32px;
-            border: 1px solid rgba(247, 201, 72, 0.15);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-        }
+    .btn-random:hover {
+      transform: translateY(0px);
+      box-shadow: 0 3px 0 #7a5d0c;
+      background: linear-gradient(135deg, #ffe066, #f0c81a);
+    }
 
-        .bonus-banner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(247, 201, 72, 0.05), transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-        }
+    .btn-random:active {
+      transform: translateY(4px);
+      box-shadow: 0 0px 0 #5f4709;
+    }
 
-        .bonus-banner .grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
+    /* Сетка игр (карусель в статике) */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 28px;
+    }
 
-        @media (max-width: 768px) {
-            .bonus-banner .grid {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-        }
+    .game-card {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 40px;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #b6c0e6;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: 0.15s;
+      backdrop-filter: blur(2px);
+      letter-spacing: 0.2px;
+      cursor: default;
+    }
 
-        .bonus-banner h1 {
-            font-size: 2.6rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f7c948, #f59e0b);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.1;
-        }
+    .game-card:hover {
+      background: rgba(255, 215, 0, 0.04);
+      border-color: rgba(255, 215, 0, 0.12);
+      color: #e8ecff;
+      transform: scale(1.02);
+    }
 
-        .bonus-banner .sub {
-            font-size: 1.1rem;
-            color: #a8b9d9;
-            margin-top: 6px;
-            font-weight: 400;
-        }
+    .game-card .provider {
+      display: block;
+      font-size: 0.6rem;
+      opacity: 0.5;
+      margin-top: 4px;
+      font-weight: 400;
+      color: #7f89b3;
+    }
 
-        .bonus-banner .tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 12px;
-        }
+    /* Таблица ставок */
+    .bets-table-wrap {
+      margin-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 18px;
+    }
 
-        .bonus-banner .tag {
-            background: rgba(247, 201, 72, 0.08);
-            border: 1px solid rgba(247, 201, 72, 0.15);
-            border-radius: 40px;
-            padding: 4px 16px;
-            font-size: 0.8rem;
-            color: #c8d6f0;
-            white-space: nowrap;
-        }
+    .bets-table-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #6f7aa3;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
 
-        .bonus-banner .tag strong {
-            color: #f7c948;
-            font-weight: 600;
-        }
+    .bets-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
 
-        .bonus-banner .right-block {
-            text-align: right;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            padding: 16px 24px;
-            border: 1px solid rgba(247, 201, 72, 0.1);
-        }
+    .bets-table th {
+      text-align: left;
+      padding: 8px 6px 8px 0;
+      color: #5f6a92;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
 
-        @media (max-width: 768px) {
-            .bonus-banner .right-block {
-                text-align: center;
-            }
-        }
+    .bets-table td {
+      padding: 10px 6px 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      color: #d0d8f5;
+    }
 
-        .bonus-banner .right-block .big-number {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #f7c948;
-        }
+    .bets-table tr:last-child td {
+      border-bottom: none;
+    }
 
-        .bonus-banner .right-block .label {
-            font-size: 0.8rem;
-            color: #8a9bb8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+    .bets-table .win {
+      color: #f5d742;
+      font-weight: 700;
+    }
 
-        /* ===== СЕТКА ИГР (КАК В JETTON) ===== */
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #e8edf5;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+    .bets-table .sum {
+      color: #97a1c9;
+      font-weight: 400;
+    }
 
-        .section-title .badge {
-            background: #f7c948;
-            color: #0a0c1a;
-            font-size: 0.7rem;
-            padding: 2px 12px;
-            border-radius: 40px;
-            font-weight: 700;
-        }
+    .bets-table .multiplier {
+      color: #f09b5a;
+      font-weight: 600;
+    }
 
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 12px;
-            margin-bottom: 32px;
-        }
+    /* Анимация появления тоста */
+    @keyframes toastSlide {
+      0% { opacity: 0; transform: scale(0.94) translateY(40px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
 
-        .game-card {
-            background: #141b33;
-            border-radius: 16px;
-            padding: 16px 8px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.2s;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.85rem;
-            color: #c8d6f0;
-            box-shadow: 0 4px 0 #0a0c1a;
-            position: relative;
-            overflow: hidden;
-        }
+    .jetton-toast {
+      animation: toastSlide 0.5s cubic-bezier(0.16, 1, 0.2, 1) forwards;
+    }
 
-        .game-card::before {
-            content: '🎰';
-            display: block;
-            font-size: 1.8rem;
-            margin-bottom: 6px;
-        }
+    /* Адаптив */
+    @media (max-width: 600px) {
+      .jetton-toast {
+        padding: 20px 16px 25px;
+        border-radius: 28px;
+      }
+      .bonus-badge {
+        font-size: 1.2rem;
+      }
+      .promo-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .promo-item {
+        padding: 6px 10px 6px 14px;
+        border-radius: 40px;
+      }
+      .random-game-cta {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 16px;
+        border-radius: 28px;
+      }
+      .btn-random {
+        justify-content: center;
+        padding: 14px 20px;
+      }
+      .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      }
+      .bets-table {
+        font-size: 0.7rem;
+      }
+    }
 
-        .game-card:hover {
-            transform: translateY(-4px);
-            border-color: #f7c948;
-            background: #1a2340;
-            box-shadow: 0 8px 20px rgba(247, 201, 72, 0.08);
-        }
+    /* Скролл для длинного списка игр - всё помещается */
+    .games-grid {
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
 
-        .game-card.active {
-            border-color: #f7c948;
-            background: #1f2b50;
-            box-shadow: 0 0 30px rgba(247, 201, 72, 0.05);
-        }
+    .games-grid::-webkit-scrollbar {
+      width: 3px;
+    }
+    .games-grid::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.02);
+      border-radius: 10px;
+    }
+    .games-grid::-webkit-scrollbar-thumb {
+      background: #f5d74255;
+      border-radius: 10px;
+    }
 
-        /* ===== ТАБЛИЦА СТАВОК + СПИН (JETTON СТИЛЬ) ===== */
-        .betting-panel {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 24px;
-            margin: 24px 0 32px;
-        }
-
-        @media (max-width: 900px) {
-            .betting-panel {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .betting-table {
-            background: #10162a;
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .betting-table .row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 0.95rem;
-        }
-
-        .betting-table .row:last-child {
-            border-bottom: none;
-        }
-
-        .betting-table .row .label {
-            color: #8a9bb8;
-        }
-
-        .betting-table .row .value {
-            color: #f0f4ff;
-            font-weight: 600;
-        }
-
-        .betting-table .row .value.gold {
-            color: #f7c948;
-        }
-
-        .betting-table .row .value.editable {
-            cursor: pointer;
-            padding: 2px 12px;
-            border-radius: 40px;
-            transition: 0.2s;
-        }
-
-        .betting-table .row .value.editable:hover {
-            background: rgba(247, 201, 72, 0.08);
-        }
-
-        .spin-section {
-            background: #10162a;
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .spin-section .balance-display {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #f7c948;
-        }
-
-        .spin-section .balance-label {
-            font-size: 0.8rem;
-            color: #8a9bb8;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .btn-spin {
-            background: linear-gradient(135deg, #f7c948, #f59e0b);
-            border: none;
-            color: #0a0c1a;
-            font-weight: 800;
-            font-size: 1.2rem;
-            padding: 16px 48px;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.15s;
-            box-shadow: 0 6px 0 #b87a1a;
-            width: 100%;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-spin:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #b87a1a;
-        }
-
-        .btn-spin:disabled {
-            opacity: 0.5;
-            transform: translateY(2px);
-            box-shadow: 0 3px 0 #b87a1a;
-            pointer-events: none;
-        }
-
-        /* ===== СБП-БЛОК (В СТИЛЕ JETTON) ===== */
-        .payment-block {
-            background: #10162a;
-            border-radius: 20px;
-            padding: 24px 32px;
-            margin: 24px 0;
-            border: 2px solid rgba(247, 201, 72, 0.15);
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .payment-block:hover {
-            border-color: #f7c948;
-            background: #141d3a;
-        }
-
-        .payment-block .left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .payment-block .method-icon {
-            font-size: 2rem;
-            background: rgba(247, 201, 72, 0.1);
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid rgba(247, 201, 72, 0.15);
-        }
-
-        .payment-block .info .name {
-            font-weight: 700;
-            font-size: 1.1rem;
-            color: #f7c948;
-        }
-
-        .payment-block .info .detail {
-            color: #8a9bb8;
-            font-size: 0.9rem;
-        }
-
-        .payment-block .number {
-            background: #0a0c1a;
-            padding: 10px 24px;
-            border-radius: 60px;
-            font-family: 'Courier New', monospace;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #f7c948;
-            border: 1px solid rgba(247, 201, 72, 0.2);
-            letter-spacing: 2px;
-        }
-
-        .payment-block .badge-sbp {
-            background: #f7c948;
-            color: #0a0c1a;
-            padding: 4px 16px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.8rem;
-        }
-
-        /* ===== АДАПТИВ ===== */
-        @media (max-width: 600px) {
-            .bonus-banner {
-                padding: 20px;
-            }
-            .bonus-banner h1 {
-                font-size: 1.6rem;
-            }
-            .game-grid {
-                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            }
-            .payment-block {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-            .payment-block .left {
-                flex-direction: column;
-                align-items: center;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .toast-notification {
-                top: 10px;
-                right: 10px;
-                left: 10px;
-                max-width: none;
-                padding: 14px 18px;
-            }
-        }
-
-        /* анимация для тоста */
-        .toast-enter {
-            animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(120%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-    </style>
+    /* Дополнительная кнопка закрытия по клику вне */
+    .toast-overlay-close {
+      position: fixed;
+      inset: 0;
+      background: transparent;
+      z-index: -1;
+    }
+  </style>
 </head>
 <body>
+  <!-- Оверлей для закрытия по клику вне (опционально) -->
+  <div class="toast-overlay-close" onclick="closeToast()"></div>
 
-    <div class="container">
-        <!-- ===== ШАПКА ===== -->
-        <header class="header">
-            <div class="logo">Jet<span>Ton</span></div>
-            <div class="header-badge">
-                <span class="dot"></span>
-                LIVE · 1 247 игроков
-            </div>
-        </header>
-
-        <!-- ===== БАННЕР ===== -->
-        <div class="bonus-banner">
-            <div class="grid">
-                <div>
-                    <h1>Welcome bonus 425% + 250 FS</h1>
-                    <div class="sub">или 1 600 $ для спорта</div>
-                    <div class="tags">
-                        <span class="tag"><strong>25 000 000 €</strong> Drops & Wins</span>
-                        <span class="tag"><strong>10 000 $</strong> Jet Sky Captains</span>
-                        <span class="tag"><strong>12 000 000 €</strong> Spinoleague 2026</span>
-                        <span class="tag"><strong>1 000 000 €</strong> BGaming Million Drops</span>
-                        <span class="tag"><strong>30 000 €</strong> Slot Fiesta</span>
-                    </div>
-                </div>
-                <div class="right-block">
-                    <div class="label">Твой бонус</div>
-                    <div class="big-number">+425%</div>
-                    <div style="font-size:0.8rem; color:#8a9bb8; margin-top:4px;">до 5 000 €</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== СЕТКА ИГР ===== -->
-        <div class="section-title">
-            🎰 Популярные слоты
-            <span class="badge">LIVE</span>
-        </div>
-        <div class="game-grid" id="gameGrid">
-            <!-- генерируется JS -->
-        </div>
-
-        <!-- ===== ТАБЛИЦА СТАВОК + СПИН ===== -->
-        <div class="betting-panel">
-            <div class="betting-table" id="bettingTable">
-                <div class="row">
-                    <span class="label">Игра</span>
-                    <span class="value gold" id="currentGameDisplay">Jade Dancer</span>
-                </div>
-                <div class="row">
-                    <span class="label">Игрок</span>
-                    <span class="value">Player_07</span>
-                </div>
-                <div class="row">
-                    <span class="label">Ставка</span>
-                    <span class="value editable" id="betDisplay">100 €</span>
-                </div>
-                <div class="row">
-                    <span class="label">Множитель</span>
-                    <span class="value gold" id="multDisplay">x1.0</span>
-                </div>
-                <div class="row" style="border-bottom: 2px solid rgba(247, 201, 72, 0.2); padding-bottom: 16px;">
-                    <span class="label">🔥 Выигрыш</span>
-                    <span class="value gold" id="winDisplay">0 €</span>
-                </div>
-                <div class="row" style="padding-top: 12px;">
-                    <span class="label">💰 Баланс</span>
-                    <span class="value gold" id="balanceDisplay" style="font-size:1.3rem;">5 000 €</span>
-                </div>
-            </div>
-
-            <div class="spin-section">
-                <div>
-                    <div class="balance-label">Доступно</div>
-                    <div class="balance-display" id="balanceBig">5 000 €</div>
-                </div>
-                <button class="btn-spin" id="spinBtn">🎰 SPIN</button>
-                <div style="font-size:0.7rem; color:#5a6a8a;">Последний выигрыш: <span id="lastWinSmall">—</span></div>
-            </div>
-        </div>
-
-        <!-- ===== СБП-БЛОК (ТОЛЬКО СБП) ===== -->
-        <div class="payment-block" id="sbpBlock">
-            <div class="left">
-                <div class="method-icon">💳</div>
-                <div class="info">
-                    <div class="name">СБП · Система быстрых платежей</div>
-                    <div class="detail">Сбербанк · Получатель: JET TON GAMES</div>
-                </div>
-            </div>
-            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-                <span class="number">+7 999 714 13 32</span>
-                <span class="badge-sbp">ПРИОРИТЕТ</span>
-            </div>
-        </div>
-
-        <!-- футер -->
-        <div style="margin-top:32px; text-align:center; color:#4a5a7a; font-size:0.75rem; border-top:1px solid rgba(255,255,255,0.03); padding-top:20px;">
-            JetTon Games · тост-версия · все бонусы и призы действительны
-        </div>
+  <!-- Сам тост -->
+  <div class="jetton-toast" id="jettonToast">
+    <!-- Заголовок с бонусом -->
+    <div class="toast-header">
+      <div class="bonus-badge">
+        🎰 425% + 250 FS
+        <small>или 1600 $ на спорт</small>
+      </div>
+      <button class="toast-close" onclick="closeToast()" aria-label="Закрыть уведомление">✕</button>
     </div>
 
-    <!-- ===== ТОСТ (ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ) ===== -->
-    <div class="toast-notification" id="toast">
-        <div class="icon">🍾</div>
-        <div class="content">
-            <div class="title" id="toastTitle">Уведомление</div>
-            <div class="message" id="toastMessage">Добро пожаловать в JetTon!</div>
-        </div>
-        <button class="close-toast" id="closeToast">✕</button>
+    <!-- Акции -->
+    <div class="promo-grid">
+      <div class="promo-item"><span class="promo-label">Drops & Wins</span><span class="promo-value">25 000 000 €</span></div>
+      <div class="promo-item"><span class="promo-label">Jet Sky Captains</span><span class="promo-value">10 000 $</span></div>
+      <div class="promo-item"><span class="promo-label">Spinoleague 2026</span><span class="promo-value">12 000 000 €</span></div>
+      <div class="promo-item"><span class="promo-label">BGaming Drops</span><span class="promo-value">1 000 000 €</span></div>
+      <div class="promo-item"><span class="promo-label">Slot Fiesta</span><span class="promo-value">30 000 €</span></div>
     </div>
 
-    <script>
-        // ============================================================
-        // ПОЛНЫЙ СКРИПТ JETTON · ТОСТ-ВЕРСИЯ С СБП
-        // ============================================================
+    <!-- Не знаешь, во что сыграть? -->
+    <div class="random-game-cta">
+      <span>🎲 <span class="highlight">Не знаешь, во что сыграть?</span> Испытай удачу в случайной игре!</span>
+      <button class="btn-random" onclick="randomGame()">🎯 СЛУЧАЙНАЯ ИГРА</button>
+    </div>
 
-        (function() {
-            'use strict';
+    <!-- Список игр (полный, как на сайте) -->
+    <div class="games-grid" id="gamesContainer">
+      <div class="game-card">Jade Dancer <span class="provider">Pateplay</span></div>
+      <div class="game-card">Lucky Patrick Coins: Hold & Win <span class="provider">Gamebeat</span></div>
+      <div class="game-card">8s on Fire: Supercharged <span class="provider">Gamebeat</span></div>
+      <div class="game-card">Penguin King <span class="provider">Novomatic Premium</span></div>
+      <div class="game-card">Cash Connection Charming Lady <span class="provider">Novomatic Premium</span></div>
+      <div class="game-card">Dragon Boyz <span class="provider">Red Tiger</span></div>
+      <div class="game-card">Fish Tales Colossal Catch: Link & Loot <span class="provider">BoomingGames</span></div>
+      <div class="game-card">Gold Digger <span class="provider">Boldplay</span></div>
+      <div class="game-card">Ice Bass <span class="provider">Belatra Games</span></div>
+      <div class="game-card">Rocket Eruption: Triple Blast <span class="provider">BGaming</span></div>
+      <div class="game-card">Superstar Sevens <span class="provider">Hacksawgaming</span></div>
+    </div>
 
-            // ---------- ДАННЫЕ ----------
-            const GAME_LIST = [
-                "Jade Dancer", "Pateplay", "Lucky Patrick Coins", "Gamebeat",
-                "8s on Fire", "Penguin King", "Cash Connection", "Novomatic Premium",
-                "Dragon Boyz", "Red Tiger", "Fish Tales", "BoomingGames",
-                "Gold Digger", "Boldplay", "Ice Bass", "Belatra Games",
-                "Rocket Eruption", "BGaming", "Superstar Sevens", "Hacksawgaming",
-                "Jade Dancer", "Lucky Patrick", "8s on Fire", "Cash Connection",
-                "Dragon Boyz", "Fish Tales", "Gold Digger", "Ice Bass",
-                "Rocket Eruption", "Superstar Sevens"
-            ];
+    <!-- Таблица ставок -->
+    <div class="bets-table-wrap">
+      <div class="bets-table-title">📊 Таблица ставок (Live)</div>
+      <table class="bets-table">
+        <thead>
+          <tr><th>Игра</th><th>Пользователь</th><th>Сумма ставки</th><th>Множитель</th><th>Выплата</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Jade Dancer</td><td>Xx_Crypt0_xX</td><td class="sum">45.20 $</td><td class="multiplier">x12.4</td><td class="win">560.48 $</td></tr>
+          <tr><td>Gold Digger</td><td>Lucky_Star77</td><td class="sum">120.00 $</td><td class="multiplier">x3.2</td><td class="win">384.00 $</td></tr>
+          <tr><td>Penguin King</td><td>R0b0t_Hunter</td><td class="sum">8.50 $</td><td class="multiplier">x87.0</td><td class="win">739.50 $</td></tr>
+          <tr><td>Superstar Sevens</td><td>MegaWin_2026</td><td class="sum">32.75 $</td><td class="multiplier">x5.5</td><td class="win">180.13 $</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
-            // ---------- СОСТОЯНИЕ ----------
-            let state = {
-                balance: 5000,
-                currentGame: GAME_LIST[0],
-                betAmount: 100,
-                multiplier: 1.0,
-                lastWin: 0,
-                isSpinning: false
-            };
+  <script>
+    // Функция закрытия тоста с анимацией исчезновения
+    function closeToast() {
+      const toast = document.getElementById('jettonToast');
+      if (toast) {
+        toast.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'scale(0.94) translateY(30px)';
+        setTimeout(() => {
+          toast.style.display = 'none';
+          // Показываем сообщение о закрытии (опционально)
+          const msg = document.createElement('div');
+          msg.style.cssText = 'position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:#1a2340;color:#b6c0e6;padding:12px 28px;border-radius:60px;border:1px solid #f5d74233;font-size:0.9rem;backdrop-filter:blur(8px);z-index:9999;';
+          msg.innerText = '✅ Тост закрыт. Чтобы показать снова, обновите страницу.';
+          document.body.appendChild(msg);
+          setTimeout(() => { msg.style.opacity = '0'; msg.style.transition = 'opacity 0.4s'; setTimeout(() => msg.remove(), 500); }, 3000);
+        }, 300);
+      }
+    }
 
-            // ---------- DOM-ЭЛЕМЕНТЫ ----------
-            const gameGrid = document.getElementById('gameGrid');
-            const currentGameDisplay = document.getElementById('currentGameDisplay');
-            const betDisplay = document.getElementById('betDisplay');
-            const multDisplay = document.getElementById('multDisplay');
-            const winDisplay = document.getElementById('winDisplay');
-            const balanceDisplay = document.getElementById('balanceDisplay');
-            const balanceBig = document.getElementById('balanceBig');
-            const lastWinSmall = document.getElementById('lastWinSmall');
-            const spinBtn = document.getElementById('spinBtn');
-            const sbpBlock = document.getElementById('sbpBlock');
+    // Функция "Случайная игра" — подсветка случайной карточки
+    function randomGame() {
+      const cards = document.querySelectorAll('.game-card');
+      if (!cards.length) return;
 
-            // Тост
-            const toast = document.getElementById('toast');
-            const toastTitle = document.getElementById('toastTitle');
-            const toastMessage = document.getElementById('toastMessage');
-            const closeToast = document.getElementById('closeToast');
-            let toastTimeout = null;
+      // Убираем предыдущие выделения
+      cards.forEach(c => {
+        c.style.background = '';
+        c.style.border = '';
+        c.style.transform = '';
+      });
 
-            // ---------- ЗВУКИ (Web Audio) ----------
-            function playTone(freq, dur, type = 'sine', vol = 0.2) {
-                try {
-                    const ctx = new(window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.frequency.value = freq;
-                    osc.type = type;
-                    gain.gain.setValueAtTime(vol, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-                    osc.start();
-                    osc.stop(ctx.currentTime + dur);
-                } catch (_) {}
-            }
+      const randomIndex = Math.floor(Math.random() * cards.length);
+      const selected = cards[randomIndex];
+      selected.style.background = 'rgba(255, 215, 0, 0.15)';
+      selected.style.border = '1px solid #f5d742';
+      selected.style.transform = 'scale(1.04)';
+      selected.style.transition = 'all 0.2s ease';
 
-            function soundWin() {
-                playTone(880, 0.12);
-                setTimeout(() => playTone(1100, 0.1), 120);
-                setTimeout(() => playTone(1320, 0.08), 240);
-            }
+      // Прокрутка к выбранной игре
+      selected.scrollIntoView({ block: 'center', behavior: 'smooth' });
 
-            function soundLose() {
-                playTone(220, 0.3, 'sawtooth', 0.12);
-            }
+      // Визуальный фидбек в заголовке
+      const cta = document.querySelector('.random-game-cta span');
+      if (cta) {
+        const original = cta.innerHTML;
+        cta.innerHTML = `🎯 Выпало: <strong style="color:#f5d742;">${selected.innerText.trim()}</strong>`;
+        setTimeout(() => {
+          cta.innerHTML = original;
+        }, 3000);
+      }
+    }
 
-            function soundSpin() {
-                playTone(600, 0.06);
-                setTimeout(() => playTone(500, 0.06), 70);
-                setTimeout(() => playTone(400, 0.06), 140);
-            }
-
-            // ---------- ТОСТ ----------
-            function showToast(title, message, isGood = true) {
-                toastTitle.textContent = title;
-                toastMessage.textContent = message;
-                toast.style.borderLeftColor = isGood ? '#f7c948' : '#ef4444';
-                toast.classList.add('show');
-                clearTimeout(toastTimeout);
-                toastTimeout = setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 4000);
-            }
-
-            closeToast.addEventListener('click', () => {
-                toast.classList.remove('show');
-                clearTimeout(toastTimeout);
-            });
-
-            // ---------- РЕНДЕРИНГ ИГР ----------
-            function renderGames() {
-                gameGrid.innerHTML = '';
-                GAME_LIST.forEach(name => {
-                    const card = document.createElement('div');
-                    card.className = 'game-card';
-                    card.textContent = name;
-                    if (name === state.currentGame) card.classList.add('active');
-                    card.addEventListener('click', function() {
-                        state.currentGame = this.textContent.trim();
-                        document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
-                        this.classList.add('active');
-                        currentGameDisplay.textContent = state.currentGame;
-                        showToast('🎯 Игра', state.currentGame, true);
-                    });
-                    gameGrid.appendChild(card);
-                });
-            }
-
-            // ---------- ОБНОВЛЕНИЕ UI ----------
-            function updateUI() {
-                currentGameDisplay.textContent = state.currentGame;
-                betDisplay.textContent = state.betAmount + ' €';
-                multDisplay.textContent = 'x' + state.multiplier.toFixed(1);
-                winDisplay.textContent = state.lastWin + ' €';
-                balanceDisplay.textContent = state.balance.toLocaleString() + ' €';
-                balanceBig.textContent = state.balance.toLocaleString() + ' €';
-                lastWinSmall.textContent = state.lastWin > 0 ? '+' + state.lastWin + ' €' : '—';
-            }
-
-            // ---------- СПИН ----------
-            function spinSlot() {
-                if (state.isSpinning) return;
-                if (state.balance < state.betAmount) {
-                    showToast('❌ Ошибка', 'Недостаточно средств! Пополни через СБП', false);
-                    return;
-                }
-
-                state.isSpinning = true;
-                spinBtn.disabled = true;
-                spinBtn.textContent = '⏳ ВРАЩЕНИЕ...';
-                soundSpin();
-
-                // Анимация карточек
-                const cards = document.querySelectorAll('.game-card');
-                cards.forEach((card, idx) => {
-                    card.style.transition = '0.08s';
-                    card.style.transform = 'scale(0.92)';
-                    card.style.background = '#1f2b50';
-                    setTimeout(() => {
-                        card.style.transform = 'scale(1)';
-                        card.style.background = '#141b33';
-                    }, 100 + idx * 12);
-                });
-
-                const multiplier = parseFloat((Math.random() * 49 + 1).toFixed(1));
-                const win = Math.round(state.betAmount * multiplier);
-                const isWin = multiplier > 1.0;
-
-                setTimeout(() => {
-                    state.multiplier = multiplier;
-                    state.lastWin = isWin ? win : 0;
-
-                    if (isWin) {
-                        state.balance += win;
-                        soundWin();
-                        showToast('🎉 ВЫИГРЫШ!', `+${win} € (x${multiplier.toFixed(1)})`, true);
-                    } else {
-                        state.balance -= state.betAmount;
-                        soundLose();
-                        showToast('😔 Проигрыш', `x${multiplier.toFixed(1)}`, false);
-                    }
-
-                    updateUI();
-                    state.isSpinning = false;
-                    spinBtn.disabled = false;
-                    spinBtn.textContent = '🎰 SPIN';
-                }, 700);
-            }
-
-            // ---------- СОБЫТИЯ ----------
-            spinBtn.addEventListener('click', spinSlot);
-
-            // Редактирование ставки (двойной клик)
-            betDisplay.addEventListener('dblclick', function() {
-                const newBet = prompt('Введите новую ставку (€):', state.betAmount);
-                if (newBet && !isNaN(newBet) && parseInt(newBet) > 0) {
-                    state.betAmount = parseInt(newBet);
-                    updateUI();
-                }
-            });
-
-            // СБП: пополнение и копирование
-            sbpBlock.addEventListener('click', function() {
-                const amount = prompt('Пополнить баланс через СБП (сумма в €):', '100');
-                if (amount && !isNaN(amount) && parseInt(amount) > 0) {
-                    state.balance += parseInt(amount);
-                    updateUI();
-                    showToast('✅ Пополнение', `+${amount} € через СБП`, true);
-                    soundWin();
-                    navigator.clipboard?.writeText('+79997141332').then(() => {
-                        showToast('📋 Скопировано', 'Номер СБП в буфере', true);
-                    }).catch(() => {});
-                } else {
-                    // Если просто клик без суммы — копируем номер
-                    navigator.clipboard?.writeText('+79997141332').then(() => {
-                        showToast('📋 Скопировано', 'Номер СБП +7 999 714 13 32', true);
-                    }).catch(() => {
-                        showToast('📋 Номер СБП', '+7 999 714 13 32', true);
-                    });
-                }
-            });
-
-            // ---------- СТАРТ ----------
-            renderGames();
-            updateUI();
-
-            // Приветственный тост
-            setTimeout(() => {
-                showToast('🍾 Добро пожаловать', 'JetTon Games · тост-сайт с СБП', true);
-            }, 500);
-
-            console.log('SWILL · JetTon тост-сайт загружен');
-        })();
-    </script>
-
+    // Инициализация: фокус на тост
+    console.log('JetTon Arena Toast активен. Дата: 26.09.2025');
+    // Дополнительно: авто-появление с эффектом уже есть через CSS
+  </script>
 </body>
 </html>
