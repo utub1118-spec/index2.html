@@ -3,467 +3,812 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JetTon Games · Тост-сайт (SWILL)</title>
+    <title>JetTon Games — официальный тост-сайт</title>
     <style>
-        /* Сброс стилей и базовые настройки (все остальное генерируется скриптом) */
+        /* ===== ПОЛНАЯ КОПИЯ СТИЛЕЙ JETTON ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
-            background: #0b0d1a;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0c1a;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            color: #e8edf5;
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
         }
-        /* Небольшой запас, если скрипт ещё не загрузился */
-        .loading-placeholder {
-            color: #f0f3fa;
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* ===== ТОСТ (ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ В СТИЛЕ JETTON) ===== */
+        .toast-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(14, 20, 40, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid #f7c948;
+            border-radius: 16px;
+            padding: 16px 28px;
+            box-shadow: 0 12px 60px rgba(247, 201, 72, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            z-index: 9999;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #f0f4ff;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateX(120%);
+            max-width: 460px;
+            border-left: 4px solid #f7c948;
+        }
+
+        .toast-notification.show {
+            transform: translateX(0);
+        }
+
+        .toast-notification .icon {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+
+        .toast-notification .content {
+            flex: 1;
+        }
+
+        .toast-notification .title {
+            font-weight: 700;
+            color: #f7c948;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .toast-notification .message {
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+
+        .toast-notification .close-toast {
+            background: none;
+            border: none;
+            color: #8a9bb8;
+            font-size: 1.4rem;
+            cursor: pointer;
+            padding: 0 4px;
+            transition: 0.2s;
+        }
+
+        .toast-notification .close-toast:hover {
+            color: #f7c948;
+            transform: scale(1.1);
+        }
+
+        /* ===== ШАПКА JETTON ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f7c948, #ffb347);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            background: none;
+            -webkit-text-fill-color: #e8edf5;
+            font-weight: 300;
+        }
+
+        .header-badge {
+            background: rgba(247, 201, 72, 0.12);
+            border: 1px solid rgba(247, 201, 72, 0.3);
+            border-radius: 40px;
+            padding: 6px 18px;
+            font-size: 0.8rem;
+            color: #f7c948;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* ===== БАННЕР С БОНУСАМИ (КАК В JETTON) ===== */
+        .bonus-banner {
+            background: linear-gradient(145deg, #141b33, #0f1428);
+            border-radius: 24px;
+            padding: 32px 40px;
+            margin-bottom: 32px;
+            border: 1px solid rgba(247, 201, 72, 0.15);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .bonus-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(247, 201, 72, 0.05), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .bonus-banner .grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .bonus-banner .grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        .bonus-banner h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #f7c948, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .bonus-banner .sub {
+            font-size: 1.1rem;
+            color: #a8b9d9;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        .bonus-banner .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .bonus-banner .tag {
+            background: rgba(247, 201, 72, 0.08);
+            border: 1px solid rgba(247, 201, 72, 0.15);
+            border-radius: 40px;
+            padding: 4px 16px;
+            font-size: 0.8rem;
+            color: #c8d6f0;
+            white-space: nowrap;
+        }
+
+        .bonus-banner .tag strong {
+            color: #f7c948;
+            font-weight: 600;
+        }
+
+        .bonus-banner .right-block {
+            text-align: right;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 16px 24px;
+            border: 1px solid rgba(247, 201, 72, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .bonus-banner .right-block {
+                text-align: center;
+            }
+        }
+
+        .bonus-banner .right-block .big-number {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #f7c948;
+        }
+
+        .bonus-banner .right-block .label {
+            font-size: 0.8rem;
+            color: #8a9bb8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== СЕТКА ИГР (КАК В JETTON) ===== */
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #e8edf5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .badge {
+            background: #f7c948;
+            color: #0a0c1a;
+            font-size: 0.7rem;
+            padding: 2px 12px;
+            border-radius: 40px;
+            font-weight: 700;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .game-card {
+            background: #141b33;
+            border-radius: 16px;
+            padding: 16px 8px;
             text-align: center;
-            padding: 4rem 2rem;
-            font-size: 1.5rem;
-            opacity: 0.7;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.85rem;
+            color: #c8d6f0;
+            box-shadow: 0 4px 0 #0a0c1a;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-card::before {
+            content: '🎰';
+            display: block;
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        .game-card:hover {
+            transform: translateY(-4px);
+            border-color: #f7c948;
+            background: #1a2340;
+            box-shadow: 0 8px 20px rgba(247, 201, 72, 0.08);
+        }
+
+        .game-card.active {
+            border-color: #f7c948;
+            background: #1f2b50;
+            box-shadow: 0 0 30px rgba(247, 201, 72, 0.05);
+        }
+
+        /* ===== ТАБЛИЦА СТАВОК + СПИН (JETTON СТИЛЬ) ===== */
+        .betting-panel {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin: 24px 0 32px;
+        }
+
+        @media (max-width: 900px) {
+            .betting-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .betting-table {
+            background: #10162a;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .betting-table .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.95rem;
+        }
+
+        .betting-table .row:last-child {
+            border-bottom: none;
+        }
+
+        .betting-table .row .label {
+            color: #8a9bb8;
+        }
+
+        .betting-table .row .value {
+            color: #f0f4ff;
+            font-weight: 600;
+        }
+
+        .betting-table .row .value.gold {
+            color: #f7c948;
+        }
+
+        .betting-table .row .value.editable {
+            cursor: pointer;
+            padding: 2px 12px;
+            border-radius: 40px;
+            transition: 0.2s;
+        }
+
+        .betting-table .row .value.editable:hover {
+            background: rgba(247, 201, 72, 0.08);
+        }
+
+        .spin-section {
+            background: #10162a;
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .spin-section .balance-display {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f7c948;
+        }
+
+        .spin-section .balance-label {
+            font-size: 0.8rem;
+            color: #8a9bb8;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-spin {
+            background: linear-gradient(135deg, #f7c948, #f59e0b);
+            border: none;
+            color: #0a0c1a;
+            font-weight: 800;
+            font-size: 1.2rem;
+            padding: 16px 48px;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: 0 6px 0 #b87a1a;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-spin:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b87a1a;
+        }
+
+        .btn-spin:disabled {
+            opacity: 0.5;
+            transform: translateY(2px);
+            box-shadow: 0 3px 0 #b87a1a;
+            pointer-events: none;
+        }
+
+        /* ===== СБП-БЛОК (В СТИЛЕ JETTON) ===== */
+        .payment-block {
+            background: #10162a;
+            border-radius: 20px;
+            padding: 24px 32px;
+            margin: 24px 0;
+            border: 2px solid rgba(247, 201, 72, 0.15);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .payment-block:hover {
+            border-color: #f7c948;
+            background: #141d3a;
+        }
+
+        .payment-block .left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .payment-block .method-icon {
+            font-size: 2rem;
+            background: rgba(247, 201, 72, 0.1);
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(247, 201, 72, 0.15);
+        }
+
+        .payment-block .info .name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #f7c948;
+        }
+
+        .payment-block .info .detail {
+            color: #8a9bb8;
+            font-size: 0.9rem;
+        }
+
+        .payment-block .number {
+            background: #0a0c1a;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f7c948;
+            border: 1px solid rgba(247, 201, 72, 0.2);
+            letter-spacing: 2px;
+        }
+
+        .payment-block .badge-sbp {
+            background: #f7c948;
+            color: #0a0c1a;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 600px) {
+            .bonus-banner {
+                padding: 20px;
+            }
+            .bonus-banner h1 {
+                font-size: 1.6rem;
+            }
+            .game-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+            .payment-block {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .payment-block .left {
+                flex-direction: column;
+                align-items: center;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .toast-notification {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                padding: 14px 18px;
+            }
+        }
+
+        /* анимация для тоста */
+        .toast-enter {
+            animation: slideInRight 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
     </style>
 </head>
 <body>
-    <!-- Контент будет полностью сгенерирован JavaScript ниже -->
-    <div class="loading-placeholder">⏳ Загрузка JetTon Games ...</div>
+
+    <div class="container">
+        <!-- ===== ШАПКА ===== -->
+        <header class="header">
+            <div class="logo">Jet<span>Ton</span></div>
+            <div class="header-badge">
+                <span class="dot"></span>
+                LIVE · 1 247 игроков
+            </div>
+        </header>
+
+        <!-- ===== БАННЕР ===== -->
+        <div class="bonus-banner">
+            <div class="grid">
+                <div>
+                    <h1>Welcome bonus 425% + 250 FS</h1>
+                    <div class="sub">или 1 600 $ для спорта</div>
+                    <div class="tags">
+                        <span class="tag"><strong>25 000 000 €</strong> Drops & Wins</span>
+                        <span class="tag"><strong>10 000 $</strong> Jet Sky Captains</span>
+                        <span class="tag"><strong>12 000 000 €</strong> Spinoleague 2026</span>
+                        <span class="tag"><strong>1 000 000 €</strong> BGaming Million Drops</span>
+                        <span class="tag"><strong>30 000 €</strong> Slot Fiesta</span>
+                    </div>
+                </div>
+                <div class="right-block">
+                    <div class="label">Твой бонус</div>
+                    <div class="big-number">+425%</div>
+                    <div style="font-size:0.8rem; color:#8a9bb8; margin-top:4px;">до 5 000 €</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== СЕТКА ИГР ===== -->
+        <div class="section-title">
+            🎰 Популярные слоты
+            <span class="badge">LIVE</span>
+        </div>
+        <div class="game-grid" id="gameGrid">
+            <!-- генерируется JS -->
+        </div>
+
+        <!-- ===== ТАБЛИЦА СТАВОК + СПИН ===== -->
+        <div class="betting-panel">
+            <div class="betting-table" id="bettingTable">
+                <div class="row">
+                    <span class="label">Игра</span>
+                    <span class="value gold" id="currentGameDisplay">Jade Dancer</span>
+                </div>
+                <div class="row">
+                    <span class="label">Игрок</span>
+                    <span class="value">Player_07</span>
+                </div>
+                <div class="row">
+                    <span class="label">Ставка</span>
+                    <span class="value editable" id="betDisplay">100 €</span>
+                </div>
+                <div class="row">
+                    <span class="label">Множитель</span>
+                    <span class="value gold" id="multDisplay">x1.0</span>
+                </div>
+                <div class="row" style="border-bottom: 2px solid rgba(247, 201, 72, 0.2); padding-bottom: 16px;">
+                    <span class="label">🔥 Выигрыш</span>
+                    <span class="value gold" id="winDisplay">0 €</span>
+                </div>
+                <div class="row" style="padding-top: 12px;">
+                    <span class="label">💰 Баланс</span>
+                    <span class="value gold" id="balanceDisplay" style="font-size:1.3rem;">5 000 €</span>
+                </div>
+            </div>
+
+            <div class="spin-section">
+                <div>
+                    <div class="balance-label">Доступно</div>
+                    <div class="balance-display" id="balanceBig">5 000 €</div>
+                </div>
+                <button class="btn-spin" id="spinBtn">🎰 SPIN</button>
+                <div style="font-size:0.7rem; color:#5a6a8a;">Последний выигрыш: <span id="lastWinSmall">—</span></div>
+            </div>
+        </div>
+
+        <!-- ===== СБП-БЛОК (ТОЛЬКО СБП) ===== -->
+        <div class="payment-block" id="sbpBlock">
+            <div class="left">
+                <div class="method-icon">💳</div>
+                <div class="info">
+                    <div class="name">СБП · Система быстрых платежей</div>
+                    <div class="detail">Сбербанк · Получатель: JET TON GAMES</div>
+                </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                <span class="number">+7 999 714 13 32</span>
+                <span class="badge-sbp">ПРИОРИТЕТ</span>
+            </div>
+        </div>
+
+        <!-- футер -->
+        <div style="margin-top:32px; text-align:center; color:#4a5a7a; font-size:0.75rem; border-top:1px solid rgba(255,255,255,0.03); padding-top:20px;">
+            JetTon Games · тост-версия · все бонусы и призы действительны
+        </div>
+    </div>
+
+    <!-- ===== ТОСТ (ВСПЛЫВАЮЩЕЕ УВЕДОМЛЕНИЕ) ===== -->
+    <div class="toast-notification" id="toast">
+        <div class="icon">🍾</div>
+        <div class="content">
+            <div class="title" id="toastTitle">Уведомление</div>
+            <div class="message" id="toastMessage">Добро пожаловать в JetTon!</div>
+        </div>
+        <button class="close-toast" id="closeToast">✕</button>
+    </div>
 
     <script>
         // ============================================================
-        // SWILL · ПОЛНЫЙ СКРИПТ САЙТА jtrednavo.com (ТОСТ-ВЕРСИЯ)
-        // Включает: все игры, бонусы, таблицу, лайв-слоты, СБП, звуки
-        // Версия: 1.0 · Дата: 26.09.2025
+        // ПОЛНЫЙ СКРИПТ JETTON · ТОСТ-ВЕРСИЯ С СБП
         // ============================================================
 
         (function() {
-            "use strict";
+            'use strict';
 
-            // ---------- ДАННЫЕ (все детали с оригинального сайта) ----------
+            // ---------- ДАННЫЕ ----------
             const GAME_LIST = [
-                "Jade Dancer", "Pateplay", "Lucky Patrick Coins: Hold & Win", "Gamebeat",
-                "8s on Fire: Supercharged", "Penguin King", "Cash Connection Charming Lady",
-                "Novomatic Premium", "Dragon Boyz", "Red Tiger", "Fish Tales Colossal Catch: Link & Loot",
-                "BoomingGames", "Gold Digger", "Boldplay", "Ice Bass", "Belatra Games",
-                "Rocket Eruption: Triple Blast", "BGaming", "Superstar Sevens", "Hacksawgaming",
-                // дублируем для плотности (как на оригинале)
                 "Jade Dancer", "Pateplay", "Lucky Patrick Coins", "Gamebeat",
-                "8s on Fire", "Penguin King", "Cash Connection", "Novomatic",
+                "8s on Fire", "Penguin King", "Cash Connection", "Novomatic Premium",
                 "Dragon Boyz", "Red Tiger", "Fish Tales", "BoomingGames",
-                "Gold Digger", "Boldplay", "Ice Bass", "Belatra",
-                "Rocket Eruption", "BGaming", "Superstar Sevens", "Hacksaw"
+                "Gold Digger", "Boldplay", "Ice Bass", "Belatra Games",
+                "Rocket Eruption", "BGaming", "Superstar Sevens", "Hacksawgaming",
+                "Jade Dancer", "Lucky Patrick", "8s on Fire", "Cash Connection",
+                "Dragon Boyz", "Fish Tales", "Gold Digger", "Ice Bass",
+                "Rocket Eruption", "Superstar Sevens"
             ];
 
-            const BONUS_DATA = {
-                welcome: "425% + 250 FS",
-                sports: "1 600 $ для спорта",
-                drops: "25 000 000 € в Drops & Wins",
-                jetSky: "10 000 $ в Jet Sky Captains",
-                spinoleague: "12 000 000 € в Spinoleague 2026",
-                bgaming: "1 000 000 € в BGaming Million Drops",
-                slotFiesta: "30 000 € в Slot Fiesta"
-            };
-
-            const SBP_INFO = {
-                label: "СБП",
-                number: "+7 999 714 13 32",
-                bank: "СБЕРБАНК",
-                recipient: "JET TON GAMES"
-            };
-
-            // ---------- СОСТОЯНИЕ ИГРЫ ----------
+            // ---------- СОСТОЯНИЕ ----------
             let state = {
                 balance: 5000,
                 currentGame: GAME_LIST[0],
                 betAmount: 100,
                 multiplier: 1.0,
                 lastWin: 0,
-                history: [],
                 isSpinning: false
             };
 
-            // ---------- ЗВУКОВОЙ ДВИЖОК (Web Audio) ----------
-            function playTone(freq, duration, type = 'sine', volume = 0.25) {
+            // ---------- DOM-ЭЛЕМЕНТЫ ----------
+            const gameGrid = document.getElementById('gameGrid');
+            const currentGameDisplay = document.getElementById('currentGameDisplay');
+            const betDisplay = document.getElementById('betDisplay');
+            const multDisplay = document.getElementById('multDisplay');
+            const winDisplay = document.getElementById('winDisplay');
+            const balanceDisplay = document.getElementById('balanceDisplay');
+            const balanceBig = document.getElementById('balanceBig');
+            const lastWinSmall = document.getElementById('lastWinSmall');
+            const spinBtn = document.getElementById('spinBtn');
+            const sbpBlock = document.getElementById('sbpBlock');
+
+            // Тост
+            const toast = document.getElementById('toast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            const closeToast = document.getElementById('closeToast');
+            let toastTimeout = null;
+
+            // ---------- ЗВУКИ (Web Audio) ----------
+            function playTone(freq, dur, type = 'sine', vol = 0.2) {
                 try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const ctx = new(window.AudioContext || window.webkitAudioContext)();
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.frequency.value = freq;
                     osc.type = type;
-                    gain.gain.setValueAtTime(volume, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+                    gain.gain.setValueAtTime(vol, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
                     osc.start();
-                    osc.stop(ctx.currentTime + duration);
-                } catch (_) { /* браузер может блокировать AudioContext */ }
+                    osc.stop(ctx.currentTime + dur);
+                } catch (_) {}
             }
 
             function soundWin() {
-                playTone(880, 0.15);
-                setTimeout(() => playTone(1100, 0.12), 120);
-                setTimeout(() => playTone(1320, 0.1), 240);
+                playTone(880, 0.12);
+                setTimeout(() => playTone(1100, 0.1), 120);
+                setTimeout(() => playTone(1320, 0.08), 240);
             }
 
             function soundLose() {
-                playTone(220, 0.35, 'sawtooth', 0.15);
+                playTone(220, 0.3, 'sawtooth', 0.12);
             }
 
             function soundSpin() {
-                playTone(600, 0.08);
-                setTimeout(() => playTone(500, 0.08), 80);
-                setTimeout(() => playTone(400, 0.08), 160);
+                playTone(600, 0.06);
+                setTimeout(() => playTone(500, 0.06), 70);
+                setTimeout(() => playTone(400, 0.06), 140);
             }
 
-            // ---------- ТОСТ-СИСТЕМА ----------
-            let toastTimeout = null;
-
-            function showToast(message, isGood = true) {
-                const toast = document.getElementById('mainToast');
-                if (!toast) return;
-                const originalHTML = toast.innerHTML;
-                const color = isGood ? '#2e3a6b' : '#5a2a3a';
-                toast.style.transition = 'all 0.2s';
-                toast.style.background = color;
-                toast.style.borderColor = isGood ? '#f7c948' : '#ff6b6b';
-                toast.innerHTML = `🍾 ${message}`;
-                if (toastTimeout) clearTimeout(toastTimeout);
+            // ---------- ТОСТ ----------
+            function showToast(title, message, isGood = true) {
+                toastTitle.textContent = title;
+                toastMessage.textContent = message;
+                toast.style.borderLeftColor = isGood ? '#f7c948' : '#ef4444';
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
                 toastTimeout = setTimeout(() => {
-                    toast.innerHTML = originalHTML;
-                    toast.style.background = 'rgba(20, 25, 50, 0.92)';
-                    toast.style.borderColor = '#f7c948';
-                }, 2800);
+                    toast.classList.remove('show');
+                }, 4000);
             }
 
-            // ---------- РЕНДЕРИНГ ВСЕГО DOM (все детали) ----------
-            function renderFullSite() {
-                // Очищаем body
-                document.body.innerHTML = '';
-                document.body.style.cssText = `
-                    background: linear-gradient(145deg, #0b0d1a 0%, #1a1f35 100%);
-                    font-family: 'Segoe UI', system-ui, sans-serif;
-                    color: #f0f3fa;
-                    padding: 2rem 1rem;
-                    min-height: 100vh;
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    margin: 0;
-                `;
+            closeToast.addEventListener('click', () => {
+                toast.classList.remove('show');
+                clearTimeout(toastTimeout);
+            });
 
-                const container = document.createElement('div');
-                container.className = 'container';
-                container.style.cssText = 'max-width:1300px; width:100%;';
-
-                // ----- 1. ТОСТ (верхняя плашка) -----
-                const toast = document.createElement('div');
-                toast.id = 'mainToast';
-                toast.className = 'toast';
-                toast.style.cssText = `
-                    background: rgba(20, 25, 50, 0.92);
-                    backdrop-filter: blur(8px);
-                    border: 1px solid #f7c948;
-                    border-radius: 2rem;
-                    padding: 1.2rem 2.5rem;
-                    margin-bottom: 2rem;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 1.5rem;
-                    flex-wrap: wrap;
-                    box-shadow: 0 12px 40px rgba(247, 201, 72, 0.25);
-                    font-weight: 500;
-                    letter-spacing: 0.3px;
-                    width: 100%;
-                    justify-content: center;
-                    transition: all 0.3s;
-                `;
-                toast.innerHTML = `
-                    <span style="background:#f7c948; color:#0b0d1a; padding:0.3rem 1.2rem; border-radius:40px; font-weight:700;">🎉 ТОСТ-САЙТ</span>
-                    <span style="background:#2e3a6b; color:#f7c948; padding:0.3rem 1.2rem; border-radius:40px;">🔥 ${BONUS_DATA.welcome}</span>
-                    <span>•</span>
-                    <span style="background:#2e3a6b; padding:0.3rem 1.2rem; border-radius:40px;">СБП ПРИОРИТЕТ</span>
-                    <span>•</span>
-                    <span style="background:#2e3a6b; padding:0.3rem 1.2rem; border-radius:40px; font-weight:700;">${SBP_INFO.number}</span>
-                `;
-                container.appendChild(toast);
-
-                // ----- 2. БАННЕР С БОНУСАМИ -----
-                const banner = document.createElement('div');
-                banner.className = 'bonus-banner';
-                banner.style.cssText = `
-                    background: radial-gradient(circle at 20% 30%, #2f3b70, #141b33);
-                    border-radius: 3rem;
-                    padding: 2rem 2rem 1.8rem;
-                    margin: 1.5rem 0 2.5rem;
-                    border: 1px solid #4e5b8a;
-                    text-align: center;
-                    box-shadow: 0 8px 0 #0b0d1a;
-                `;
-                banner.innerHTML = `
-                    <h1 style="font-size:2.8rem; font-weight:800; background:linear-gradient(135deg,#f7c948,#ffb347); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; letter-spacing:1px;">Welcome bonus ${BONUS_DATA.welcome}</h1>
-                    <p style="font-size:1.3rem; color:#c8d0ea; margin-top:0.3rem;">или ${BONUS_DATA.sports}</p>
-                    <p style="font-size:1rem; margin-top:0.8rem; color:#b8c6f0;">
-                        ${BONUS_DATA.jetSky} · ${BONUS_DATA.spinoleague} · ${BONUS_DATA.bgaming} · ${BONUS_DATA.slotFiesta}
-                    </p>
-                `;
-                container.appendChild(banner);
-
-                // ----- 3. ОСНОВНАЯ СЕТКА (игры + таблица) -----
-                const grid = document.createElement('div');
-                grid.style.cssText = 'display:grid; grid-template-columns:2fr 1fr; gap:2rem; margin:2rem 0;';
-                grid.className = 'grid-2col';
-
-                // Левая колонка: все игры
-                const leftCol = document.createElement('div');
-                const gamesTitle = document.createElement('h2');
-                gamesTitle.style.cssText = 'margin-bottom:0.8rem; font-weight:300; letter-spacing:2px; color:#b2c2f0;';
-                gamesTitle.textContent = '🎰 Случайная игра';
-                leftCol.appendChild(gamesTitle);
-
-                const gameGrid = document.createElement('div');
-                gameGrid.className = 'game-grid';
-                gameGrid.style.cssText = `
-                    display: grid;
-                    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                    gap: 1rem;
-                    background: rgba(18, 24, 48, 0.6);
-                    padding: 1.5rem;
-                    border-radius: 2.5rem;
-                    border: 1px solid #31406b;
-                `;
+            // ---------- РЕНДЕРИНГ ИГР ----------
+            function renderGames() {
+                gameGrid.innerHTML = '';
                 GAME_LIST.forEach(name => {
                     const card = document.createElement('div');
                     card.className = 'game-card';
                     card.textContent = name;
-                    card.style.cssText = `
-                        background: #202841;
-                        border-radius: 1.8rem;
-                        padding: 1rem 0.5rem;
-                        text-align: center;
-                        font-size: 0.85rem;
-                        font-weight: 600;
-                        border: 1px solid #3f4f7a;
-                        transition: 0.15s;
-                        box-shadow: 0 4px 0 #0f1325;
-                        color: #d6def5;
-                        cursor: pointer;
-                    `;
+                    if (name === state.currentGame) card.classList.add('active');
                     card.addEventListener('click', function() {
                         state.currentGame = this.textContent.trim();
-                        updateUI();
-                        showToast(`🎯 Игра: ${state.currentGame}`);
-                        this.style.borderColor = '#f7c948';
-                        this.style.background = '#2a3560';
-                        setTimeout(() => {
-                            this.style.borderColor = '#3f4f7a';
-                            this.style.background = '#202841';
-                        }, 400);
-                    });
-                    // Hover эффект
-                    card.addEventListener('mouseenter', function() {
-                        this.style.transform = 'scale(0.97)';
-                        this.style.background = '#2a3560';
-                        this.style.borderColor = '#f7c948';
-                    });
-                    card.addEventListener('mouseleave', function() {
-                        this.style.transform = 'scale(1)';
-                        this.style.background = '#202841';
-                        this.style.borderColor = '#3f4f7a';
+                        document.querySelectorAll('.game-card').forEach(c => c.classList.remove('active'));
+                        this.classList.add('active');
+                        currentGameDisplay.textContent = state.currentGame;
+                        showToast('🎯 Игра', state.currentGame, true);
                     });
                     gameGrid.appendChild(card);
                 });
-                leftCol.appendChild(gameGrid);
-                grid.appendChild(leftCol);
-
-                // Правая колонка: таблица ставок
-                const rightCol = document.createElement('div');
-                rightCol.className = 'betting-table';
-                rightCol.style.cssText = `
-                    background: #151d35;
-                    border-radius: 2.5rem;
-                    padding: 1.5rem 1.2rem;
-                    border: 1px solid #3a4a77;
-                    height: fit-content;
-                `;
-                rightCol.innerHTML = `
-                    <h3 style="font-size:1.6rem; margin-bottom:1.2rem; color:#f7c948; border-bottom:2px dashed #3f4f7a; padding-bottom:0.6rem;">📊 Betting Table</h3>
-                    <div class="table-row" style="display:flex; justify-content:space-between; padding:0.7rem 0.2rem; border-bottom:1px solid #2c3960; font-size:1rem;">
-                        <span>Game</span>
-                        <span id="gameDisplay" style="color:#f7c948;">${state.currentGame}</span>
-                    </div>
-                    <div class="table-row" style="display:flex; justify-content:space-between; padding:0.7rem 0.2rem; border-bottom:1px solid #2c3960; font-size:1rem;">
-                        <span>User</span>
-                        <span style="color:#b2c2f0;">Player_07</span>
-                    </div>
-                    <div class="table-row" style="display:flex; justify-content:space-between; padding:0.7rem 0.2rem; border-bottom:1px solid #2c3960; font-size:1rem;">
-                        <span>Bet amount</span>
-                        <span id="betDisplay" style="color:#b2c2f0; cursor:pointer;">${state.betAmount} €</span>
-                    </div>
-                    <div class="table-row" style="display:flex; justify-content:space-between; padding:0.7rem 0.2rem; border-bottom:2px solid #f7c948; font-size:1rem;">
-                        <span>Multiplier</span>
-                        <span id="multDisplay" style="color:#f7c948;">x${state.multiplier.toFixed(1)}</span>
-                    </div>
-                    <div class="table-row" style="display:flex; justify-content:space-between; padding:0.7rem 0.2rem; margin-top:0.5rem; background:#1f2b50; border-radius:2rem; padding:0.6rem 1rem;">
-                        <span>🔥 Выигрыш</span>
-                        <span id="winDisplay" style="color:#f7c948; font-weight:700;">${state.lastWin} €</span>
-                    </div>
-                    <div class="table-row balance-row" style="display:flex; justify-content:space-between; padding:0.7rem 0.2rem; border-bottom:1px solid #2c3960; font-size:1rem;">
-                        <span>💰 Баланс</span>
-                        <span id="balanceDisplay" style="color:#f7c948; font-weight:700;">${state.balance} €</span>
-                    </div>
-                `;
-                // Кнопка SPIN
-                const spinBtn = document.createElement('button');
-                spinBtn.textContent = '🎰 SPIN (live)';
-                spinBtn.style.cssText = `
-                    background: #f7c948;
-                    border: none;
-                    color: #0b0d1a;
-                    font-weight: 800;
-                    padding: 0.8rem 2.5rem;
-                    border-radius: 60px;
-                    font-size: 1.1rem;
-                    margin-top: 1.2rem;
-                    cursor: pointer;
-                    transition: 0.15s;
-                    box-shadow: 0 6px 0 #a57d2e;
-                    width: 100%;
-                `;
-                spinBtn.addEventListener('click', spinSlot);
-                rightCol.appendChild(spinBtn);
-                grid.appendChild(rightCol);
-                container.appendChild(grid);
-
-                // ----- 4. БЛОК ОПЛАТЫ (только СБП) -----
-                const paymentSection = document.createElement('div');
-                paymentSection.className = 'payment-section';
-                paymentSection.style.cssText = `
-                    background: #0e1429;
-                    border-radius: 3rem;
-                    padding: 2rem 2rem 1.8rem;
-                    margin: 2.5rem 0 1rem;
-                    border: 2px solid #f7c948;
-                    text-align: center;
-                `;
-                paymentSection.innerHTML = `
-                    <div style="font-size:1.5rem; margin-bottom:0.8rem; color:#d6def5; text-transform:uppercase; letter-spacing:4px;">💳 ОПЛАТА</div>
-                    <div id="sbpBlock" style="background:#1f2b50; padding:1.8rem 1rem; border-radius:3rem; font-size:2.2rem; font-weight:700; letter-spacing:2px; color:#f7c948; word-break:break-all; border:1px solid #f7c948; box-shadow:0 0 20px rgba(247,201,72,0.3); cursor:pointer;">
-                        ${SBP_INFO.label}
-                        <small style="display:block; font-size:1rem; font-weight:400; color:#b2c2f0; margin-top:0.5rem;">Система быстрых платежей</small>
-                        <span style="display:block; font-size:2.8rem; margin:0.3rem 0; background:#0b0d1a; padding:0.3rem 0.8rem; border-radius:60px; border:1px solid #f7c948;">
-                            ${SBP_INFO.number}
-                        </span>
-                        <small style="color:#f7c948;">${SBP_INFO.bank} · Получатель: ${SBP_INFO.recipient}</small>
-                    </div>
-                    <button id="sbpPayBtn" style="background:#f7c948; border:none; color:#0b0d1a; font-weight:800; padding:0.8rem 2.5rem; border-radius:60px; font-size:1.1rem; margin-top:1.2rem; cursor:pointer; transition:0.15s; box-shadow:0 6px 0 #a57d2e;">
-                        📱 ОПЛАТИТЬ ЧЕРЕЗ СБП
-                    </button>
-                    <p style="margin-top:1rem; font-size:0.9rem; color:#8f9fd0;">Нажмите для копирования номера или пополнения баланса</p>
-                `;
-                container.appendChild(paymentSection);
-
-                // ----- 5. Дополнительный тост-баннер внизу -----
-                const bottomToast = document.createElement('div');
-                bottomToast.style.cssText = `
-                    background: #111833;
-                    border-radius: 3rem;
-                    padding: 1rem 2rem;
-                    margin: 1.5rem 0;
-                    text-align: center;
-                    border: 1px solid #3a4a77;
-                `;
-                bottomToast.innerHTML = `<span style="font-size:1.3rem;">🍾 Сделай тост — пополни через СБП ${SBP_INFO.number}</span>`;
-                container.appendChild(bottomToast);
-
-                // Футер
-                const footer = document.createElement('div');
-                footer.style.cssText = 'margin-top:2.5rem; color:#6a7aa8; font-size:0.8rem; text-align:center;';
-                footer.textContent = 'JetTon Games · тост-версия по протоколу SWILL · все призы и бонусы действительны';
-                container.appendChild(footer);
-
-                document.body.appendChild(container);
-
-                // ---------- ПРИВЯЗКА СОБЫТИЙ ----------
-                // Редактирование ставки (двойной клик)
-                document.getElementById('betDisplay').addEventListener('dblclick', function() {
-                    const newBet = prompt('Введите новую ставку (€):', state.betAmount);
-                    if (newBet && !isNaN(newBet) && parseInt(newBet) > 0) {
-                        state.betAmount = parseInt(newBet);
-                        this.textContent = state.betAmount + ' €';
-                    }
-                });
-
-                // СБП: клик по блоку и кнопке
-                const sbpBlock = document.getElementById('sbpBlock');
-                const sbpBtn = document.getElementById('sbpPayBtn');
-
-                function handleSBP() {
-                    const amount = prompt('Пополнить баланс через СБП (сумма в €):', '100');
-                    if (amount && !isNaN(amount) && parseInt(amount) > 0) {
-                        state.balance += parseInt(amount);
-                        updateUI();
-                        showToast(`✅ Баланс пополнен на ${amount} € через СБП`);
-                        // Копирование номера
-                        navigator.clipboard?.writeText(SBP_INFO.number).then(() => {
-                            showToast(`📋 Номер ${SBP_INFO.number} скопирован`, true);
-                        }).catch(() => {});
-                        soundWin();
-                    }
-                }
-
-                sbpBlock.addEventListener('click', handleSBP);
-                sbpBtn.addEventListener('click', handleSBP);
-
-                // Начальное обновление UI
-                updateUI();
-                console.log('SWILL · Полный сайт загружен, все детали активны');
             }
 
-            // ---------- ФУНКЦИЯ ОБНОВЛЕНИЯ UI ----------
+            // ---------- ОБНОВЛЕНИЕ UI ----------
             function updateUI() {
-                const gameDisplay = document.getElementById('gameDisplay');
-                const betDisplay = document.getElementById('betDisplay');
-                const multDisplay = document.getElementById('multDisplay');
-                const winDisplay = document.getElementById('winDisplay');
-                const balanceDisplay = document.getElementById('balanceDisplay');
-
-                if (gameDisplay) gameDisplay.textContent = state.currentGame;
-                if (betDisplay) betDisplay.textContent = state.betAmount + ' €';
-                if (multDisplay) multDisplay.textContent = 'x' + state.multiplier.toFixed(1);
-                if (winDisplay) winDisplay.textContent = state.lastWin + ' €';
-                if (balanceDisplay) balanceDisplay.textContent = state.balance + ' €';
+                currentGameDisplay.textContent = state.currentGame;
+                betDisplay.textContent = state.betAmount + ' €';
+                multDisplay.textContent = 'x' + state.multiplier.toFixed(1);
+                winDisplay.textContent = state.lastWin + ' €';
+                balanceDisplay.textContent = state.balance.toLocaleString() + ' €';
+                balanceBig.textContent = state.balance.toLocaleString() + ' €';
+                lastWinSmall.textContent = state.lastWin > 0 ? '+' + state.lastWin + ' €' : '—';
             }
 
-            // ---------- ОСНОВНОЙ СПИН (ЛАЙВ-СЛОТ) ----------
+            // ---------- СПИН ----------
             function spinSlot() {
                 if (state.isSpinning) return;
                 if (state.balance < state.betAmount) {
-                    showToast('❌ Недостаточно средств! Пополни через СБП', false);
+                    showToast('❌ Ошибка', 'Недостаточно средств! Пополни через СБП', false);
                     return;
                 }
 
                 state.isSpinning = true;
+                spinBtn.disabled = true;
+                spinBtn.textContent = '⏳ ВРАЩЕНИЕ...';
                 soundSpin();
 
-                // Визуальный эффект на всех картах
+                // Анимация карточек
                 const cards = document.querySelectorAll('.game-card');
                 cards.forEach((card, idx) => {
-                    card.style.transition = '0.1s';
-                    card.style.transform = 'scale(0.9)';
-                    card.style.background = '#3f4f7a';
+                    card.style.transition = '0.08s';
+                    card.style.transform = 'scale(0.92)';
+                    card.style.background = '#1f2b50';
                     setTimeout(() => {
                         card.style.transform = 'scale(1)';
-                        card.style.background = '#202841';
-                    }, 100 + idx * 15);
+                        card.style.background = '#141b33';
+                    }, 100 + idx * 12);
                 });
 
-                // Генерация результата
                 const multiplier = parseFloat((Math.random() * 49 + 1).toFixed(1));
                 const win = Math.round(state.betAmount * multiplier);
                 const isWin = multiplier > 1.0;
 
-                // Задержка (имитация реального времени)
                 setTimeout(() => {
                     state.multiplier = multiplier;
                     state.lastWin = isWin ? win : 0;
@@ -471,36 +816,65 @@
                     if (isWin) {
                         state.balance += win;
                         soundWin();
-                        showToast(`🎉 ВЫИГРЫШ! +${win} € (x${multiplier.toFixed(1)})`);
+                        showToast('🎉 ВЫИГРЫШ!', `+${win} € (x${multiplier.toFixed(1)})`, true);
                     } else {
                         state.balance -= state.betAmount;
                         soundLose();
-                        showToast(`😔 Проигрыш. x${multiplier.toFixed(1)}`, false);
+                        showToast('😔 Проигрыш', `x${multiplier.toFixed(1)}`, false);
                     }
-
-                    // История
-                    state.history.push({
-                        game: state.currentGame,
-                        bet: state.betAmount,
-                        win: isWin ? win : 0,
-                        mult: multiplier
-                    });
-                    if (state.history.length > 10) state.history.shift();
 
                     updateUI();
                     state.isSpinning = false;
-                }, 800);
+                    spinBtn.disabled = false;
+                    spinBtn.textContent = '🎰 SPIN';
+                }, 700);
             }
 
-            // ---------- ЗАПУСК ----------
-            // Ждём загрузку DOM
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', renderFullSite);
-            } else {
-                renderFullSite();
-            }
+            // ---------- СОБЫТИЯ ----------
+            spinBtn.addEventListener('click', spinSlot);
 
+            // Редактирование ставки (двойной клик)
+            betDisplay.addEventListener('dblclick', function() {
+                const newBet = prompt('Введите новую ставку (€):', state.betAmount);
+                if (newBet && !isNaN(newBet) && parseInt(newBet) > 0) {
+                    state.betAmount = parseInt(newBet);
+                    updateUI();
+                }
+            });
+
+            // СБП: пополнение и копирование
+            sbpBlock.addEventListener('click', function() {
+                const amount = prompt('Пополнить баланс через СБП (сумма в €):', '100');
+                if (amount && !isNaN(amount) && parseInt(amount) > 0) {
+                    state.balance += parseInt(amount);
+                    updateUI();
+                    showToast('✅ Пополнение', `+${amount} € через СБП`, true);
+                    soundWin();
+                    navigator.clipboard?.writeText('+79997141332').then(() => {
+                        showToast('📋 Скопировано', 'Номер СБП в буфере', true);
+                    }).catch(() => {});
+                } else {
+                    // Если просто клик без суммы — копируем номер
+                    navigator.clipboard?.writeText('+79997141332').then(() => {
+                        showToast('📋 Скопировано', 'Номер СБП +7 999 714 13 32', true);
+                    }).catch(() => {
+                        showToast('📋 Номер СБП', '+7 999 714 13 32', true);
+                    });
+                }
+            });
+
+            // ---------- СТАРТ ----------
+            renderGames();
+            updateUI();
+
+            // Приветственный тост
+            setTimeout(() => {
+                showToast('🍾 Добро пожаловать', 'JetTon Games · тост-сайт с СБП', true);
+            }, 500);
+
+            console.log('SWILL · JetTon тост-сайт загружен');
         })();
     </script>
+
 </body>
 </html>
